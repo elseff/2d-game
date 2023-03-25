@@ -22,7 +22,7 @@ public class MyGdxGame extends Game {
 
     private int SCREEN_HEIGHT;
     private int SCREEN_WIDTH;
-    private final boolean DEBUG_MODE = true;
+    private boolean DEBUG_MODE = true;
     private float time;
 
     @Override
@@ -30,7 +30,7 @@ public class MyGdxGame extends Game {
         this.batch = new SpriteBatch();
         this.SCREEN_WIDTH = Gdx.graphics.getWidth();
         this.SCREEN_HEIGHT = Gdx.graphics.getHeight();
-        this.fireBall = new FireBall(100, 100, 5f, 0, false, false);
+        this.fireBall = new FireBall(100, 100, 5f, 0, true, true);
         this.shapeRenderer = new ShapeRenderer();
         this.windowUtil = new WindowUtil(this);
         this.shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
@@ -66,6 +66,8 @@ public class MyGdxGame extends Game {
     public void update(float dt) {
         if (myInputProcessor.keyDown(Input.Keys.ESCAPE))
             Gdx.app.exit();
+        if (myInputProcessor.keyDown(Input.Keys.F12))
+            DEBUG_MODE = !DEBUG_MODE;
 
         time += dt;
         fireBall.update(dt);

@@ -6,6 +6,6 @@ import com.badlogic.gdx.InputAdapter;
 public class MyInputProcessor extends InputAdapter {
     @Override
     public boolean keyDown(int keycode) {
-        return Gdx.input.isKeyPressed(keycode);
+        return Gdx.input.isKeyJustPressed(keycode);
     }
 }
