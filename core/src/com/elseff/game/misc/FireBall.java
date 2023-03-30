@@ -17,12 +17,12 @@ public class FireBall {
     private final boolean rotating;
     private final boolean moving;
 
-    public FireBall(float x, float y, float SCALE, int wait, boolean rotating, boolean moving) {
+    public FireBall(float x, float y, float SCALE, boolean rotating, boolean moving) {
         this.texture = new TextureRegion(new Texture("fireball.png"));
         this.position = new Vector2(x, y);
         this.movementForce = SCALE * 40f;
         this.movementForceCounter = movementForce;
-        this.movementCounter = -wait; // for waiting before start moving
+        this.movementCounter = 0; // for waiting before start moving
         this.angle = 0.0f;
         this.SCALE = SCALE;
         this.rotationSpeed = 2.5f; // 0-4

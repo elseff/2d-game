@@ -30,7 +30,7 @@ public class MyGdxGame extends Game {
         this.batch = new SpriteBatch();
         this.SCREEN_WIDTH = Gdx.graphics.getWidth();
         this.SCREEN_HEIGHT = Gdx.graphics.getHeight();
-        this.fireBall = new FireBall(100, 100, 5f, 0, true, true);
+        this.fireBall = new FireBall(100, 100, 5f,  true, true);
         this.shapeRenderer = new ShapeRenderer();
         this.windowUtil = new WindowUtil(this);
         this.shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
