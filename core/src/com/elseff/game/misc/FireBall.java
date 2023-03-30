@@ -5,6 +5,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
+/**
+ * May can be used for downloading screens
+ */
 public class FireBall {
     private final TextureRegion texture;
     private float movementForceCounter;

@@ -8,21 +8,21 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.elseff.game.misc.FireBall;
-import com.elseff.game.util.MyInputProcessor;
+import com.elseff.game.screen.GameScreen;
 import com.elseff.game.util.WindowUtil;
 
+/**
+ * Main game class
+ */
 public class MyGdxGame extends Game {
     private ShapeRenderer shapeRenderer;
     private WindowUtil windowUtil;
-    private FireBall fireBall;
     private SpriteBatch batch;
     private BitmapFont font;
-    private MyInputProcessor myInputProcessor;
 
     private int SCREEN_HEIGHT;
     private int SCREEN_WIDTH;
-    private boolean DEBUG_MODE = true;
+    private boolean debug = true;
     private float time;
 
     @Override
@@ -30,48 +30,45 @@ public class MyGdxGame extends Game {
         this.batch = new SpriteBatch();
         this.SCREEN_WIDTH = Gdx.graphics.getWidth();
         this.SCREEN_HEIGHT = Gdx.graphics.getHeight();
-        this.fireBall = new FireBall(100, 100, 5f,  true, true);
         this.shapeRenderer = new ShapeRenderer();
         this.windowUtil = new WindowUtil(this);
         this.shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
         this.font = new BitmapFont();
         this.font.setColor(Color.GREEN);
         this.time = 0.0f;
-        this.myInputProcessor = new MyInputProcessor();
-        Gdx.input.setInputProcessor(myInputProcessor);
+        this.setScreen(new GameScreen(this));
     }
 
     @Override
     public void render() {
+        ScreenUtils.clear(Color.DARK_GRAY);
         float dt = Gdx.graphics.getDeltaTime();
         update(dt);
-        ScreenUtils.clear(Color.DARK_GRAY);
-        batch.begin();
-        fireBall.render(batch);
-        batch.end();
+        super.render();
+    }
 
-        if (!DEBUG_MODE) return;
-        windowUtil.info(batch, font);
-        windowUtil.grid(shapeRenderer);
+    public void update(float dt) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
+            Gdx.app.exit();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F12))
+            debug = !debug;
+
+        time += dt;
+        windowUtil.update();
     }
 
     @Override
     public void dispose() {
         batch.dispose();
-        fireBall.dispose();
         shapeRenderer.dispose();
         font.dispose();
     }
 
-    public void update(float dt) {
-        if (myInputProcessor.keyDown(Input.Keys.ESCAPE))
-            Gdx.app.exit();
-        if (myInputProcessor.keyDown(Input.Keys.F12))
-            DEBUG_MODE = !DEBUG_MODE;
-
-        time += dt;
-        fireBall.update(dt);
-        windowUtil.update();
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
+        this.SCREEN_WIDTH = Gdx.graphics.getWidth();
+        this.SCREEN_HEIGHT = Gdx.graphics.getHeight();
     }
 
     public int getSCREEN_WIDTH() {
@@ -82,7 +79,27 @@ public class MyGdxGame extends Game {
         return SCREEN_HEIGHT;
     }
 
+    public ShapeRenderer getShapeRenderer() {
+        return shapeRenderer;
+    }
+
+    public WindowUtil getWindowUtil() {
+        return windowUtil;
+    }
+
+    public SpriteBatch getBatch() {
+        return batch;
+    }
+
     public float getTime() {
         return time;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public BitmapFont getFont() {
+        return font;
     }
 }
