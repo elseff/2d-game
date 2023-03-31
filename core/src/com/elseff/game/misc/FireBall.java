@@ -33,7 +33,9 @@ public class FireBall {
         this.moving = moving;
     }
 
-    public void render(SpriteBatch batch) {
+    public void render(SpriteBatch batch, float delta) {
+        update(delta);
+        batch.begin();
         batch.draw(texture,
                 position.x - texture.getRegionWidth() / 2f,
                 position.y - texture.getRegionWidth() / 2f,
@@ -44,9 +46,10 @@ public class FireBall {
                 SCALE,
                 SCALE,
                 angle);
+        batch.end();
     }
 
-    public void update(float dt) {
+    private void update(float dt) {
         if (rotating)
             rotate(dt);
         if (moving)

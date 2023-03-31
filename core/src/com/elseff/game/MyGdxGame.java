@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.elseff.game.screen.GameScreen;
 import com.elseff.game.util.WindowUtil;
 
@@ -22,7 +21,7 @@ public class MyGdxGame extends Game {
 
     private int SCREEN_HEIGHT;
     private int SCREEN_WIDTH;
-    private boolean debug = true;
+    private boolean debug = false;
     private float time;
 
     @Override
@@ -39,19 +38,11 @@ public class MyGdxGame extends Game {
         this.setScreen(new GameScreen(this));
     }
 
-    @Override
-    public void render() {
-        ScreenUtils.clear(Color.DARK_GRAY);
-        float dt = Gdx.graphics.getDeltaTime();
-        update(dt);
-        super.render();
-    }
-
     public void update(float dt) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
             Gdx.app.exit();
         if (Gdx.input.isKeyJustPressed(Input.Keys.F12))
-            debug = !debug;
+            this.debug = !this.debug;
 
         time += dt;
         windowUtil.update();
