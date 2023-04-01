@@ -21,7 +21,7 @@ public class FireBall {
     private final boolean moving;
 
     public FireBall(float x, float y, float SCALE, boolean rotating, boolean moving) {
-        this.texture = new TextureRegion(new Texture("fireball.png"));
+        this.texture = new TextureRegion(new Texture("images/fireball.png"));
         this.position = new Vector2(x, y);
         this.movementForce = SCALE * 40f;
         this.movementForceCounter = movementForce;

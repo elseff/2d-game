@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.elseff.game.misc.GameResources;
 import com.elseff.game.screen.GameScreen;
 import com.elseff.game.util.WindowUtil;
 
@@ -18,7 +19,7 @@ public class MyGdxGame extends Game {
     private WindowUtil windowUtil;
     private SpriteBatch batch;
     private BitmapFont font;
-
+    private GameResources gameResources;
     private int SCREEN_HEIGHT;
     private int SCREEN_WIDTH;
     private boolean debug = false;
@@ -35,6 +36,7 @@ public class MyGdxGame extends Game {
         this.font = new BitmapFont();
         this.font.setColor(Color.GREEN);
         this.time = 0.0f;
+        this.gameResources = new GameResources();
         this.setScreen(new GameScreen(this));
     }
 
@@ -92,5 +94,9 @@ public class MyGdxGame extends Game {
 
     public BitmapFont getFont() {
         return font;
+    }
+
+    public GameResources getGameResources() {
+        return this.gameResources;
     }
 }

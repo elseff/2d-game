@@ -2,17 +2,16 @@ package com.elseff.game.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.elseff.game.MyGdxGame;
-import com.elseff.game.model.Body;
+import com.elseff.game.model.Player;
 
 /**
  * Main game screen class
  */
 public class GameScreen implements Screen {
     private final MyGdxGame game;
-    private Body body1;
+    private Player player1;
 
     public GameScreen(MyGdxGame game) {
         this.game = game;
@@ -20,7 +19,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        body1 = new Body(game, 300, 400, Color.WHITE);
+        player1 = new Player(game, this, 300, 400);
     }
 
     @Override
@@ -28,7 +27,8 @@ public class GameScreen implements Screen {
         update(delta);
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        body1.render(game.getBatch(), game.getShapeRenderer(), delta);
+        Gdx.gl.glClearColor(255,255,255,1);
+        player1.render(game.getBatch(), game.getShapeRenderer(), game.getFont(), delta);
         checkDebugMode();
     }
 
