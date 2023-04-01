@@ -12,7 +12,7 @@ import com.elseff.game.MyGdxGame;
  * such as additional info about the game and grid
  */
 public class WindowUtil {
-    private final Color gridColor = Color.LIGHT_GRAY;
+    private final Color gridColor = Color.GRAY;
     private final MyGdxGame game;
     private final int margin = 20; // 20 by default
     private final int padding = 5; // 5 by default

@@ -36,7 +36,7 @@ public class Player {
         this.position = new Vector2(x, y);
         this.speed = new Vector2(400.0f, 400.0f);
 
-        this.SCALE = 5f;
+        this.SCALE = 10f;
         animationFrames = game.getGameResources().findRegions();
         animation = new Animation<>(0.1f, animationFrames);
 
@@ -114,15 +114,15 @@ public class Player {
     }
 
     private void checkBorderCollision(float dt) {
-        if (position.x + currentFrame.getRegionHeight() * SCALE / 2f > game.getSCREEN_WIDTH()) {
-            position.x = game.getSCREEN_WIDTH() - currentFrame.getRegionHeight() * SCALE / 2f;
-        } else if (position.x - currentFrame.getRegionHeight() * SCALE / 2f < 0) {
+        if (position.x + currentFrame.getRegionWidth() * SCALE / 2f > game.getSCREEN_WIDTH()) {
+            position.x = game.getSCREEN_WIDTH() - currentFrame.getRegionWidth() * SCALE / 2f;
+        } else if (position.x - currentFrame.getRegionWidth() * SCALE / 2f < 0) {
             position.x = currentFrame.getRegionWidth() * SCALE / 2f;
         }
 
-        if (position.y + currentFrame.getRegionHeight() * SCALE / 2f >= game.getSCREEN_HEIGHT()) {
+        if (position.y + currentFrame.getRegionHeight() * SCALE / 2f > game.getSCREEN_HEIGHT()) {
             position.y = game.getSCREEN_HEIGHT() - currentFrame.getRegionHeight() * SCALE / 2f;
-        } else if (position.y - currentFrame.getRegionHeight() * SCALE / 2f <= 0) {
+        } else if (position.y - currentFrame.getRegionHeight() * SCALE / 2f < 0) {
             position.y = currentFrame.getRegionHeight() * SCALE / 2f;
         }
     }
