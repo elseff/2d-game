@@ -8,14 +8,14 @@ public class GameResources {
     private final TextureAtlas ninjaAtlas;
 
     public GameResources() {
-        ninjaAtlas = new TextureAtlas(Gdx.files.internal("ninja.atlas"));
+        ninjaAtlas = new TextureAtlas(Gdx.files.internal("ninja-export.atlas"));
     }
 
-    public TextureAtlas.AtlasRegion findRegion(String name){
+    public TextureAtlas.AtlasRegion findRegion(String name) {
         return ninjaAtlas.findRegion(name);
     }
 
-    public TextureAtlas.AtlasRegion[] findRegions(){
+    public TextureAtlas.AtlasRegion[] findRegions() {
         Array<TextureAtlas.AtlasRegion> regions = ninjaAtlas.getRegions();
 
         TextureAtlas.AtlasRegion[] result = new TextureAtlas.AtlasRegion[regions.size];

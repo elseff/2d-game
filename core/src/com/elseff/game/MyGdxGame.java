@@ -41,6 +41,8 @@ public class MyGdxGame extends Game {
     }
 
     public void update(float dt) {
+        this.SCREEN_WIDTH = Gdx.graphics.getWidth();
+        this.SCREEN_HEIGHT = Gdx.graphics.getHeight();
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
             Gdx.app.exit();
         if (Gdx.input.isKeyJustPressed(Input.Keys.F12))
