@@ -37,23 +37,26 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(255, 255, 255, 1);
         player1.render(game.getBatch(), game.getFont(), delta);
         fireBall.render(game.getBatch(), delta);
-        checkDebugMode();
+        renderDebugMode();
     }
 
-    private void checkDebugMode() {
+    private void renderDebugMode() {
         if (game.isDebug()) {
             game.getWindowUtil().render(game.getFont());
         }
     }
 
     public void update(float dt) {
-
-        camera.position.x = camera.position.x + (player1.getPosition().x - camera.position.x) * .08f;
-        camera.position.y = camera.position.y + (player1.getPosition().y - camera.position.y) * .08f;
-        camera.update();
+        cameraUpdate();
         game.getBatch().setProjectionMatrix(camera.combined);
         game.getShapeRenderer().setProjectionMatrix(camera.combined);
         game.update(dt);
+    }
+
+    public void cameraUpdate(){
+        camera.position.x = camera.position.x + (player1.getPosition().x - camera.position.x) * .08f;
+        camera.position.y = camera.position.y + (player1.getPosition().y - camera.position.y) * .08f;
+        camera.update();
     }
 
     @Override
@@ -70,6 +73,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+        fireBall.dispose();
+        player1.dispose();
     }
 
     @Override

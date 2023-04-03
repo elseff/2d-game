@@ -23,7 +23,7 @@ public class FireBall {
 
     public FireBall(MyGdxGame game, float x, float y, float SCALE, boolean rotating, boolean moving) {
         this.game = game;
-        this.texture = game.getGameResources().findRegion("fireball");
+        this.texture = this.game.getGameResources().findRegion("fireball");
         this.position = new Vector2(x, y);
         this.movementForce = SCALE * 40f;
         this.movementForceCounter = movementForce;

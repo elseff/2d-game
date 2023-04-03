@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.elseff.game.MyGdxGame;
 
 /**
@@ -11,7 +12,7 @@ import com.elseff.game.MyGdxGame;
  * such as additional info about the game and grid
  */
 public class WindowUtil {
-    private final Color gridColor = Color.GRAY;
+    private final Color gridColor = Color.GREEN;
     private final MyGdxGame game;
     private final int margin = 20; // 20 by default
     private final int padding = 5; // 5 by default
@@ -26,18 +27,19 @@ public class WindowUtil {
         this.data[0] = "DEBUG MODE"; // first line in info tab is title of debug mode
     }
 
-//    public void grid() {
-//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-//        for (int i = 0; i <= game.getViewport().getScreenWidth(); i += game.getSCREEN_WIDTH() / (Gdx.graphics.getWidth() / 100f))
-//            shapeRenderer.line(i, game.getSCREEN_HEIGHT(), i, 0, gridColor, gridColor);
-//        for (int i = 0; i <= game.getSCREEN_HEIGHT(); i += game.getSCREEN_HEIGHT() / (Gdx.graphics.getHeight() / 100f))
-//            shapeRenderer.line(0, i, game.getSCREEN_WIDTH(), i, gridColor, gridColor);
-//        shapeRenderer.end();
-//    }
+    public void grid() {
+        game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Line);
+        for (int i = 0; i <= game.getSCREEN_WIDTH(); i += game.getSCREEN_WIDTH() / (Gdx.graphics.getWidth() / 100f))
+            game.getShapeRenderer().line(i, game.getSCREEN_HEIGHT(), i, 0, gridColor, gridColor);
+        for (int i = 0; i <= game.getSCREEN_HEIGHT(); i += game.getSCREEN_HEIGHT() / (Gdx.graphics.getHeight() / 100f))
+            game.getShapeRenderer().line(0, i, game.getSCREEN_WIDTH(), i, gridColor, gridColor);
+        game.getShapeRenderer().end();
+    }
 
     public void render(BitmapFont font) {
         update();
         info(font);
+        grid();
     }
 
     public void update() {

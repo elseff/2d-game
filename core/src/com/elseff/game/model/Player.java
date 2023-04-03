@@ -140,4 +140,15 @@ public class Player {
     public Vector2 getPosition() {
         return position;
     }
+
+    public void dispose(){
+        for (int i = 0; i < downAnimationFrames.length; i++)
+            downAnimationFrames[i].getTexture().dispose();
+        for (int i = 0; i < upAnimationFrames.length; i++)
+            upAnimationFrames[i].getTexture().dispose();
+        for (int i = 0; i < rightLeftAnimationFrames.length; i++)
+            rightLeftAnimationFrames[i].getTexture().dispose();
+
+        this.currentFrame.getTexture().dispose();
+    }
 }
