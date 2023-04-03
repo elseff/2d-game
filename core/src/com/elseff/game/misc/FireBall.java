@@ -1,15 +1,16 @@
 package com.elseff.game.misc;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.elseff.game.MyGdxGame;
 
 /**
  * May can be used for downloading screens
  */
 public class FireBall {
     private final TextureRegion texture;
+    private final MyGdxGame game;
     private float movementForceCounter;
     private int movementCounter;
     private final float movementForce;
@@ -20,8 +21,9 @@ public class FireBall {
     private final boolean rotating;
     private final boolean moving;
 
-    public FireBall(float x, float y, float SCALE, boolean rotating, boolean moving) {
-        this.texture = new TextureRegion(new Texture("images/fireball.png"));
+    public FireBall(MyGdxGame game, float x, float y, float SCALE, boolean rotating, boolean moving) {
+        this.game = game;
+        this.texture = game.getGameResources().findRegion("fireball");
         this.position = new Vector2(x, y);
         this.movementForce = SCALE * 40f;
         this.movementForceCounter = movementForce;

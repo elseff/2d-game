@@ -8,7 +8,7 @@ public class GameResources {
     private final TextureAtlas ninjaAtlas;
 
     public GameResources() {
-        ninjaAtlas = new TextureAtlas(Gdx.files.internal("ninja-export.atlas"));
+        ninjaAtlas = new TextureAtlas(Gdx.files.internal("ninja_fireball.atlas"));
     }
 
     public TextureAtlas.AtlasRegion findRegion(String name) {

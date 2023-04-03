@@ -26,7 +26,7 @@ public class GameScreen implements Screen {
         player1 = new Player(game, game.getSCREEN_WIDTH() / 2, game.getSCREEN_HEIGHT() / 2);
         camera = new OrthographicCamera();
         camera.setToOrtho(false, game.getSCREEN_WIDTH(), game.getSCREEN_HEIGHT());
-        fireBall = new FireBall(100, 100, 5f, true, false);
+        fireBall = new FireBall(game, 100, 100, 5f, true, false);
     }
 
     @Override
