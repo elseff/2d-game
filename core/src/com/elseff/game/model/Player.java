@@ -3,18 +3,14 @@ package com.elseff.game.model;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.misc.Direction;
 
-public class Player {
-    private final MyGdxGame game;
-    private final Vector2 position;
-    private final Vector2 speed;
-
+public class Player extends GameObject {
     private final Animation<TextureRegion> downAnimation;
     private final Animation<TextureRegion> rightLeftAnimation; // flip right moving sprites for left movement
     private final Animation<TextureRegion> upAnimation;
@@ -25,14 +21,13 @@ public class Player {
 
     private TextureRegion currentFrame;
 
+    private final SpriteBatch batch;
+    private final Vector2 speed;
     private final float SCALE;
     private Direction direction;
 
     public Player(MyGdxGame game, int x, int y) {
-        this.game = game;
-        this.position = new Vector2(x, y);
-        this.speed = new Vector2(400.0f, 400.0f);
-
+        super(game, x, y);
         this.downAnimationFrames = new TextureRegion[10]; // 10 frames for down animation
         this.rightLeftAnimationFrames = new TextureRegion[8]; // 8 frames for right/left animation
         this.upAnimationFrames = new TextureRegion[10]; // 10 frames for up animation
@@ -48,18 +43,22 @@ public class Player {
         this.rightLeftAnimation = new Animation<>(0.1f, rightLeftAnimationFrames);
         this.upAnimation = new Animation<>(0.08f, upAnimationFrames);
 
-        currentFrame = downAnimation.getKeyFrames()[0];
-        this.SCALE = 5f;
+        this.currentFrame = downAnimation.getKeyFrames()[0];
+
+        this.speed = new Vector2(200.0f, 200.0f);
+        this.batch = getGame().getBatch();
+        this.SCALE = 2f;
+
         this.direction = Direction.STAY;
     }
 
-    public void render(SpriteBatch batch, BitmapFont font, float dt) {
+    @Override
+    public void render(float dt) {
         update(dt);
-
         batch.begin();
         batch.draw(currentFrame,
-                position.x - currentFrame.getRegionWidth() / 2f,
-                position.y - currentFrame.getRegionHeight() / 2f,
+                getPosition().x - currentFrame.getRegionWidth() / 2f,
+                getPosition().y - currentFrame.getRegionHeight() / 2f,
                 currentFrame.getRegionWidth() / 2f,
                 currentFrame.getRegionHeight() / 2f,
                 currentFrame.getRegionWidth(),
@@ -67,13 +66,16 @@ public class Player {
                 SCALE,
                 SCALE,
                 0.0f);
-        if (game.isDebug()) {
-            font.draw(batch,
-                    String.format("(%.1f; %.1f)", position.x, position.y),
-                    position.x - currentFrame.getRegionWidth() * SCALE / 2f,
-                    position.y + currentFrame.getRegionWidth() * SCALE / 1.5f);
-        }
         batch.end();
+        super.render(dt);
+    }
+
+    @Override
+    public Rectangle getRectangle() {
+        return new Rectangle(getPosition().x - currentFrame.getRegionWidth() * SCALE / 2f,
+                getPosition().y - currentFrame.getRegionHeight() * SCALE / 2f,
+                currentFrame.getRegionWidth() * SCALE,
+                currentFrame.getRegionHeight() * SCALE);
     }
 
     private void update(float dt) {
@@ -83,23 +85,23 @@ public class Player {
 
     private void move(Direction direction, float dt) {
         this.direction = direction;
-        position.add(direction.getVx() * speed.x * dt,
+        getPosition().add(direction.getVx() * speed.x * dt,
                 direction.getVy() * speed.y * dt);
     }
 
     public void changeCurrentFrame() {
         switch (this.direction) {
             case STAY -> currentFrame = downAnimation.getKeyFrames()[0];
-            case DOWN -> currentFrame = downAnimation.getKeyFrame(game.getTime(), true);
-            case UP -> currentFrame = upAnimation.getKeyFrame(game.getTime(), true);
+            case DOWN -> currentFrame = downAnimation.getKeyFrame(getGame().getTime(), true);
+            case UP -> currentFrame = upAnimation.getKeyFrame(getGame().getTime(), true);
             case LEFT -> {
-                TextureRegion frame = rightLeftAnimation.getKeyFrame(game.getTime(), true);
+                TextureRegion frame = rightLeftAnimation.getKeyFrame(getGame().getTime(), true);
                 if (!frame.isFlipX())
                     frame.flip(true, false);
                 currentFrame = frame;
             }
             case RIGHT -> {
-                TextureRegion frame = rightLeftAnimation.getKeyFrame(game.getTime(), true);
+                TextureRegion frame = rightLeftAnimation.getKeyFrame(getGame().getTime(), true);
                 if (frame.isFlipX())
                     frame.flip(true, false);
                 currentFrame = frame;
@@ -116,18 +118,14 @@ public class Player {
             move(Direction.STAY, dt);
             return;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.W))
             move(Direction.UP, dt);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.S))
             move(Direction.DOWN, dt);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.A))
             move(Direction.LEFT, dt);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.D))
             move(Direction.RIGHT, dt);
-        }
 
         if (!(Gdx.input.isKeyPressed(Input.Keys.D) ||
                 Gdx.input.isKeyPressed(Input.Keys.A) ||
@@ -137,11 +135,7 @@ public class Player {
         }
     }
 
-    public Vector2 getPosition() {
-        return position;
-    }
-
-    public void dispose(){
+    public void dispose() {
         for (int i = 0; i < downAnimationFrames.length; i++)
             downAnimationFrames[i].getTexture().dispose();
         for (int i = 0; i < upAnimationFrames.length; i++)

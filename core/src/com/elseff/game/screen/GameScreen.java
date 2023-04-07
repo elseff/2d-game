@@ -5,45 +5,43 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.elseff.game.MyGdxGame;
-import com.elseff.game.misc.FireBall;
 import com.elseff.game.model.Player;
+import com.elseff.game.model.box.SmallCardBox;
 
 /**
  * Main game screen class
  */
 public class GameScreen implements Screen {
     private final MyGdxGame game;
-    private Player player1;
+    private Player player;
     private OrthographicCamera camera;
-    private FireBall fireBall;
-
+    private SmallCardBox cardBox;
     public GameScreen(MyGdxGame game) {
         this.game = game;
     }
 
     @Override
     public void show() {
-        player1 = new Player(game, game.getSCREEN_WIDTH() / 2, game.getSCREEN_HEIGHT() / 2);
+        player = new Player(game, 0, 0);
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, game.getSCREEN_WIDTH(), game.getSCREEN_HEIGHT());
-        fireBall = new FireBall(game, 100, 100, 5f, true, false);
+        cardBox = new SmallCardBox(game, 100, 100);
+        camera.setToOrtho(false, game.getSCREEN_WIDTH()/1.5f, game.getSCREEN_HEIGHT()/1.5f);
+        game.getFont().getData().setScale(0.75f,0.75f);
     }
 
     @Override
     public void render(float delta) {
         update(delta);
-
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl.glClearColor(255, 255, 255, 1);
-        player1.render(game.getBatch(), game.getFont(), delta);
-        fireBall.render(game.getBatch(), delta);
+        player.render(delta);
+        cardBox.render(delta);
         renderDebugMode();
     }
 
     private void renderDebugMode() {
-        if (game.isDebug()) {
-            game.getWindowUtil().render(game.getFont());
-        }
+        if (game.isDebug())
+            game.getWindowUtil().render();
     }
 
     public void update(float dt) {
@@ -54,8 +52,8 @@ public class GameScreen implements Screen {
     }
 
     public void cameraUpdate(){
-        camera.position.x = camera.position.x + (player1.getPosition().x - camera.position.x) * .08f;
-        camera.position.y = camera.position.y + (player1.getPosition().y - camera.position.y) * .08f;
+        camera.position.x = camera.position.x + (player.getPosition().x - camera.position.x) * .07f;
+        camera.position.y = camera.position.y + (player.getPosition().y - camera.position.y) * .07f;
         camera.update();
     }
 
@@ -73,8 +71,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        fireBall.dispose();
-        player1.dispose();
+        player.dispose();
     }
 
     @Override

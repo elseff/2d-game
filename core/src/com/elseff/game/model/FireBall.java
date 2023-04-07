@@ -1,20 +1,19 @@
-package com.elseff.game.misc;
+package com.elseff.game.model;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Rectangle;
 import com.elseff.game.MyGdxGame;
 
 /**
  * May can be used for downloading screens
  */
-public class FireBall {
+public class FireBall extends GameObject {
     private final TextureRegion texture;
-    private final MyGdxGame game;
+    private final SpriteBatch batch;
     private float movementForceCounter;
     private int movementCounter;
     private final float movementForce;
-    private final Vector2 position;
     private float angle;
     private final float SCALE;
     private final float rotationSpeed;
@@ -22,9 +21,8 @@ public class FireBall {
     private final boolean moving;
 
     public FireBall(MyGdxGame game, float x, float y, float SCALE, boolean rotating, boolean moving) {
-        this.game = game;
-        this.texture = this.game.getGameResources().findRegion("fireball");
-        this.position = new Vector2(x, y);
+        super(game, x, y);
+        this.texture = getGame().getGameResources().findRegion("fireball");
         this.movementForce = SCALE * 40f;
         this.movementForceCounter = movementForce;
         this.movementCounter = 0; // for waiting before start moving
@@ -33,14 +31,16 @@ public class FireBall {
         this.rotationSpeed = 2.5f; // 0-4
         this.rotating = rotating;
         this.moving = moving;
+        this.batch = game.getBatch();
     }
 
-    public void render(SpriteBatch batch, float delta) {
+    @Override
+    public void render(float delta) {
         update(delta);
         batch.begin();
         batch.draw(texture,
-                position.x - texture.getRegionWidth() / 2f,
-                position.y - texture.getRegionWidth() / 2f,
+                getPosition().x - texture.getRegionWidth() / 2f,
+                getPosition().y - texture.getRegionWidth() / 2f,
                 texture.getRegionWidth() / 2f,
                 texture.getRegionHeight() / 2f,
                 texture.getRegionWidth(),
@@ -49,6 +49,15 @@ public class FireBall {
                 SCALE,
                 angle);
         batch.end();
+    }
+
+
+    @Override
+    public Rectangle getRectangle() {
+        return new Rectangle(getPosition().x - texture.getRegionWidth() * SCALE / 2f,
+                getPosition().y - texture.getRegionHeight() * SCALE / 2f,
+                texture.getRegionWidth() * SCALE,
+                texture.getRegionHeight() * SCALE);
     }
 
     private void update(float dt) {
@@ -66,9 +75,9 @@ public class FireBall {
             if (movementCounter == 0) // for first step
                 movementForceCounter = movementForce; // set to default
 
-            this.position.y += Math.abs(movementForceCounter) * dt;
+            getPosition().y += Math.abs(movementForceCounter) * dt;
         } else if (movementCounter > 50)
-            this.position.y -= Math.abs(movementForceCounter) * dt;
+            getPosition().y -= Math.abs(movementForceCounter) * dt;
 
         movementForceCounter -= movementForce / 50;
         movementCounter++;

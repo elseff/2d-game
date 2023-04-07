@@ -1,4 +1,4 @@
-images/ninja_fireball.png
+images/textures.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -204,4 +204,32 @@ fireball
   size: 16,16
   orig: 16,16
   offset: 1,0
+  index: -1
+wooden_box
+  rotate: false
+  xy: 18, 67
+  size: 32, 32
+  orig: 32, 32
+  offsetL 1,0
+  index: -1
+card_box
+  rotate: false
+  xy: 53, 67
+  size: 32, 32
+  orig: 32, 32
+  offsetL 1,0
+  index: -1
+big_wooden_box
+  rotate: false
+  xy: 87, 67
+  size: 64, 64
+  orig: 64, 64
+  offsetL 1,0
+  index: -1
+small_card_box
+  rotate: false
+  xy: 154, 67
+  size: 16, 16
+  orig: 16, 16
+  offsetL 1,0
   index: -1
