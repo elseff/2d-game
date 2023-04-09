@@ -3,6 +3,7 @@ package com.elseff.game.model.box;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.model.GameObject;
 
@@ -13,6 +14,13 @@ public abstract class Box extends GameObject {
 
     protected Box(MyGdxGame game, float x, float y) {
         super(game, x, y);
+        this.texture = getTexture();
+        this.batch = getGame().getBatch();
+        this.SCALE = 2.0f;
+    }
+
+    protected Box(MyGdxGame game, Vector2 position){
+        super(game, position);
         this.texture = getTexture();
         this.batch = getGame().getBatch();
         this.SCALE = 2.0f;
@@ -29,7 +37,6 @@ public abstract class Box extends GameObject {
     }
 
     public void render(float delta) {
-        batch.begin();
         batch.draw(texture,
                 getPosition().x - texture.getRegionWidth() / 2f,
                 getPosition().y - texture.getRegionHeight() / 2f,
@@ -40,7 +47,6 @@ public abstract class Box extends GameObject {
                 SCALE,
                 SCALE,
                 0.0f);
-        batch.end();
         super.render(delta);
     }
 

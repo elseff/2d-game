@@ -26,7 +26,7 @@ public class Player extends GameObject {
     private final float SCALE;
     private Direction direction;
 
-    public Player(MyGdxGame game, int x, int y) {
+    public Player(MyGdxGame game, float x, float y) {
         super(game, x, y);
         this.downAnimationFrames = new TextureRegion[10]; // 10 frames for down animation
         this.rightLeftAnimationFrames = new TextureRegion[8]; // 8 frames for right/left animation
@@ -55,7 +55,6 @@ public class Player extends GameObject {
     @Override
     public void render(float dt) {
         update(dt);
-        batch.begin();
         batch.draw(currentFrame,
                 getPosition().x - currentFrame.getRegionWidth() / 2f,
                 getPosition().y - currentFrame.getRegionHeight() / 2f,
@@ -66,7 +65,6 @@ public class Player extends GameObject {
                 SCALE,
                 SCALE,
                 0.0f);
-        batch.end();
         super.render(dt);
     }
 
@@ -144,5 +142,17 @@ public class Player extends GameObject {
             rightLeftAnimationFrames[i].getTexture().dispose();
 
         this.currentFrame.getTexture().dispose();
+    }
+
+    public Vector2 getSpeed() {
+        return speed;
+    }
+
+    public float getSCALE() {
+        return SCALE;
+    }
+
+    public Direction getDirection() {
+        return direction;
     }
 }

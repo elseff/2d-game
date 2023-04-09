@@ -24,12 +24,13 @@ public class MyGdxGame extends Game {
     private int SCREEN_WIDTH;
     private boolean debug = false;
     private float time;
+    private GameScreen gameScreen;
 
     @Override
     public void create() {
         this.batch = new SpriteBatch();
-        this.SCREEN_WIDTH = Gdx.graphics.getWidth();
-        this.SCREEN_HEIGHT = Gdx.graphics.getHeight();
+        this.SCREEN_WIDTH = 1920;
+        this.SCREEN_HEIGHT = 1080;
         this.shapeRenderer = new ShapeRenderer();
         this.windowUtil = new WindowUtil(this);
         this.shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
@@ -37,7 +38,8 @@ public class MyGdxGame extends Game {
         this.font.setColor(Color.GREEN);
         this.time = 0.0f;
         this.gameResources = new GameResources();
-        this.setScreen(new GameScreen(this));
+        this.gameScreen = new GameScreen(this);
+        this.setScreen(gameScreen);
     }
 
     public void update(float dt) {
@@ -62,8 +64,6 @@ public class MyGdxGame extends Game {
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
-        this.SCREEN_WIDTH = Gdx.graphics.getWidth();
-        this.SCREEN_HEIGHT = Gdx.graphics.getHeight();
     }
 
     public int getSCREEN_WIDTH() {
@@ -100,5 +100,10 @@ public class MyGdxGame extends Game {
 
     public GameResources getGameResources() {
         return this.gameResources;
+    }
+
+    @Override
+    public GameScreen getScreen() {
+        return (GameScreen) super.getScreen();
     }
 }
