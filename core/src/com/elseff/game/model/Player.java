@@ -25,6 +25,7 @@ public class Player extends GameObject {
     private final Vector2 speed;
     private final float SCALE;
     private Direction direction;
+    private final Rectangle tmpRect;
 
     public Player(MyGdxGame game, float x, float y) {
         super(game, x, y);
@@ -50,6 +51,7 @@ public class Player extends GameObject {
         this.SCALE = 2f;
 
         this.direction = Direction.STAY;
+        this.tmpRect = new Rectangle();
     }
 
     @Override
@@ -70,9 +72,9 @@ public class Player extends GameObject {
 
     @Override
     public Rectangle getRectangle() {
-        return new Rectangle(getPosition().x - currentFrame.getRegionWidth() * SCALE / 2f,
+        return new Rectangle(getPosition().x - currentFrame.getRegionWidth() * SCALE / 2f+2,
                 getPosition().y - currentFrame.getRegionHeight() * SCALE / 2f,
-                currentFrame.getRegionWidth() * SCALE,
+                currentFrame.getRegionWidth() * SCALE-2,
                 currentFrame.getRegionHeight() * SCALE);
     }
 
@@ -83,8 +85,15 @@ public class Player extends GameObject {
 
     private void move(Direction direction, float dt) {
         this.direction = direction;
-        getPosition().add(direction.getVx() * speed.x * dt,
-                direction.getVy() * speed.y * dt);
+        tmpRect.set(
+                getRectangle().x + direction.getVx() * speed.x * dt,
+                getRectangle().y + direction.getVy() * speed.y * dt,
+                getRectangle().width,
+                getRectangle().height);
+        if (getGame().getScreen().getMapRenderer().getMap().isAreaClear(tmpRect)) {
+            getPosition().set(getPosition().x + direction.getVx() * speed.x * dt,
+                    getPosition().y + direction.getVy() * speed.y * dt);
+        }
     }
 
     public void changeCurrentFrame() {

@@ -22,7 +22,7 @@ public class WindowUtil {
         this.game = game;
         this.batch = new SpriteBatch(); // own batch
 
-        this.data = new String[7]; // info with 7 lines
+        this.data = new String[6]; // info with 7 lines
         this.data[0] = "DEBUG MODE"; // first line in info tab is title of debug mode
         this.font = new BitmapFont();
         this.font.setColor(Color.GREEN);
@@ -44,19 +44,12 @@ public class WindowUtil {
         data[4] = String.format("time: %.1f s.",
                 game
                         .getTime()); // fifth line is time since game starting
-        data[5] = String.format("count chunks: %.1s.",
+        data[5] = String.format("count chunks: %s.",
                 game
                         .getScreen()
                         .getMapRenderer()
                         .getMap()
-                        .getChunks().size()); // sixth line is the chunks count
-        data[6] = String.format("current chunk: %s",
-                game
-                        .getScreen()
-                        .getMapRenderer()
-                        .getMap()
-                        .getCurrentChunk()
-                        .getId());
+                        .getChunks().size); // sixth line is the chunks count
     }
 
     public void info() {

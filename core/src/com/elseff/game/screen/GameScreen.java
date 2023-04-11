@@ -5,7 +5,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.elseff.game.*;
+import com.elseff.game.MyGdxGame;
+import com.elseff.game.map.Map;
+import com.elseff.game.map.MapController;
+import com.elseff.game.map.MapRenderer;
+import com.elseff.game.map.chunk.Chunk;
 import com.elseff.game.model.Player;
 
 /**
@@ -25,6 +29,7 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
         camera = new OrthographicCamera();
+
         mapRenderer = new MapRenderer(game);
         Map map = mapRenderer.getMap();
         Chunk chunk = map.getChunkById(0);
@@ -34,9 +39,10 @@ public class GameScreen implements Screen {
                 chunk.getHeightPixels() / 2f);
         camera.setToOrtho(false, game.getSCREEN_WIDTH(), game.getSCREEN_HEIGHT());
         game.getFont().getData().setScale(0.75f, 0.75f);
-        camera.zoom=0.5f;
+        camera.zoom = 0.5f;
         camera.position.set(player.getPosition(), 0);
         mapController = new MapController(game);
+        mapController.init();
     }
 
     @Override
@@ -66,19 +72,18 @@ public class GameScreen implements Screen {
     }
 
     private void cameraUpdate(float delta) {
-        scaleUpdate(delta);
+        cameraZoomUpdate(delta);
         camera.position.x = camera.position.x + (player.getPosition().x - camera.position.x) * 0.07f;
         camera.position.y = camera.position.y + (player.getPosition().y - camera.position.y) * 0.07f;
         camera.update();
     }
 
-    private void scaleUpdate(float delta) {
+    private void cameraZoomUpdate(float delta) {
         if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_SUBTRACT)) {
             if (camera.zoom <= 1)
                 camera.zoom += delta;
-        }
-        else if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_ADD)) {
-            if (camera.zoom >= 0.5)
+        } else if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_ADD)) {
+            if (camera.zoom >= 0.1)
                 camera.zoom -= delta;
         }
     }
@@ -111,5 +116,9 @@ public class GameScreen implements Screen {
 
     public MapRenderer getMapRenderer() {
         return mapRenderer;
+    }
+
+    public MapController getMapController() {
+        return mapController;
     }
 }

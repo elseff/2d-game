@@ -1,4 +1,4 @@
-package com.elseff.game;
+package com.elseff.game.map.chunk;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.elseff.game.MyGdxGame;
 import com.elseff.game.model.GameObject;
 
 import java.util.Objects;
@@ -24,8 +25,8 @@ public class Chunk {
     private final int height = 16;
     private Rectangle rectangle;
     private boolean isCurrent = false;
-
     private final Array<GameObject> objects;
+    private final Array<TriggerRegion> triggers;
 
     public Chunk(Integer id, MyGdxGame game, float x, float y) {
         this.id = id;
@@ -37,6 +38,7 @@ public class Chunk {
         this.font = game.getFont();
         this.game = game;
         this.batch = game.getBatch();
+        this.triggers = new Array<>();
     }
 
     public Chunk(Integer id, MyGdxGame game, Vector2 position) {
@@ -45,6 +47,54 @@ public class Chunk {
         this.font = game.getFont();
         this.game = game;
         this.batch = game.getBatch();
+    }
+
+    public void initTriggers(TriggerPosition exclude) {
+        if (exclude == null) {
+            TriggerRegion bottomTriggerRegion = new TriggerRegion(TriggerPosition.BOTTOM, this);
+            TriggerRegion rightTriggerRegion = new TriggerRegion(TriggerPosition.RIGHT, this);
+            TriggerRegion topTriggerRegion = new TriggerRegion(TriggerPosition.TOP, this);
+            TriggerRegion leftTriggerRegion = new TriggerRegion(TriggerPosition.LEFT, this);
+            addTrigger(rightTriggerRegion);
+            addTrigger(topTriggerRegion);
+            addTrigger(leftTriggerRegion);
+            addTrigger(bottomTriggerRegion);
+        } else {
+            switch (exclude) {
+                case RIGHT -> {
+                    TriggerRegion leftTriggerRegion = new TriggerRegion(TriggerPosition.LEFT, this);
+                    TriggerRegion topTriggerRegion = new TriggerRegion(TriggerPosition.TOP, this);
+                    TriggerRegion bottomTriggerRegion = new TriggerRegion(TriggerPosition.BOTTOM, this);
+                    addTrigger(leftTriggerRegion);
+                    addTrigger(topTriggerRegion);
+                    addTrigger(bottomTriggerRegion);
+                }
+                case LEFT -> {
+                    TriggerRegion rightTriggerRegion = new TriggerRegion(TriggerPosition.RIGHT, this);
+                    TriggerRegion topTriggerRegion = new TriggerRegion(TriggerPosition.TOP, this);
+                    TriggerRegion bottomTriggerRegion = new TriggerRegion(TriggerPosition.BOTTOM, this);
+                    addTrigger(rightTriggerRegion);
+                    addTrigger(topTriggerRegion);
+                    addTrigger(bottomTriggerRegion);
+                }
+                case TOP -> {
+                    TriggerRegion rightTriggerRegion = new TriggerRegion(TriggerPosition.RIGHT, this);
+                    TriggerRegion leftTriggerRegion = new TriggerRegion(TriggerPosition.LEFT, this);
+                    TriggerRegion bottomTriggerRegion = new TriggerRegion(TriggerPosition.BOTTOM, this);
+                    addTrigger(rightTriggerRegion);
+                    addTrigger(leftTriggerRegion);
+                    addTrigger(bottomTriggerRegion);
+                }
+                case BOTTOM -> {
+                    TriggerRegion rightTriggerRegion = new TriggerRegion(TriggerPosition.RIGHT, this);
+                    TriggerRegion topTriggerRegion = new TriggerRegion(TriggerPosition.TOP, this);
+                    TriggerRegion leftTriggerRegion = new TriggerRegion(TriggerPosition.LEFT, this);
+                    addTrigger(rightTriggerRegion);
+                    addTrigger(topTriggerRegion);
+                    addTrigger(leftTriggerRegion);
+                }
+            }
+        }
     }
 
     public void render() {
@@ -128,6 +178,16 @@ public class Chunk {
         return Objects.hash(id, position);
     }
 
+    @Override
+    public String toString() {
+        return "Chunk{" +
+                "id=" + id +
+                ", color=" + color +
+                ", position=" + position +
+                ", triggers=" + triggers +
+                '}';
+    }
+
     public Color getColor() {
         return color;
     }
@@ -146,5 +206,22 @@ public class Chunk {
 
     public void setCurrent(boolean current) {
         isCurrent = current;
+    }
+
+    public Array<TriggerRegion> getTriggers() {
+        return triggers;
+    }
+
+    public void addTrigger(TriggerRegion trigger) {
+        this.triggers.add(trigger);
+    }
+
+    public void deleteTrigger(TriggerPosition triggerPosition) {
+        for (int i = 0; i < triggers.size; i++) {
+            TriggerRegion triggerRegion = triggers.get(i);
+            if (triggerRegion.getTriggerPosition().name().equals(triggerPosition.name())) {
+                triggers.removeValue(triggerRegion, true);
+            }
+        }
     }
 }
