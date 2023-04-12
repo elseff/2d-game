@@ -2,9 +2,11 @@ package com.elseff.game.model;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.elseff.game.MyGdxGame;
@@ -22,10 +24,13 @@ public class Player extends GameObject {
     private TextureRegion currentFrame;
 
     private final SpriteBatch batch;
+    private final ShapeRenderer shapeRenderer;
     private final Vector2 speed;
     private final float SCALE;
     private Direction direction;
     private final Rectangle tmpRect;
+    private final Rectangle chunkGeneratorRectangle;
+    private final Color chunkGeneratorRectangleColor;
 
     public Player(MyGdxGame game, float x, float y) {
         super(game, x, y);
@@ -40,9 +45,9 @@ public class Player extends GameObject {
         for (int i = 0; i < 10; i++)
             upAnimationFrames[i] = game.getGameResources().findRegion("ninja_up" + i);
 
-        this.downAnimation = new Animation<>(0.05f, downAnimationFrames);
+        this.downAnimation = new Animation<>(0.07f, downAnimationFrames);
         this.rightLeftAnimation = new Animation<>(0.08f, rightLeftAnimationFrames);
-        this.upAnimation = new Animation<>(0.05f, upAnimationFrames);
+        this.upAnimation = new Animation<>(0.07f, upAnimationFrames);
 
         this.currentFrame = downAnimation.getKeyFrames()[0];
 
@@ -52,6 +57,11 @@ public class Player extends GameObject {
 
         this.direction = Direction.STAY;
         this.tmpRect = new Rectangle();
+        this.chunkGeneratorRectangle = new Rectangle();
+        this.shapeRenderer = game.getShapeRenderer();
+        this.chunkGeneratorRectangleColor = Color.BLUE;
+        this.chunkGeneratorRectangle.width = 1920;
+        this.chunkGeneratorRectangle.height = 1080;
     }
 
     @Override
@@ -67,6 +77,20 @@ public class Player extends GameObject {
                 SCALE,
                 SCALE,
                 0.0f);
+
+        if (getGame().isDebug()) {
+            batch.end();
+            Color oldColor = shapeRenderer.getColor();
+            shapeRenderer.setColor(chunkGeneratorRectangleColor);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.rect(chunkGeneratorRectangle.x,
+                    chunkGeneratorRectangle.y,
+                    chunkGeneratorRectangle.width,
+                    chunkGeneratorRectangle.height);
+            shapeRenderer.end();
+            shapeRenderer.setColor(oldColor);
+            batch.begin();
+        }
         super.render(dt);
     }
 
@@ -81,6 +105,13 @@ public class Player extends GameObject {
     private void update(float dt) {
         checkMovement(dt);
         changeCurrentFrame();
+        updateChunkGeneratorRectangle();
+    }
+
+    private void updateChunkGeneratorRectangle() {
+        chunkGeneratorRectangle.setPosition(
+                getPosition().x - chunkGeneratorRectangle.width / 2,
+                getPosition().y - chunkGeneratorRectangle.height / 2);
     }
 
     private void move(Direction direction, float dt) {
@@ -96,7 +127,7 @@ public class Player extends GameObject {
         }
     }
 
-    public void changeCurrentFrame() {
+    private void changeCurrentFrame() {
         switch (this.direction) {
             case STAY -> currentFrame = downAnimation.getKeyFrames()[0];
             case DOWN -> currentFrame = downAnimation.getKeyFrame(getGame().getTime(), true);
@@ -116,7 +147,7 @@ public class Player extends GameObject {
         }
     }
 
-    public void checkMovement(float dt) {
+    private void checkMovement(float dt) {
         if (Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.D)) {
             move(Direction.STAY, dt);
             return;
@@ -163,5 +194,9 @@ public class Player extends GameObject {
 
     public Direction getDirection() {
         return direction;
+    }
+
+    public Rectangle getChunkGeneratorRectangle() {
+        return chunkGeneratorRectangle;
     }
 }

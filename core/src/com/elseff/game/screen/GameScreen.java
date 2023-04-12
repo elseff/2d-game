@@ -86,7 +86,7 @@ public class GameScreen implements Screen {
             if (camera.zoom <= 1)
                 camera.zoom += delta;
         } else if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_ADD)) {
-            if (camera.zoom >= 0.1)
+            if (camera.zoom > 0.5)
                 camera.zoom -= delta;
         }
     }

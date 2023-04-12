@@ -24,7 +24,7 @@ public class ChunkController {
         this.game = game;
         this.player = game.getScreen().getPlayer();
         this.map = game.getScreen().getMapRenderer().getMap();
-        this.countRandomObjects = 1;
+        this.countRandomObjects = 5;
         tmpVector = new Vector2();
     }
 
@@ -63,36 +63,38 @@ public class ChunkController {
     }
 
     private void checkGenerate() {
-        Chunk currentChunk = map.getCurrentChunk();
-        Array<ChunkTrigger> triggers = currentChunk.getTriggers();
-        for (int i = 0; i < triggers.size; i++) {
-            ChunkTrigger trigger = triggers.get(i);
-            if (player.getRectangle().overlaps(trigger.getRectangle())) {
-                deleteTrigger(currentChunk, trigger);
-                switch (trigger.getTriggerPosition()) {
-                    case TOP -> {
-                        tmpVector.set(currentChunk.getRectangle().x,
-                                currentChunk.getPosition().y + currentChunk.getRectangle().height);
-                        if (map.getChunkByPosition(tmpVector).isEmpty())
-                            generateNewChunk(tmpVector.x, tmpVector.y);
-                    }
-                    case LEFT -> {
-                        tmpVector.set(currentChunk.getPosition().x - currentChunk.getRectangle().width,
-                                currentChunk.getRectangle().y);
-                        if (map.getChunkByPosition(tmpVector).isEmpty())
-                            generateNewChunk(tmpVector.x, tmpVector.y);
-                    }
-                    case RIGHT -> {
-                        tmpVector.set(currentChunk.getRectangle().x + currentChunk.getRectangle().width,
-                                currentChunk.getRectangle().y);
-                        if (map.getChunkByPosition(tmpVector).isEmpty())
-                            generateNewChunk(tmpVector.x, tmpVector.y);
-                    }
-                    case BOTTOM -> {
-                        tmpVector.set(currentChunk.getRectangle().x,
-                                currentChunk.getRectangle().y - currentChunk.getRectangle().height);
-                        if (map.getChunkByPosition(tmpVector).isEmpty())
-                            generateNewChunk(tmpVector.x, tmpVector.y);
+        for (int i = 0; i < map.getChunks().size; i++) {
+            Chunk chunk = map.getChunks().get(i);
+            Array<ChunkTrigger> triggers = chunk.getTriggers();
+            for (int j = 0; j < triggers.size; j++) {
+                ChunkTrigger trigger = triggers.get(j);
+                if (player.getChunkGeneratorRectangle().overlaps(trigger.getRectangle())) {
+                    deleteTrigger(chunk, trigger);
+                    switch (trigger.getTriggerPosition()) {
+                        case TOP -> {
+                            tmpVector.set(chunk.getRectangle().x,
+                                    chunk.getPosition().y + chunk.getRectangle().height);
+                            if (map.getChunkByPosition(tmpVector).isEmpty())
+                                generateNewChunk(tmpVector.x, tmpVector.y);
+                        }
+                        case LEFT -> {
+                            tmpVector.set(chunk.getPosition().x - chunk.getRectangle().width,
+                                    chunk.getRectangle().y);
+                            if (map.getChunkByPosition(tmpVector).isEmpty())
+                                generateNewChunk(tmpVector.x, tmpVector.y);
+                        }
+                        case RIGHT -> {
+                            tmpVector.set(chunk.getRectangle().x + chunk.getRectangle().width,
+                                    chunk.getRectangle().y);
+                            if (map.getChunkByPosition(tmpVector).isEmpty())
+                                generateNewChunk(tmpVector.x, tmpVector.y);
+                        }
+                        case BOTTOM -> {
+                            tmpVector.set(chunk.getRectangle().x,
+                                    chunk.getRectangle().y - chunk.getRectangle().height);
+                            if (map.getChunkByPosition(tmpVector).isEmpty())
+                                generateNewChunk(tmpVector.x, tmpVector.y);
+                        }
                     }
                 }
             }

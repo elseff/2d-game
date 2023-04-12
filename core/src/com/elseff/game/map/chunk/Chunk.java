@@ -18,8 +18,8 @@ public class Chunk {
     private final Array<ChunkTrigger> triggers;
 
     private final int cellSize = 32; // one cell size
-    private final int width = 16; // count cells by horizontal
-    private final int height = 16; // count cells by vertical
+    private final int width = 32; // count cells by horizontal
+    private final int height = 32; // count cells by vertical
 
     private boolean isCurrent = false;
     private Color color;
