@@ -100,9 +100,9 @@ public class ChunkController {
     }
 
     private void generateNewChunk(float x, float y) {
-        int id = map.addChunk(x, y);
+        Chunk chunk = map.addChunk(x, y);
         checkDeleteTriggers();
-        fillRandomObjects(id);
+        fillRandomObjects(chunk.getId());
     }
 
     private void deleteTrigger(Chunk chunk, ChunkTrigger trigger) {
@@ -129,14 +129,14 @@ public class ChunkController {
 
     private Vector2 randomPosition(Chunk chunk, GameObject gameObject) {
         Vector2 result = new Vector2();
-        result.x = ((int) (Math.random() * (chunk.getWidth())))
+        result.x = ((int) (Math.random() * (chunk.getWidth() - 4))) // skip last 2 cells
                 * chunk.getCellSize()
-                + gameObject.getRectangle().width / 2
-                + chunk.getPosition().x;
-        result.y = ((int) (Math.random() * (chunk.getHeight())))
+                + chunk.getPosition().x + chunk.getCellSize() * 2 // skip first 2 cells
+                + gameObject.getRectangle().width / 2;
+        result.y = ((int) (Math.random() * (chunk.getHeight() - 4))) // skip last 2 cells
                 * chunk.getCellSize()
-                + gameObject.getRectangle().height / 2
-                + chunk.getPosition().y;
+                + chunk.getPosition().y + chunk.getCellSize() * 2 // skip first 2 cells
+                + gameObject.getRectangle().height / 2;
         return result;
     }
 

@@ -23,12 +23,12 @@ public class Map {
         addChunk(position.x, position.y);
     }
 
-    public int addChunk(float xPos, float yPos) {
+    public Chunk addChunk(float xPos, float yPos) {
         int id = chunks.size;
         Chunk chunk = new Chunk(id, xPos, yPos);
         chunk.initTriggers();
         chunks.add(chunk);
-        return chunk.getId();
+        return chunk;
     }
 
     public Optional<Chunk> getChunkByPosition(float x, float y) {

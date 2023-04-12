@@ -40,13 +40,13 @@ public class Player extends GameObject {
         for (int i = 0; i < 10; i++)
             upAnimationFrames[i] = game.getGameResources().findRegion("ninja_up" + i);
 
-        this.downAnimation = new Animation<>(0.08f, downAnimationFrames);
-        this.rightLeftAnimation = new Animation<>(0.1f, rightLeftAnimationFrames);
-        this.upAnimation = new Animation<>(0.08f, upAnimationFrames);
+        this.downAnimation = new Animation<>(0.05f, downAnimationFrames);
+        this.rightLeftAnimation = new Animation<>(0.08f, rightLeftAnimationFrames);
+        this.upAnimation = new Animation<>(0.05f, upAnimationFrames);
 
         this.currentFrame = downAnimation.getKeyFrames()[0];
 
-        this.speed = new Vector2(200.0f, 200.0f);
+        this.speed = new Vector2(300.0f, 300.0f);
         this.batch = getGame().getBatch();
         this.SCALE = 2f;
 
