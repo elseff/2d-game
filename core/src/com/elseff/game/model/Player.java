@@ -72,9 +72,9 @@ public class Player extends GameObject {
 
     @Override
     public Rectangle getRectangle() {
-        return new Rectangle(getPosition().x - currentFrame.getRegionWidth() * SCALE / 2f+2,
+        return new Rectangle(getPosition().x - currentFrame.getRegionWidth() * SCALE / 2f + 2,
                 getPosition().y - currentFrame.getRegionHeight() * SCALE / 2f,
-                currentFrame.getRegionWidth() * SCALE-2,
+                currentFrame.getRegionWidth() * SCALE - 2,
                 currentFrame.getRegionHeight() * SCALE);
     }
 
@@ -90,7 +90,7 @@ public class Player extends GameObject {
                 getRectangle().y + direction.getVy() * speed.y * dt,
                 getRectangle().width,
                 getRectangle().height);
-        if (getGame().getScreen().getMapRenderer().getMap().isAreaClear(tmpRect)) {
+        if (getGame().getScreen().getMapController().isAreaClear(tmpRect)) {
             getPosition().set(getPosition().x + direction.getVx() * speed.x * dt,
                     getPosition().y + direction.getVy() * speed.y * dt);
         }

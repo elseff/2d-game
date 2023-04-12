@@ -1,12 +1,9 @@
 package com.elseff.game.map;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.map.chunk.Chunk;
-import com.elseff.game.map.chunk.TriggerPosition;
-import com.elseff.game.model.GameObject;
 
 import java.util.Optional;
 
@@ -18,33 +15,34 @@ public class Map {
     public Map(MyGdxGame game) {
         this.game = game;
         this.chunks = new Array<>();
-        addChunk(0, 0, null);
+        addChunk(0, 0);
         currentChunk = chunks.get(0);
     }
 
-    public void addChunk(Vector2 position, TriggerPosition exclude) {
-        addChunk(position.x, position.y, exclude);
+    public void addChunk(Vector2 position) {
+        addChunk(position.x, position.y);
     }
 
-    public int addChunk(float xPos, float yPos, TriggerPosition exclude) {
+    public int addChunk(float xPos, float yPos) {
         int id = chunks.size;
-        Chunk chunk = new Chunk(id, game, xPos, yPos);
-        chunk.initTriggers(exclude);
+        Chunk chunk = new Chunk(id, xPos, yPos);
+        chunk.initTriggers();
         chunks.add(chunk);
-        return id;
+        return chunk.getId();
     }
 
-    public boolean isAreaClear(Rectangle rectangle) {
+    public Optional<Chunk> getChunkByPosition(float x, float y) {
         for (int i = 0; i < chunks.size; i++) {
             Chunk chunk = chunks.get(i);
-            for (int j = 0; j < chunk.getObjects().size; j++) {
-                GameObject gameObject = chunk.getObjects().get(j);
-                if (gameObject.getRectangle().overlaps(rectangle)) {
-                    return false;
-                }
+            if (chunk.getPosition().x == x && chunk.getPosition().y == y) {
+                return Optional.of(chunk);
             }
         }
-        return true;
+        return Optional.empty();
+    }
+
+    public Optional<Chunk> getChunkByPosition(Vector2 position) {
+        return getChunkByPosition(position.x, position.y);
     }
 
     public Chunk getChunkById(Integer id) {
@@ -63,17 +61,4 @@ public class Map {
         return currentChunk;
     }
 
-    public Optional<Chunk> getChunkByPosition(float x, float y) {
-        for (int i = 0; i < chunks.size; i++) {
-            Chunk chunk = chunks.get(i);
-            if (chunk.getPosition().x == x && chunk.getPosition().y == y) {
-                return Optional.of(chunk);
-            }
-        }
-        return Optional.empty();
-    }
-
-    public Optional<Chunk> getChunkByPosition(Vector2 position) {
-        return getChunkByPosition(position.x, position.y);
-    }
 }

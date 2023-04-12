@@ -1,17 +1,18 @@
-package com.elseff.game.map.chunk;
+package com.elseff.game.map.chunk.trigger;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
+import com.elseff.game.map.chunk.Chunk;
 
-public class TriggerRegion {
+public class ChunkTrigger {
     private static final Color color = new Color(255, 102, 0, 0.5f);
     private final float width;
     private final Rectangle rectangle;
-    private final TriggerPosition triggerPosition;
+    private final ChunkTriggerPosition chunkTriggerPosition;
     private final Chunk chunk;
 
-    public TriggerRegion(TriggerPosition triggerPosition, Chunk chunk) {
-        this.triggerPosition = triggerPosition;
+    public ChunkTrigger(ChunkTriggerPosition chunkTriggerPosition, Chunk chunk) {
+        this.chunkTriggerPosition = chunkTriggerPosition;
         this.chunk = chunk;
         this.rectangle = new Rectangle();
         this.width = 16;
@@ -19,27 +20,27 @@ public class TriggerRegion {
     }
 
     public void initRectangle() {
-        switch (triggerPosition) {
+        switch (chunkTriggerPosition) {
             case LEFT -> rectangle.set(
-                    chunk.getRectangle().x,
+                    chunk.getRectangle().x-width,
                     chunk.getRectangle().y,
                     width,
                     chunk.getRectangle().height
             );
             case RIGHT -> rectangle.set(
-                    chunk.getRectangle().x + chunk.getRectangle().width - width,
+                    chunk.getRectangle().x + chunk.getRectangle().width,
                     chunk.getRectangle().y,
                     width,
                     chunk.getRectangle().height
             );
             case TOP -> rectangle.set(
                     chunk.getRectangle().x,
-                    chunk.getRectangle().y + chunk.getRectangle().height - width,
+                    chunk.getRectangle().y + chunk.getRectangle().height,
                     chunk.getRectangle().width,
                     width);
             case BOTTOM -> rectangle.set(
                     chunk.getRectangle().x,
-                    chunk.getRectangle().y,
+                    chunk.getRectangle().y-width,
                     chunk.getRectangle().width,
                     width
             );
@@ -54,8 +55,8 @@ public class TriggerRegion {
         return rectangle;
     }
 
-    public TriggerPosition getTriggerPosition() {
-        return triggerPosition;
+    public ChunkTriggerPosition getTriggerPosition() {
+        return chunkTriggerPosition;
     }
 
     public Chunk getChunk() {
@@ -66,7 +67,7 @@ public class TriggerRegion {
     public String toString() {
         return "TriggerRegion{" +
                 "rectangle=" + rectangle +
-                ", triggerPosition=" + triggerPosition +
+                ", triggerPosition=" + chunkTriggerPosition +
                 '}';
     }
 }

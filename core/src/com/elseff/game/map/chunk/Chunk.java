@@ -1,132 +1,100 @@
 package com.elseff.game.map.chunk;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.elseff.game.MyGdxGame;
+import com.elseff.game.map.chunk.trigger.ChunkTrigger;
+import com.elseff.game.map.chunk.trigger.ChunkTriggerPosition;
 import com.elseff.game.model.GameObject;
 
 import java.util.Objects;
 
 public class Chunk {
-    private MyGdxGame game;
-    private SpriteBatch batch;
     private final Integer id;
-    private final ShapeRenderer shapeRenderer;
-    private BitmapFont font;
-    private Color color;
     private final Vector2 position;
-    private final int cellSize = 32; // one cell size
-    private final int width = 16;
-    private final int height = 16;
-    private Rectangle rectangle;
-    private boolean isCurrent = false;
+    private final Rectangle rectangle;
     private final Array<GameObject> objects;
-    private final Array<TriggerRegion> triggers;
+    private final Array<ChunkTrigger> triggers;
 
-    public Chunk(Integer id, MyGdxGame game, float x, float y) {
+    private final int cellSize = 32; // one cell size
+    private final int width = 16; // count cells by horizontal
+    private final int height = 16; // count cells by vertical
+
+    private boolean isCurrent = false;
+    private Color color;
+
+    public Chunk(Integer id, float x, float y) {
         this.id = id;
         this.position = new Vector2(x, y);
         this.objects = new Array<>();
-        this.shapeRenderer = game.getShapeRenderer();
         this.color = Color.GREEN;
         this.rectangle = new Rectangle(position.x, position.y, getWidthPixels(), getHeightPixels());
-        this.font = game.getFont();
-        this.game = game;
-        this.batch = game.getBatch();
         this.triggers = new Array<>();
     }
 
-    public Chunk(Integer id, MyGdxGame game, Vector2 position) {
-        this(id, game, position.x, position.y);
-        this.rectangle = new Rectangle(position.x, position.y, getWidthPixels(), getHeightPixels());
-        this.font = game.getFont();
-        this.game = game;
-        this.batch = game.getBatch();
+    public Chunk(Integer id, Vector2 position) {
+        this(id, position.x, position.y);
     }
 
-    public void initTriggers(TriggerPosition exclude) {
-        if (exclude == null) {
-            TriggerRegion bottomTriggerRegion = new TriggerRegion(TriggerPosition.BOTTOM, this);
-            TriggerRegion rightTriggerRegion = new TriggerRegion(TriggerPosition.RIGHT, this);
-            TriggerRegion topTriggerRegion = new TriggerRegion(TriggerPosition.TOP, this);
-            TriggerRegion leftTriggerRegion = new TriggerRegion(TriggerPosition.LEFT, this);
-            addTrigger(rightTriggerRegion);
-            addTrigger(topTriggerRegion);
-            addTrigger(leftTriggerRegion);
-            addTrigger(bottomTriggerRegion);
-        } else {
-            switch (exclude) {
-                case RIGHT -> {
-                    TriggerRegion leftTriggerRegion = new TriggerRegion(TriggerPosition.LEFT, this);
-                    TriggerRegion topTriggerRegion = new TriggerRegion(TriggerPosition.TOP, this);
-                    TriggerRegion bottomTriggerRegion = new TriggerRegion(TriggerPosition.BOTTOM, this);
-                    addTrigger(leftTriggerRegion);
-                    addTrigger(topTriggerRegion);
-                    addTrigger(bottomTriggerRegion);
-                }
-                case LEFT -> {
-                    TriggerRegion rightTriggerRegion = new TriggerRegion(TriggerPosition.RIGHT, this);
-                    TriggerRegion topTriggerRegion = new TriggerRegion(TriggerPosition.TOP, this);
-                    TriggerRegion bottomTriggerRegion = new TriggerRegion(TriggerPosition.BOTTOM, this);
-                    addTrigger(rightTriggerRegion);
-                    addTrigger(topTriggerRegion);
-                    addTrigger(bottomTriggerRegion);
-                }
-                case TOP -> {
-                    TriggerRegion rightTriggerRegion = new TriggerRegion(TriggerPosition.RIGHT, this);
-                    TriggerRegion leftTriggerRegion = new TriggerRegion(TriggerPosition.LEFT, this);
-                    TriggerRegion bottomTriggerRegion = new TriggerRegion(TriggerPosition.BOTTOM, this);
-                    addTrigger(rightTriggerRegion);
-                    addTrigger(leftTriggerRegion);
-                    addTrigger(bottomTriggerRegion);
-                }
-                case BOTTOM -> {
-                    TriggerRegion rightTriggerRegion = new TriggerRegion(TriggerPosition.RIGHT, this);
-                    TriggerRegion topTriggerRegion = new TriggerRegion(TriggerPosition.TOP, this);
-                    TriggerRegion leftTriggerRegion = new TriggerRegion(TriggerPosition.LEFT, this);
-                    addTrigger(rightTriggerRegion);
-                    addTrigger(topTriggerRegion);
-                    addTrigger(leftTriggerRegion);
-                }
+    public void initTriggers() {
+        ChunkTrigger bottomChunkTrigger = new ChunkTrigger(ChunkTriggerPosition.BOTTOM, this);
+        ChunkTrigger rightChunkTrigger = new ChunkTrigger(ChunkTriggerPosition.RIGHT, this);
+        ChunkTrigger topChunkTrigger = new ChunkTrigger(ChunkTriggerPosition.TOP, this);
+        ChunkTrigger leftChunkTrigger = new ChunkTrigger(ChunkTriggerPosition.LEFT, this);
+        addTrigger(rightChunkTrigger);
+        addTrigger(topChunkTrigger);
+        addTrigger(leftChunkTrigger);
+        addTrigger(bottomChunkTrigger);
+    }
+
+    public void addTrigger(ChunkTrigger trigger) {
+        this.triggers.add(trigger);
+    }
+
+    public void deleteTriggerByTriggerPosition(ChunkTriggerPosition chunkTriggerPosition) {
+        for (int i = 0; i < triggers.size; i++) {
+            ChunkTrigger chunkTrigger = triggers.get(i);
+            if (chunkTrigger.getTriggerPosition().name().equals(chunkTriggerPosition.name())) {
+                triggers.removeValue(chunkTrigger, true);
             }
         }
     }
 
-    public void render() {
-        if (game.isDebug()) {
-            Color oldColor = shapeRenderer.getColor();
-            shapeRenderer.setColor(color);
-            for (int j = 0; j < getWidth(); j++) {
-                for (int k = 0; k < getHeight(); k++) {
-                    shapeRenderer.rect(
-                            j * getCellSize() + getPosition().x,
-                            k * getCellSize() + getPosition().y,
-                            getCellSize(),
-                            getCellSize());
-                }
-            }
-            shapeRenderer.end();
-            batch.begin();
-            font.draw(game.getBatch(),
-                    String.format("%s (%.1f; %.1f)", getId(), getPosition().x, getPosition().y),
-                    getPosition().x,
-                    getPosition().y);
-            batch.end();
-            shapeRenderer.setColor(oldColor);
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        }
+    public void deleteTrigger(ChunkTrigger trigger){
+        triggers.removeValue(trigger, true);
     }
 
-    public void renderObjects(float delta) {
-        for (int j = 0; j < getObjects().size; j++) {
-            GameObject object = getObjects().get(j);
-            object.render(delta);
-        }
+    public void addGameObject(GameObject gameObject) {
+        objects.add(gameObject);
+    }
+
+    public void deleteGameObject(GameObject gameObject) {
+        objects.removeValue(gameObject, true);
+    }
+
+    public Array<ChunkTrigger> getTriggers() {
+        return triggers;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    public Rectangle getRectangle() {
+        return rectangle;
+    }
+
+    public Array<GameObject> getObjects() {
+        return objects;
+    }
+
+    public Color getColor() {
+        return color;
     }
 
     public int getCellSize() {
@@ -145,24 +113,20 @@ public class Chunk {
         return width * cellSize;
     }
 
-    public void addGameObject(GameObject gameObject) {
-        objects.add(gameObject);
-    }
-
     public int getHeightPixels() {
         return height * cellSize;
     }
 
-    public Vector2 getPosition() {
-        return position;
+    public void setColor(Color color) {
+        this.color = color;
     }
 
-    public Array<GameObject> getObjects() {
-        return objects;
+    public boolean isCurrent() {
+        return isCurrent;
     }
 
-    public Integer getId() {
-        return id;
+    public void setCurrent(boolean current) {
+        isCurrent = current;
     }
 
     @Override
@@ -186,42 +150,5 @@ public class Chunk {
                 ", position=" + position +
                 ", triggers=" + triggers +
                 '}';
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    public Rectangle getRectangle() {
-        return rectangle;
-    }
-
-    public boolean isCurrent() {
-        return isCurrent;
-    }
-
-    public void setCurrent(boolean current) {
-        isCurrent = current;
-    }
-
-    public Array<TriggerRegion> getTriggers() {
-        return triggers;
-    }
-
-    public void addTrigger(TriggerRegion trigger) {
-        this.triggers.add(trigger);
-    }
-
-    public void deleteTrigger(TriggerPosition triggerPosition) {
-        for (int i = 0; i < triggers.size; i++) {
-            TriggerRegion triggerRegion = triggers.get(i);
-            if (triggerRegion.getTriggerPosition().name().equals(triggerPosition.name())) {
-                triggers.removeValue(triggerRegion, true);
-            }
-        }
     }
 }

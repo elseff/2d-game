@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.map.Map;
+import com.elseff.game.map.chunk.trigger.ChunkTrigger;
 import com.elseff.game.model.GameObject;
 import com.elseff.game.model.Player;
 import com.elseff.game.model.box.BigWoodenBox;
@@ -12,27 +13,20 @@ import com.elseff.game.model.box.CardBox;
 import com.elseff.game.model.box.SmallCardBox;
 import com.elseff.game.model.box.WoodenBox;
 
-public class ChunkGenerator {
+public class ChunkController {
     private final MyGdxGame game;
     private final Player player;
     private final Map map;
     private final int countRandomObjects;
-    public ChunkGenerator(MyGdxGame game) {
+    private final Vector2 tmpVector;
+
+    public ChunkController(MyGdxGame game) {
         this.game = game;
         this.player = game.getScreen().getPlayer();
         this.map = game.getScreen().getMapRenderer().getMap();
         this.countRandomObjects = 1;
+        tmpVector = new Vector2();
     }
-
-    public void init() {
-        Array<Chunk> chunks = map.getChunks();
-        for (int i = 0; i < chunks.size; i++) {
-            Chunk chunk = chunks.get(i);
-            fillRandomObjects(chunk.getId());
-            chunk.initTriggers(null);
-        }
-    }
-
 
     public void update() {
         checkGenerate();
@@ -43,25 +37,25 @@ public class ChunkGenerator {
         Array<Chunk> chunks = map.getChunks();
         for (int i = 0; i < chunks.size; i++) {
             Chunk chunk = chunks.get(i);
-            Array<TriggerRegion> triggers = chunk.getTriggers();
+            Array<ChunkTrigger> triggers = chunk.getTriggers();
             for (int j = 0; j < triggers.size; j++) {
-                TriggerRegion trigger = triggers.get(j);
+                ChunkTrigger trigger = triggers.get(j);
                 switch (trigger.getTriggerPosition()) {
                     case BOTTOM -> {
                         if (map.getChunkByPosition(chunk.getPosition().x, chunk.getPosition().y - chunk.getRectangle().height).isPresent())
-                            chunk.deleteTrigger(trigger.getTriggerPosition());
+                            chunk.deleteTriggerByTriggerPosition(trigger.getTriggerPosition());
                     }
                     case TOP -> {
                         if (map.getChunkByPosition(chunk.getPosition().x, chunk.getPosition().y + chunk.getRectangle().height).isPresent())
-                            chunk.deleteTrigger(trigger.getTriggerPosition());
+                            chunk.deleteTriggerByTriggerPosition(trigger.getTriggerPosition());
                     }
                     case RIGHT -> {
                         if (map.getChunkByPosition(chunk.getPosition().x + chunk.getRectangle().width, chunk.getPosition().y).isPresent())
-                            chunk.deleteTrigger(trigger.getTriggerPosition());
+                            chunk.deleteTriggerByTriggerPosition(trigger.getTriggerPosition());
                     }
                     case LEFT -> {
                         if (map.getChunkByPosition(chunk.getPosition().x - chunk.getRectangle().width, chunk.getPosition().y).isPresent())
-                            chunk.deleteTrigger(trigger.getTriggerPosition());
+                            chunk.deleteTriggerByTriggerPosition(trigger.getTriggerPosition());
                     }
                 }
             }
@@ -70,40 +64,49 @@ public class ChunkGenerator {
 
     private void checkGenerate() {
         Chunk currentChunk = map.getCurrentChunk();
-        Array<TriggerRegion> triggers = currentChunk.getTriggers();
+        Array<ChunkTrigger> triggers = currentChunk.getTriggers();
         for (int i = 0; i < triggers.size; i++) {
-            TriggerRegion trigger = triggers.get(i);
+            ChunkTrigger trigger = triggers.get(i);
             if (player.getRectangle().overlaps(trigger.getRectangle())) {
                 deleteTrigger(currentChunk, trigger);
                 switch (trigger.getTriggerPosition()) {
-                    case TOP -> generateNewChunk(
-                            currentChunk.getRectangle().x,
-                            currentChunk.getPosition().y + currentChunk.getRectangle().height,
-                            TriggerPosition.BOTTOM);
-                    case LEFT -> generateNewChunk(
-                            currentChunk.getPosition().x - currentChunk.getRectangle().width,
-                            currentChunk.getRectangle().y,
-                            TriggerPosition.RIGHT);
-                    case RIGHT -> generateNewChunk(
-                            currentChunk.getRectangle().x + currentChunk.getRectangle().width,
-                            currentChunk.getRectangle().y,
-                            TriggerPosition.LEFT);
-                    case BOTTOM -> generateNewChunk(
-                            currentChunk.getRectangle().x,
-                            currentChunk.getRectangle().y - currentChunk.getRectangle().height,
-                            TriggerPosition.TOP);
+                    case TOP -> {
+                        tmpVector.set(currentChunk.getRectangle().x,
+                                currentChunk.getPosition().y + currentChunk.getRectangle().height);
+                        if (map.getChunkByPosition(tmpVector).isEmpty())
+                            generateNewChunk(tmpVector.x, tmpVector.y);
+                    }
+                    case LEFT -> {
+                        tmpVector.set(currentChunk.getPosition().x - currentChunk.getRectangle().width,
+                                currentChunk.getRectangle().y);
+                        if (map.getChunkByPosition(tmpVector).isEmpty())
+                            generateNewChunk(tmpVector.x, tmpVector.y);
+                    }
+                    case RIGHT -> {
+                        tmpVector.set(currentChunk.getRectangle().x + currentChunk.getRectangle().width,
+                                currentChunk.getRectangle().y);
+                        if (map.getChunkByPosition(tmpVector).isEmpty())
+                            generateNewChunk(tmpVector.x, tmpVector.y);
+                    }
+                    case BOTTOM -> {
+                        tmpVector.set(currentChunk.getRectangle().x,
+                                currentChunk.getRectangle().y - currentChunk.getRectangle().height);
+                        if (map.getChunkByPosition(tmpVector).isEmpty())
+                            generateNewChunk(tmpVector.x, tmpVector.y);
+                    }
                 }
             }
         }
     }
 
-    private void generateNewChunk(float x, float y, TriggerPosition exclude) {
-        int id = map.addChunk(x, y, exclude);
+    private void generateNewChunk(float x, float y) {
+        int id = map.addChunk(x, y);
+        checkDeleteTriggers();
         fillRandomObjects(id);
     }
 
-    private void deleteTrigger(Chunk chunk, TriggerRegion trigger) {
-        chunk.deleteTrigger(trigger.getTriggerPosition());
+    private void deleteTrigger(Chunk chunk, ChunkTrigger trigger) {
+        chunk.deleteTriggerByTriggerPosition(trigger.getTriggerPosition());
     }
 
     private void fillRandomObjects(int chunkId) {
@@ -117,7 +120,9 @@ public class ChunkGenerator {
                 case 3 -> randomBox = new BigWoodenBox(game, 0, 0);
                 default -> randomBox = new CardBox(game, 0, 0);
             }
-            randomBox.getPosition().set(randomPosition(chunk, randomBox));
+            do {
+                randomBox.getPosition().set(randomPosition(chunk, randomBox));
+            } while (randomBox.getRectangle().overlaps(player.getRectangle()));
             chunk.addGameObject(randomBox);
         }
     }

@@ -37,11 +37,14 @@ public class GameScreen implements Screen {
                 game,
                 chunk.getWidthPixels() / 2f,
                 chunk.getHeightPixels() / 2f);
-        camera.setToOrtho(false, game.getSCREEN_WIDTH(), game.getSCREEN_HEIGHT());
+        camera.setToOrtho(
+                false,
+                game.getSCREEN_WIDTH(),
+                game.getSCREEN_HEIGHT());
         game.getFont().getData().setScale(0.75f, 0.75f);
         camera.zoom = 0.5f;
         camera.position.set(player.getPosition(), 0);
-        mapController = new MapController(game);
+        mapController = new MapController(game, map);
         mapController.init();
     }
 
