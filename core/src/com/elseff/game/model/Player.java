@@ -6,11 +6,15 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.elseff.game.MyGdxGame;
+import com.elseff.game.map.chunk.Chunk;
 import com.elseff.game.misc.Direction;
+import com.elseff.game.screen.GameScreen;
 
 public class Player extends GameObject {
     private final Animation<TextureRegion> downAnimation;
@@ -25,18 +29,31 @@ public class Player extends GameObject {
 
     private final SpriteBatch batch;
     private final ShapeRenderer shapeRenderer;
+
     private final Vector2 speed;
-    private final float SCALE;
+    private final Vector2 defaultSpeed;
+
     private Direction direction;
+    private final Vector2 reversedDirection;
+
+    private final float SCALE;
+
     private final Rectangle tmpRect;
+
     private final Rectangle chunkGeneratorRectangle;
     private final Color chunkGeneratorRectangleColor;
 
-    public Player(MyGdxGame game, float x, float y) {
-        super(game, x, y);
-        this.downAnimationFrames = new TextureRegion[10]; // 10 frames for down animation
-        this.rightLeftAnimationFrames = new TextureRegion[8]; // 8 frames for right/left animation
-        this.upAnimationFrames = new TextureRegion[10]; // 10 frames for up animation
+    private float hp;
+
+    private boolean isCollidingWithMonster;
+
+    private final ShaderProgram shader;
+
+    public Player(MyGdxGame game, GameScreen gameScreen, float x, float y) {
+        super(game, x, y, gameScreen);
+        downAnimationFrames = new TextureRegion[10]; // 10 frames for down animation
+        rightLeftAnimationFrames = new TextureRegion[8]; // 8 frames for right/left animation
+        upAnimationFrames = new TextureRegion[10]; // 10 frames for up animation
 
         for (int i = 0; i < 10; i++)
             downAnimationFrames[i] = game.getGameResources().findRegion("ninja" + i);
@@ -45,28 +62,48 @@ public class Player extends GameObject {
         for (int i = 0; i < 10; i++)
             upAnimationFrames[i] = game.getGameResources().findRegion("ninja_up" + i);
 
-        this.downAnimation = new Animation<>(0.07f, downAnimationFrames);
-        this.rightLeftAnimation = new Animation<>(0.08f, rightLeftAnimationFrames);
-        this.upAnimation = new Animation<>(0.07f, upAnimationFrames);
+        downAnimation = new Animation<>(0.07f, downAnimationFrames);
+        rightLeftAnimation = new Animation<>(0.08f, rightLeftAnimationFrames);
+        upAnimation = new Animation<>(0.07f, upAnimationFrames);
 
-        this.currentFrame = downAnimation.getKeyFrames()[0];
+        currentFrame = downAnimation.getKeyFrames()[0];
 
-        this.speed = new Vector2(300.0f, 300.0f);
-        this.batch = getGame().getBatch();
-        this.SCALE = 2f;
+        batch = getGame().getBatch();
+        shapeRenderer = game.getShapeRenderer();
 
-        this.direction = Direction.STAY;
-        this.tmpRect = new Rectangle();
-        this.chunkGeneratorRectangle = new Rectangle();
-        this.shapeRenderer = game.getShapeRenderer();
-        this.chunkGeneratorRectangleColor = Color.BLUE;
-        this.chunkGeneratorRectangle.width = 1920;
-        this.chunkGeneratorRectangle.height = 1080;
+        defaultSpeed = new Vector2(200f, 200f);
+        speed = new Vector2();
+        speed.set(defaultSpeed);
+
+        SCALE = 1.4f;
+        tmpRect = new Rectangle();
+
+        direction = Direction.STAY;
+        reversedDirection = new Vector2(direction.getVx(), direction.getVy());
+
+        chunkGeneratorRectangle = new Rectangle();
+        chunkGeneratorRectangleColor = Color.BLUE;
+        chunkGeneratorRectangle.width = 1920;
+        chunkGeneratorRectangle.height = 1080;
+
+        getRectColor().set(0.8f, 0.7f, 0.1f, 0.8f);
+
+        hp = 100f;
+        isCollidingWithMonster = false;
+
+//        ShaderProgram.pedantic = false;
+        shader = new ShaderProgram(Gdx.files.internal("shaders/default.vert"),
+                Gdx.files.internal("shaders/red.frag"));
     }
 
     @Override
     public void render(float dt) {
         update(dt);
+        super.render(dt);
+
+        if (isCollidingWithMonster)
+            this.batch.setShader(shader);
+
         batch.draw(currentFrame,
                 getPosition().x - currentFrame.getRegionWidth() / 2f,
                 getPosition().y - currentFrame.getRegionHeight() / 2f,
@@ -78,9 +115,10 @@ public class Player extends GameObject {
                 SCALE,
                 0.0f);
 
+        this.batch.setShader(null); // setting off shader
+
         if (getGame().isDebug()) {
             batch.end();
-            Color oldColor = shapeRenderer.getColor();
             shapeRenderer.setColor(chunkGeneratorRectangleColor);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.rect(chunkGeneratorRectangle.x,
@@ -88,10 +126,8 @@ public class Player extends GameObject {
                     chunkGeneratorRectangle.width,
                     chunkGeneratorRectangle.height);
             shapeRenderer.end();
-            shapeRenderer.setColor(oldColor);
             batch.begin();
         }
-        super.render(dt);
     }
 
     @Override
@@ -103,9 +139,12 @@ public class Player extends GameObject {
     }
 
     private void update(float dt) {
+        checkCollision(dt);
         checkMovement(dt);
         changeCurrentFrame();
         updateChunkGeneratorRectangle();
+        regenerationHp(dt);
+        updateRectColor();
     }
 
     private void updateChunkGeneratorRectangle() {
@@ -121,10 +160,9 @@ public class Player extends GameObject {
                 getRectangle().y + direction.getVy() * speed.y * dt,
                 getRectangle().width,
                 getRectangle().height);
-        if (getGame().getScreen().getMapController().isAreaClear(tmpRect)) {
+        if (getGameScreen().getMap().isAreaClear(tmpRect))
             getPosition().set(getPosition().x + direction.getVx() * speed.x * dt,
                     getPosition().y + direction.getVy() * speed.y * dt);
-        }
     }
 
     private void changeCurrentFrame() {
@@ -173,6 +211,42 @@ public class Player extends GameObject {
         }
     }
 
+    public void checkCollision(float delta) {
+        Chunk currentChunk = getGameScreen().getMap().getCurrentChunk();
+        Array<Enemy> monsters = getGameScreen().getMap().getEnemies();
+        isCollidingWithMonster = false;
+        for (int i = 0; i < monsters.size; i++) {
+            GameObject gameObject = monsters.get(i);
+            if (gameObject.getClass().equals(Slime.class)) {
+                if (getRectangle().overlaps(gameObject.getRectangle())) {
+//                    hit((float) (Math.random()));
+                    isCollidingWithMonster = true;
+                    speed.set(defaultSpeed.x / 2f, defaultSpeed.y / 2f);
+                    break;
+                } else {
+                    speed.set(defaultSpeed);
+                }
+
+            }
+        }
+    }
+
+    private void updateRectColor() {
+        if (isCollidingWithMonster)
+            getRectColor().set(1, 0, 0, 0.5f);
+        else
+            getRectColor().set(0.8f, 0.7f, 0.1f, 0.8f);
+    }
+
+    public void hit(float damage) {
+        this.hp -= damage;
+    }
+
+    private void regenerationHp(float dt) {
+        if (hp < 100)
+            hp += dt * 2;
+    }
+
     public void dispose() {
         for (int i = 0; i < downAnimationFrames.length; i++)
             downAnimationFrames[i].getTexture().dispose();
@@ -199,4 +273,13 @@ public class Player extends GameObject {
     public Rectangle getChunkGeneratorRectangle() {
         return chunkGeneratorRectangle;
     }
+
+    public float getHp() {
+        return hp;
+    }
+
+    public Vector2 getReversedDirection() {
+        return reversedDirection;
+    }
+
 }

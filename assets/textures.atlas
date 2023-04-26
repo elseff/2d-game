@@ -1,4 +1,4 @@
-images/textures.png
+images/tiles.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -198,38 +198,199 @@ ninja_up9
   orig: 21,21
   offset: 1,0
   index: -1
+box1
+  rotate: false
+  xy: 3, 66
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box2
+  rotate: false
+  xy: 20, 66
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box3
+  rotate: false
+  xy: 37, 66
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box4
+  rotate: false
+  xy: 54, 66
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box5
+  rotate: false
+  xy: 71, 66
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box6
+  rotate: false
+  xy: 89, 66
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box7
+  rotate: false
+  xy: 106, 66
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box8
+  rotate: false
+  xy: 123, 66
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box9
+  rotate: false
+  xy: 140, 66
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box10
+  rotate: false
+  xy: 157, 66
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box11
+  rotate: false
+  xy: 3, 86
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box12
+  rotate: false
+  xy: 20, 86
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box13
+  rotate: false
+  xy: 37, 86
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box14
+  rotate: false
+  xy: 54, 86
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box15
+  rotate: false
+  xy: 71, 86
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box16
+  rotate: false
+  xy: 89, 86
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box17
+  rotate: false
+  xy: 106, 86
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box18
+  rotate: false
+  xy: 123, 86
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box19
+  rotate: false
+  xy: 140, 86
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+box20
+  rotate: false
+  xy: 157, 86
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
+small_card_box
+  rotate: false
+  xy: 121, 104
+  size: 16, 16
+  orig: 16, 16
+  offset: 1,0
+  index: -1
 fireball
   rotate: false
-  xy: 1, 66
+  xy: 2, 104
+  size: 14, 14
+  orig: 14, 14
+  offset: 0,0
+  index: -1
+slime1
+  rotate: false
+  xy: 0,137
   size: 16,16
   orig: 16,16
   offset: 1,0
   index: -1
-wooden_box
+slime2
   rotate: false
-  xy: 18, 67
-  size: 32, 32
-  orig: 32, 32
-  offsetL 1,0
+  xy: 0,137
+  size: 16,16
+  orig: 16,16
+  offset: 1,0
   index: -1
-card_box
+slime3
   rotate: false
-  xy: 53, 67
-  size: 32, 32
-  orig: 32, 32
-  offsetL 1,0
+  xy: 16,137
+  size: 16,16
+  orig: 16,16
+  offset: 1,0
   index: -1
-big_wooden_box
+slime4
   rotate: false
-  xy: 87, 67
-  size: 64, 64
-  orig: 64, 64
-  offsetL 1,0
+  xy: 32,137
+  size: 16,16
+  orig: 16,16
+  offset: 1,0
   index: -1
-small_card_box
+slime5
   rotate: false
-  xy: 154, 67
-  size: 16, 16
-  orig: 16, 16
-  offsetL 1,0
+  xy: 48,137
+  size: 16,16
+  orig: 16,16
+  offset: 1,0
+  index: -1
+slime6
+  rotate: false
+  xy: 64,137
+  size: 16,16
+  orig: 16,16
+  offset: 1,0
   index: -1

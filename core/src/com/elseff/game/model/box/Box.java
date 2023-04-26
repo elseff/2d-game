@@ -6,21 +6,22 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.model.GameObject;
+import com.elseff.game.screen.GameScreen;
 
 public abstract class Box extends GameObject {
     private final TextureRegion texture;
     private final SpriteBatch batch;
     private float SCALE;
 
-    protected Box(MyGdxGame game, float x, float y) {
-        super(game, x, y);
+    protected Box(MyGdxGame game, GameScreen gameScreen,float x, float y) {
+        super(game, x, y, gameScreen);
         this.texture = getTexture();
         this.batch = getGame().getBatch();
         this.SCALE = 2.0f;
     }
 
-    protected Box(MyGdxGame game, Vector2 position){
-        super(game, position);
+    protected Box(MyGdxGame game,GameScreen gameScreen, Vector2 position){
+        super(game,gameScreen, position);
         this.texture = getTexture();
         this.batch = getGame().getBatch();
         this.SCALE = 2.0f;

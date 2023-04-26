@@ -7,9 +7,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.map.Map;
-import com.elseff.game.map.MapController;
-import com.elseff.game.map.MapRenderer;
-import com.elseff.game.map.chunk.Chunk;
 import com.elseff.game.model.Player;
 
 /**
@@ -19,8 +16,7 @@ public class GameScreen implements Screen {
     private final MyGdxGame game;
     private Player player;
     private OrthographicCamera camera;
-    private MapRenderer mapRenderer;
-    private MapController mapController;
+    private Map map;
 
     public GameScreen(MyGdxGame game) {
         this.game = game;
@@ -30,55 +26,65 @@ public class GameScreen implements Screen {
     public void show() {
         camera = new OrthographicCamera();
 
-        mapRenderer = new MapRenderer(game);
-        Map map = mapRenderer.getMap();
-        Chunk chunk = map.getChunkById(0);
         player = new Player(
                 game,
-                chunk.getWidthPixels() / 2f,
-                chunk.getHeightPixels() / 2f);
+                this,
+                320,
+                320);
+
+        map = new Map(game, this);
+
         camera.setToOrtho(
                 false,
                 game.getSCREEN_WIDTH(),
                 game.getSCREEN_HEIGHT());
-        game.getFont().getData().setScale(0.75f, 0.75f);
+
+        game
+                .getFont()
+                .getData()
+                .setScale(0.75f, 0.75f);
+
         camera.zoom = 0.5f;
         camera.position.set(player.getPosition(), 0);
-        mapController = new MapController(game, map);
-        mapController.init();
     }
 
     @Override
     public void render(float delta) {
         update(delta);
+        Gdx.gl.glClearColor(0.01f, 0.4f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glClearColor(255, 255, 255, 1);
 
         game.getBatch().begin();
-        mapRenderer.render(delta);
+        map.render(delta);
         player.render(delta);
         renderDebugMode();
         game.getBatch().end();
+        game.getWindowUtil().playerHpBar();
     }
 
     private void renderDebugMode() {
-        if (game.isDebug())
-            game.getWindowUtil().render();
+        if (game.isDebug()) {
+            game.getWindowUtil().info();
+        }
     }
 
     private void update(float dt) {
+        checkGameOver();
         cameraUpdate(dt);
+        game.getWindowUtil().update();
         game.getBatch().setProjectionMatrix(camera.combined);
         game.getShapeRenderer().setProjectionMatrix(camera.combined);
         game.update(dt);
-        mapController.update();
+        map.update();
     }
 
     private void cameraUpdate(float delta) {
         cameraZoomUpdate(delta);
-        camera.position.x = camera.position.x + (player.getPosition().x - camera.position.x) * 0.07f;
-        camera.position.y = camera.position.y + (player.getPosition().y - camera.position.y) * 0.07f;
+        camera.position.x = camera.position.x + (player.getPosition().x - camera.position.x) * delta * 5;
+        camera.position.y = camera.position.y + (player.getPosition().y - camera.position.y) * delta * 5;
         camera.update();
+        player.getChunkGeneratorRectangle().x = camera.position.x - player.getChunkGeneratorRectangle().width / 2;
+        player.getChunkGeneratorRectangle().y = camera.position.y - player.getChunkGeneratorRectangle().height / 2;
     }
 
     private void cameraZoomUpdate(float delta) {
@@ -88,6 +94,12 @@ public class GameScreen implements Screen {
         } else if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_ADD)) {
             if (camera.zoom > 0.5)
                 camera.zoom -= delta;
+        }
+    }
+
+    private void checkGameOver(){
+        if (player.getHp()<0){
+            game.setScreen(game.getGameOverScreen());
         }
     }
 
@@ -117,11 +129,7 @@ public class GameScreen implements Screen {
         return player;
     }
 
-    public MapRenderer getMapRenderer() {
-        return mapRenderer;
-    }
-
-    public MapController getMapController() {
-        return mapController;
+    public Map getMap() {
+        return map;
     }
 }

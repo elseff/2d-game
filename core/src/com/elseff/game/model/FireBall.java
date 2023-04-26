@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.elseff.game.MyGdxGame;
+import com.elseff.game.screen.GameScreen;
 
 /**
  * May can be used for downloading screens
@@ -20,8 +21,8 @@ public class FireBall extends GameObject {
     private final boolean rotating;
     private final boolean moving;
 
-    public FireBall(MyGdxGame game, float x, float y, float SCALE, boolean rotating, boolean moving) {
-        super(game, x, y);
+    public FireBall(MyGdxGame game, GameScreen gameScreen, float x, float y, float SCALE, boolean rotating, boolean moving) {
+        super(game, x, y, gameScreen);
         this.texture = getGame().getGameResources().findRegion("fireball");
         this.movementForce = SCALE * 40f;
         this.movementForceCounter = movementForce;
@@ -37,7 +38,6 @@ public class FireBall extends GameObject {
     @Override
     public void render(float delta) {
         update(delta);
-        batch.begin();
         batch.draw(texture,
                 getPosition().x - texture.getRegionWidth() / 2f,
                 getPosition().y - texture.getRegionWidth() / 2f,
@@ -48,7 +48,7 @@ public class FireBall extends GameObject {
                 SCALE,
                 SCALE,
                 angle);
-        batch.end();
+        super.render(delta);
     }
 
 

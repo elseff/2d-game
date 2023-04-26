@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.elseff.game.misc.GameResources;
+import com.elseff.game.screen.GameOverScreen;
 import com.elseff.game.screen.GameScreen;
 import com.elseff.game.util.WindowUtil;
 
@@ -25,6 +26,7 @@ public class MyGdxGame extends Game {
     private boolean debug = false;
     private float time;
     private GameScreen gameScreen;
+    private GameOverScreen gameOverScreen;
 
     @Override
     public void create() {
@@ -32,13 +34,14 @@ public class MyGdxGame extends Game {
         this.SCREEN_WIDTH = 1920;
         this.SCREEN_HEIGHT = 1080;
         this.shapeRenderer = new ShapeRenderer();
-        this.windowUtil = new WindowUtil(this);
         this.shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
         this.font = new BitmapFont();
         this.font.setColor(Color.GREEN);
         this.time = 0.0f;
         this.gameResources = new GameResources();
         this.gameScreen = new GameScreen(this);
+        this.gameOverScreen = new GameOverScreen(this);
+        this.windowUtil = new WindowUtil(this, gameScreen);
         this.setScreen(gameScreen);
     }
 
@@ -102,8 +105,11 @@ public class MyGdxGame extends Game {
         return this.gameResources;
     }
 
-    @Override
-    public GameScreen getScreen() {
-        return (GameScreen) super.getScreen();
+    public GameScreen getGameScreen() {
+        return gameScreen;
+    }
+
+    public GameOverScreen getGameOverScreen() {
+        return gameOverScreen;
     }
 }
