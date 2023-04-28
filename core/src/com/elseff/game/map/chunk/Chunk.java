@@ -1,6 +1,8 @@
 package com.elseff.game.map.chunk;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -10,7 +12,6 @@ import com.badlogic.gdx.utils.Array;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.map.chunk.trigger.ChunkTrigger;
 import com.elseff.game.map.chunk.trigger.ChunkTriggerPosition;
-import com.elseff.game.model.FireBall;
 import com.elseff.game.model.GameObject;
 import com.elseff.game.model.Player;
 import com.elseff.game.model.Slime;
@@ -44,23 +45,28 @@ public class Chunk {
 
     private boolean isCurrent = false;
     private boolean hasTriggers = true;
-    private Color color;
+
+    private final Color isCurrentColor;
+    private final Color isNotCurrentColor;
+    private Color currentColor;
 
     public Chunk(Integer id, MyGdxGame game, GameScreen gameScreen, float x, float y) {
         this.id = id;
         this.game = game;
         this.gameScreen = gameScreen;
-        this.position = new Vector2(x, y);
-        this.objects = new Array<>();
-        this.color = Color.WHITE;
-        this.rectangle = new Rectangle(position.x, position.y, getWidthPixels(), getHeightPixels());
-        this.triggers = new Array<>();
-        this.batch = game.getBatch();
-        this.shapeRenderer = game.getShapeRenderer();
-        this.font = game.getFont();
-        this.player = gameScreen.getPlayer();
-        this.countRandomObjects = 10;
-        this.countRandomMonsters = 3;
+        position = new Vector2(x, y);
+        objects = new Array<>();
+        isNotCurrentColor = new Color(1, 1, 1, 0.5f);
+        isCurrentColor = new Color(0.3f, 1, 0.3f, 0.1f);
+        currentColor = isNotCurrentColor;
+        rectangle = new Rectangle(position.x, position.y, getWidthPixels(), getHeightPixels());
+        triggers = new Array<>();
+        batch = game.getBatch();
+        shapeRenderer = game.getShapeRenderer();
+        font = game.getFont();
+        player = gameScreen.getPlayer();
+        countRandomObjects = 10;
+        countRandomMonsters = 3;
         initTriggers();
     }
 
@@ -79,9 +85,9 @@ public class Chunk {
         addTrigger(bottomChunkTrigger);
     }
 
-    public void render() {
+    public void render(float delta) {
         if (game.isDebug()) {
-            shapeRenderer.setColor(color);
+            shapeRenderer.setColor(currentColor);
             for (int j = 0; j < width; j++) {
                 for (int k = 0; k < height; k++) {
                     shapeRenderer.rect(
@@ -91,7 +97,10 @@ public class Chunk {
                             cellSize);
                 }
             }
-
+            if (isCurrent()) {
+                shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
+                shapeRenderer.rect(position.x, position.y, getWidthPixels(), getHeightPixels());
+            }
             shapeRenderer.end();
 
             batch.begin();
@@ -100,9 +109,15 @@ public class Chunk {
                     position.x,
                     position.y);
             batch.end();
-
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         }
+        shapeRenderer.end();
+
+        batch.begin();
+        renderObjects(delta);
+        batch.end();
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
     }
 
     public void update() {
@@ -111,18 +126,16 @@ public class Chunk {
 
     private void updateColor() {
         if (isCurrent)
-            color = Color.RED;
+            currentColor = isCurrentColor;
         else
-            color = Color.WHITE;
+            currentColor = isNotCurrentColor;
     }
 
-    public void renderObjects(float delta) {
+    private void renderObjects(float delta) {
         for (int j = 0; j < objects.size; j++) {
             GameObject object = objects.get(j);
-            if (object.getRectangle().overlaps(player.getChunkGeneratorRectangle())
-                    || player.getChunkGeneratorRectangle().contains(object.getRectangle())) {
+            if (player.getChunkGeneratorRectangle().overlaps(object.getRectangle()))
                 object.render(delta);
-            }
         }
     }
 
@@ -142,8 +155,6 @@ public class Chunk {
     }
 
     public void fillRandomObjects() {
-        FireBall fireBall = new FireBall(game, gameScreen, 0, 0, 2.0f, true, false);
-
         for (int j = 0; j < countRandomObjects; j++) {
             int random = (int) (Math.random() * 3 + 1);
             GameObject randomBox;
@@ -154,24 +165,22 @@ public class Chunk {
             }
             do {
                 randomBox.getPosition().set(gameScreen.getMap().randomPosition(this, randomBox));
-                fireBall.getPosition().set(gameScreen.getMap().randomPosition(this, fireBall));
             } while (randomBox.getRectangle().overlaps(player.getRectangle()));
             addGameObject(randomBox);
         }
-        addGameObject(fireBall);
     }
 
     public void fillRandomMonsters() {
         for (int i = 0; i < countRandomMonsters; i++) {
             Slime slime = new Slime(game, gameScreen, 0, 0);
-            FireBall fireBall = new FireBall(game, gameScreen, 0, 0, 2.0f, true, false);
-            for (int j = 0; j < getObjects().size; j++) {
-                GameObject gameObject = getObjects().get(i);
+            GameObject gameObject = null;
                 do {
+                    for (int j = 0; j < getObjects().size; j++) {
+                        gameObject = getObjects().get(i);
+                    }
                     slime.getPosition().set(gameScreen.getMap().randomPosition(this, slime));
-                } while (slime.getRectangle().overlaps(gameObject.getRectangle()));
-            }
-            objects.add(slime);
+                } while (slime.getRectangle().overlaps(Objects.requireNonNull(gameObject).getRectangle()));
+
             gameScreen.getMap().getEnemies().add(slime);
         }
     }
@@ -224,8 +233,8 @@ public class Chunk {
         return objects;
     }
 
-    public Color getColor() {
-        return color;
+    public Color getCurrentColor() {
+        return currentColor;
     }
 
     public int getCellSize() {
@@ -248,8 +257,8 @@ public class Chunk {
         return height * cellSize;
     }
 
-    public void setColor(Color color) {
-        this.color = color;
+    public void setCurrentColor(Color currentColor) {
+        this.currentColor = currentColor;
     }
 
     public boolean isCurrent() {
@@ -277,7 +286,7 @@ public class Chunk {
     public String toString() {
         return "Chunk{" +
                 "id=" + id +
-                ", color=" + color +
+                ", color=" + currentColor +
                 ", position=" + position +
                 ", triggers=" + triggers +
                 '}';

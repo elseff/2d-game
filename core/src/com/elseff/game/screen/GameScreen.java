@@ -29,10 +29,13 @@ public class GameScreen implements Screen {
         player = new Player(
                 game,
                 this,
-                320,
-                320);
+                0,0);
 
         map = new Map(game, this);
+
+        //on the center of the start chunk
+        player.getPosition().set(map.getCurrentChunk().getPosition().x+map.getCurrentChunk().getWidthPixels()/2f,
+                map.getCurrentChunk().getPosition().y+map.getCurrentChunk().getHeightPixels()/2f);
 
         camera.setToOrtho(
                 false,
@@ -46,6 +49,8 @@ public class GameScreen implements Screen {
 
         camera.zoom = 0.5f;
         camera.position.set(player.getPosition(), 0);
+
+//        Gdx.gl.glEnable(GL20.GL_BLEND);
     }
 
     @Override
@@ -53,12 +58,14 @@ public class GameScreen implements Screen {
         update(delta);
         Gdx.gl.glClearColor(0.01f, 0.4f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glEnable(GL20.GL_BLEND);
 
         game.getBatch().begin();
         map.render(delta);
         player.render(delta);
         renderDebugMode();
         game.getBatch().end();
+
         game.getWindowUtil().playerHpBar();
     }
 
@@ -89,7 +96,7 @@ public class GameScreen implements Screen {
 
     private void cameraZoomUpdate(float delta) {
         if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_SUBTRACT)) {
-            if (camera.zoom <= 1)
+            if (camera.zoom <= 4)
                 camera.zoom += delta;
         } else if (Gdx.input.isKeyPressed(Input.Keys.NUMPAD_ADD)) {
             if (camera.zoom > 0.5)

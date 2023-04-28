@@ -40,13 +40,13 @@ public abstract class GameObject {
     public void render(float delta) {
         update();
         if (getGame().isDebug()) {
-//            font.draw(batch,
-//                    String.format("(%.1f; %.1f)", getPosition().x, getPosition().y),
-//                    getPosition().x - getRectangle().width / 2f,
-//                    getPosition().y - getRectangle().height / 2f);
+            font.draw(batch,
+                    String.format("(%.1f; %.1f)", getPosition().x, getPosition().y),
+                    getPosition().x - getRectangle().width / 2f,
+                    getPosition().y - getRectangle().height / 2f);
             batch.end();
             Gdx.gl.glEnable(GL20.GL_BLEND);
-            this.shapeRenderer.setColor(getRectColor());
+            shapeRenderer.setColor(getRectColor());
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.rect(getRectangle().x, getRectangle().y, getRectangle().width, getRectangle().height);
             shapeRenderer.end();

@@ -77,6 +77,10 @@ public class WindowUtil {
                         .getMap()
                         .getCurrentChunk()
                         .getId()));
+        data.add(String.format("monsters count: %s",
+                gameScreen
+                        .getMap()
+                        .getEnemies().size));
     }
 
     public void info() {
@@ -94,7 +98,6 @@ public class WindowUtil {
         shapeRenderer.setColor(playerHpBarColor);
         shapeRenderer.rect(12, 12, gameScreen.getPlayer().getHp(), 28);
         shapeRenderer.end();
-        Gdx.gl.glDisable(GL20.GL_BLEND);
         if (game.isDebug()) {
             batch.begin();
             font.setColor(Color.WHITE);

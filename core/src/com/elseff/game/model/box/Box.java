@@ -21,10 +21,7 @@ public abstract class Box extends GameObject {
     }
 
     protected Box(MyGdxGame game,GameScreen gameScreen, Vector2 position){
-        super(game,gameScreen, position);
-        this.texture = getTexture();
-        this.batch = getGame().getBatch();
-        this.SCALE = 2.0f;
+        this(game, gameScreen, position.x, position.y);
     }
 
     public abstract TextureRegion getTexture();

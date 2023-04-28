@@ -35,14 +35,19 @@ public class Map {
     public Map(MyGdxGame game, GameScreen gameScreen) {
         this.game = game;
         this.gameScreen = gameScreen;
-        this.chunks = new Array<>();
+
+        batch = game.getBatch();
+        shapeRenderer = game.getShapeRenderer();
+        shapeRenderer.setAutoShapeType(true);
+
+        chunks = new Array<>();
+        enemies = new Array<>();
+
         addChunk(0, 0);
-        this.currentChunk = chunks.get(0);
-        this.player = gameScreen.getPlayer();
-        this.batch = game.getBatch();
-        this.shapeRenderer = game.getShapeRenderer();
-        this.tmpVector = new Vector2();
-        this.enemies = new Array<>();
+        currentChunk = chunks.get(0);
+
+        player = gameScreen.getPlayer();
+        tmpVector = new Vector2();
     }
 
     public void addChunk(Vector2 position) {
@@ -59,29 +64,26 @@ public class Map {
     public Optional<Chunk> getChunkByPosition(float x, float y) {
         for (int i = 0; i < chunks.size; i++) {
             Chunk chunk = chunks.get(i);
-            if (chunk.getPosition().x == x && chunk.getPosition().y == y) {
+            if (chunk.getPosition().x == x && chunk.getPosition().y == y)
                 return Optional.of(chunk);
-            }
         }
         return Optional.empty();
     }
 
     public void update() {
-        checkGenerate();
+        checkGenerateChunk();
         updateCurrentChunk();
         checkDeleteTriggers();
         updateKillMonsters();
     }
 
     private void updateKillMonsters(){
-        Array<GameObject> objects = currentChunk.getObjects();
-        for (int i = 0; i < objects.size; i++) {
-            GameObject gameObject = objects.get(i);
-            if (gameObject.getClass().equals(Slime.class)){
-                Slime slime = (Slime) gameObject;
-                if (slime.getHp()<0){
-                    currentChunk.getObjects().removeValue(slime, true);
-                }
+        for (int i = 0; i < enemies.size; i++) {
+            Enemy enemy = enemies.get(i);
+            if (enemy.getClass().equals(Slime.class)){
+                Slime slime = (Slime) enemy;
+                if (slime.getHp()<0)
+                    enemies.removeValue(slime, true);
             }
         }
     }
@@ -103,33 +105,32 @@ public class Map {
     public void render(float delta) {
         batch.end();
 
+        Gdx.gl.glEnable(GL20.GL_BLEND);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         for (int i = 0; i < chunks.size; i++) {
             Chunk chunk = chunks.get(i);
-            if(chunk.getRectangle().overlaps(player.getChunkGeneratorRectangle())) {
-                chunk.render();
-            }
+            if(player.getChunkGeneratorRectangle().overlaps(chunk.getRectangle()))
+                chunk.render(delta);
         }
-        shapeRenderer.end();
 
-        Gdx.gl.glEnable(GL20.GL_BLEND);
+        shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(ChunkTrigger.getColor());
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (int i = 0; i < chunks.size; i++) {
             Chunk chunk = chunks.get(i);
-            if(chunk.getRectangle().overlaps(player.getChunkGeneratorRectangle())) {
+            if(chunk.getRectangle().overlaps(player.getChunkGeneratorRectangle()))
                 chunk.renderTriggers();
-            }
         }
         shapeRenderer.end();
-        Gdx.gl.glDisable(GL20.GL_BLEND);
 
         batch.begin();
-        for (int i = 0; i < chunks.size; i++) {
-            Chunk chunk = chunks.get(i);
-            if(chunk.getRectangle().overlaps(player.getChunkGeneratorRectangle())) {
-                chunk.renderObjects(delta);
-            }
+        renderEnemies(delta);
+    }
+
+    private void renderEnemies(float delta){
+        for (int i = 0; i < enemies.size; i++) {
+            Enemy enemy = enemies.get(i);
+            if(player.getChunkGeneratorRectangle().overlaps(enemy.getRectangle()))
+                enemy.render(delta);
         }
     }
 
@@ -138,9 +139,8 @@ public class Map {
             Chunk chunk = chunks.get(i);
             for (int j = 0; j < chunk.getObjects().size; j++) {
                 GameObject gameObject = chunk.getObjects().get(j);
-                if (gameObject.getRectangle().overlaps(rectangle) && !gameObject.getClass().equals(Slime.class)) {
+                if (gameObject.getRectangle().overlaps(rectangle) && !gameObject.getClass().equals(Slime.class))
                     return false;
-                }
             }
         }
         return true;
@@ -159,7 +159,7 @@ public class Map {
         return result;
     }
 
-    private void checkGenerate() {
+    private void checkGenerateChunk() {
         for (int i = 0; i < chunks.size; i++) {
             Chunk chunk = chunks.get(i);
             if (chunk.isHasTriggers()) {

@@ -102,7 +102,7 @@ public class Player extends GameObject {
         super.render(dt);
 
         if (isCollidingWithMonster)
-            this.batch.setShader(shader);
+            batch.setShader(shader);
 
         batch.draw(currentFrame,
                 getPosition().x - currentFrame.getRegionWidth() / 2f,
@@ -115,7 +115,7 @@ public class Player extends GameObject {
                 SCALE,
                 0.0f);
 
-        this.batch.setShader(null); // setting off shader
+        batch.setShader(null); // disable shader
 
         if (getGame().isDebug()) {
             batch.end();
@@ -213,20 +213,18 @@ public class Player extends GameObject {
 
     public void checkCollision(float delta) {
         Chunk currentChunk = getGameScreen().getMap().getCurrentChunk();
-        Array<Enemy> monsters = getGameScreen().getMap().getEnemies();
+        Array<Enemy> enemies = getGameScreen().getMap().getEnemies();
         isCollidingWithMonster = false;
-        for (int i = 0; i < monsters.size; i++) {
-            GameObject gameObject = monsters.get(i);
-            if (gameObject.getClass().equals(Slime.class)) {
-                if (getRectangle().overlaps(gameObject.getRectangle())) {
-//                    hit((float) (Math.random()));
-                    isCollidingWithMonster = true;
-                    speed.set(defaultSpeed.x / 2f, defaultSpeed.y / 2f);
-                    break;
-                } else {
-                    speed.set(defaultSpeed);
-                }
-
+        for (int i = 0; i < enemies.size; i++) {
+            Enemy enemy = enemies.get(i);
+            if (getRectangle().overlaps(enemy.getRectangle())) {
+                hit((float) (Math.random()));
+                enemy.hit((float) (Math.random() * 5));
+                isCollidingWithMonster = true;
+                speed.set(defaultSpeed.x / 2f, defaultSpeed.y / 2f);
+                break;
+            } else {
+                speed.set(defaultSpeed);
             }
         }
     }

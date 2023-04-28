@@ -26,8 +26,6 @@ public class Slime extends Enemy {
     private final Animation<TextureRegion> animation;
     private TextureRegion currentFrame;
 
-    private final float SCALE;
-    private float hp;
     private Direction preferredDirection;
     private final Vector2 speed;
     private final Rectangle tmpRect;
@@ -37,27 +35,30 @@ public class Slime extends Enemy {
 
     public Slime(MyGdxGame game, GameScreen gameScreen, float x, float y) {
         super(game, x, y, gameScreen);
-        this.id = UUID.randomUUID();
+        id = UUID.randomUUID();
         this.game = game;
         this.gameScreen = gameScreen;
-        this.hp = 100;
-        this.batch = game.getBatch();
-        this.shapeRenderer = game.getShapeRenderer();
-        this.animationFrames = new TextureRegion[6];
+
+        batch = game.getBatch();
+        shapeRenderer = game.getShapeRenderer();
+
+        animationFrames = new TextureRegion[6];
+
         for (int i = 0; i < animationFrames.length; i++) {
             TextureAtlas.AtlasRegion region = this.game.getGameResources().findRegion("slime" + (i + 1));
-            this.animationFrames[i] = region;
+            animationFrames[i] = region;
         }
-        this.animation = new Animation<>(0.2f, animationFrames);
-        this.currentFrame = animation.getKeyFrames()[0];
-        this.SCALE = 2f;
-        this.hpBarColor = new Color(0f, 1f, 0f, 0.5f);
-        this.getRectColor().set(0.1f, 0.2f, 0.8f, 0.5f);
-        this.tmpRect = new Rectangle();
-        this.speed = new Vector2(50, 50);
-        this.preferredDirection = getRandomPreferredDirection();
-        this.timer = new Timer();
+        animation = new Animation<>(0.2f, animationFrames);
+        currentFrame = animation.getKeyFrames()[0];
 
+        preferredDirection = getRandomPreferredDirection();
+
+        hpBarColor = new Color(0f, 1f, 0f, 0.5f);
+        getRectColor().set(1, 0.5f, 0, 0.5f);
+
+        speed = new Vector2(50, 50);
+
+        timer = new Timer();
         Timer.Task task = new Timer.Task() {
             @Override
             public void run() {
@@ -66,55 +67,79 @@ public class Slime extends Enemy {
         };
         timer.scheduleTask(task, 0, 10, -1);
         timer.start();
-        this.tmpVector = new Vector2();
-        this.font = game.getFont();
-        this.font.setColor(Color.WHITE);
-        this.font.getData().setScale(0.75f, 0.75f);
+
+        tmpRect = new Rectangle();
+        tmpVector = new Vector2();
+
+        font = game.getFont();
+        font.setColor(Color.WHITE);
+        font.getData().setScale(0.75f, 0.75f);
+    }
+
+    @Override
+    public float getSCALE() {
+        return 2.0f;
+    }
+
+    @Override
+    public TextureRegion getTexture() {
+        return currentFrame;
+    }
+
+    @Override
+    public Rectangle getRectangle() {
+        return new Rectangle(getPosition().x - currentFrame.getRegionWidth() * getSCALE() / 2f + 3,
+                getPosition().y - currentFrame.getRegionHeight() * getSCALE() / 2f + 3,
+                currentFrame.getRegionWidth() * getSCALE() - 6,
+                currentFrame.getRegionHeight() * getSCALE() - 6);
+    }
+
+    @Override
+    public void hit(float damage) {
+        setHp(getHp()-damage);
+    }
+
+    private void update(float delta) {
+        updateCurrentFrame();
+        move(delta);
     }
 
     public void render(float delta) {
         update(delta);
-        batch.draw(currentFrame,
-                getPosition().x - currentFrame.getRegionWidth() / 2f,
-                getPosition().y - currentFrame.getRegionHeight() / 2f,
-                currentFrame.getRegionWidth() / 2f,
-                currentFrame.getRegionHeight() / 2f,
-                currentFrame.getRegionWidth(),
-                currentFrame.getRegionHeight(),
-                SCALE,
-                SCALE,
-                0.0f);
-        shapeRenderer.setColor(hpBarColor);
+        super.render(delta);
         batch.end();
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(0.1f,0.1f,0.1f, 0.5f);
-        shapeRenderer.rect(getRectangle().x-12,
-                getRectangle().y + getRectangle().height+8,
-                54,
-                14);
-        shapeRenderer.setColor(hpBarColor);
-        shapeRenderer.rect(getRectangle().x - 10,
-                getRectangle().y + getRectangle().height + 10,
-                hp / 2f,
-                10);
-        shapeRenderer.end();
-        Gdx.gl.glDisable(GL20.GL_BLEND);
+
+        renderHpBar();
+
         batch.begin();
         if (game.isDebug()) {
-            font.draw(batch, String.valueOf((int) hp), getRectangle().x + 5,
+            font.draw(batch, String.valueOf((int) getHp()), getRectangle().x + 5,
                     getRectangle().y + getRectangle().height + 20);
         }
         super.render(delta);
     }
 
-    private void update(float delta) {
-        updateCurrentFrame();
-        checkCollision(delta);
-        move(delta);
-    }
+    private void renderHpBar() {
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        shapeRenderer.setColor(0.1f,0.1f,0.1f, 0.5f);
 
-    private void checkCollision(float delta) {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        //border rectangle of hp bar
+        shapeRenderer.rect(getRectangle().x-12,
+                getRectangle().y + getRectangle().height+8,
+                54,
+                14);
+
+        shapeRenderer.setColor(hpBarColor);
+
+        //hp bar
+        shapeRenderer.rect(getRectangle().x - 10,
+                getRectangle().y + getRectangle().height + 10,
+                getHp() / 2f,
+                10);
+
+        shapeRenderer.end();
     }
 
     private Direction getReversedDirection(){
@@ -155,27 +180,6 @@ public class Slime extends Enemy {
 
     private void updateCurrentFrame() {
         this.currentFrame = animation.getKeyFrame(getGame().getTime(), true);
-    }
-
-    @Override
-    public TextureRegion getTexture() {
-        return currentFrame;
-    }
-
-    @Override
-    public Rectangle getRectangle() {
-        return new Rectangle(getPosition().x - currentFrame.getRegionWidth() * SCALE / 2f + 3,
-                getPosition().y - currentFrame.getRegionHeight() * SCALE / 2f + 3,
-                currentFrame.getRegionWidth() * SCALE - 6,
-                currentFrame.getRegionHeight() * SCALE - 6);
-    }
-
-    public void hit(float damage) {
-        this.hp -= damage;
-    }
-
-    public float getHp() {
-        return hp;
     }
 
     public UUID getId() {
