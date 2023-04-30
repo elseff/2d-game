@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 import com.elseff.game.MyGdxGame;
+import com.elseff.game.model.Player;
 import com.elseff.game.screen.GameScreen;
 
 /**
@@ -46,6 +47,8 @@ public class WindowUtil {
     }
 
     public void update() {
+        updateHpBarColor();
+
         data.clear();
         data.add(String.format("fps: %s",
                 Gdx.graphics.getFramesPerSecond()));
@@ -81,6 +84,20 @@ public class WindowUtil {
                 gameScreen
                         .getMap()
                         .getEnemies().size));
+        data.add(String.format("particles count: %s",
+                gameScreen
+                        .getParticles()
+                        .size));
+    }
+
+    private void updateHpBarColor() {
+        Player player = gameScreen.getPlayer();
+        if (player.getHp() >= 70)
+            playerHpBarColor.set(0f, 1f, 0f, 0.5f);
+        else if (player.getHp() >= 30)
+            playerHpBarColor.set(1, 1, 0, 0.5f);
+        else
+            playerHpBarColor.set(1,0,0,0.5f);
     }
 
     public void info() {

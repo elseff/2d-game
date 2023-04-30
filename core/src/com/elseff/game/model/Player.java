@@ -75,7 +75,7 @@ public class Player extends GameObject {
         speed = new Vector2();
         speed.set(defaultSpeed);
 
-        SCALE = 1.4f;
+        SCALE = 1.3f;
         tmpRect = new Rectangle();
 
         direction = Direction.STAY;
@@ -143,7 +143,7 @@ public class Player extends GameObject {
         checkMovement(dt);
         changeCurrentFrame();
         updateChunkGeneratorRectangle();
-        regenerationHp(dt);
+        regenerationHp(dt*2);
         updateRectColor();
     }
 
@@ -240,9 +240,11 @@ public class Player extends GameObject {
         this.hp -= damage;
     }
 
-    private void regenerationHp(float dt) {
-        if (hp < 100)
-            hp += dt * 2;
+    private void regenerationHp(float value) {
+        if (hp + value <= 100)
+            hp += value;
+        else
+            hp = 100;
     }
 
     public void dispose() {
@@ -280,4 +282,7 @@ public class Player extends GameObject {
         return reversedDirection;
     }
 
+    public void changeSpeed(float value) {
+        defaultSpeed.add(value, value);
+    }
 }

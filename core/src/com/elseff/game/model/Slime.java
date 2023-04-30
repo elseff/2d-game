@@ -96,12 +96,33 @@ public class Slime extends Enemy {
 
     @Override
     public void hit(float damage) {
-        setHp(getHp()-damage);
+        setHp(getHp() - damage);
+        updateHpBarColor();
+    }
+
+    @Override
+    public void regenerationHp(float value) {
+        if (getHp() + value <= 100)
+            setHp(getHp() + value);
+        else
+            setHp(100);
+
+        updateHpBarColor();
     }
 
     private void update(float delta) {
         updateCurrentFrame();
+        regenerationHp(delta / 2);
         move(delta);
+    }
+
+    private void updateHpBarColor() {
+        if (getHp() >= 70)
+            hpBarColor.set(0f, 1f, 0f, 0.5f);
+        else if (getHp() >= 30)
+            hpBarColor.set(1, 1, 0, 0.5f);
+        else
+            hpBarColor.set(1,0,0,0.5f);
     }
 
     public void render(float delta) {
@@ -121,13 +142,13 @@ public class Slime extends Enemy {
 
     private void renderHpBar() {
         Gdx.gl.glEnable(GL20.GL_BLEND);
-        shapeRenderer.setColor(0.1f,0.1f,0.1f, 0.5f);
+        shapeRenderer.setColor(0.1f, 0.1f, 0.1f, 0.5f);
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         //border rectangle of hp bar
-        shapeRenderer.rect(getRectangle().x-12,
-                getRectangle().y + getRectangle().height+8,
+        shapeRenderer.rect(getRectangle().x - 12,
+                getRectangle().y + getRectangle().height + 8,
                 54,
                 14);
 
@@ -142,8 +163,8 @@ public class Slime extends Enemy {
         shapeRenderer.end();
     }
 
-    private Direction getReversedDirection(){
-        return switch (preferredDirection){
+    private Direction getReversedDirection() {
+        return switch (preferredDirection) {
             case STAY -> Direction.STAY;
             case LEFT -> Direction.RIGHT;
             case RIGHT -> Direction.LEFT;

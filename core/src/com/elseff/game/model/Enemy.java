@@ -41,6 +41,8 @@ public abstract class Enemy extends GameObject {
 
     public abstract void hit(float damage);
 
+    public abstract void regenerationHp(float value);
+
     public abstract TextureRegion getTexture();
 
     public abstract float getSCALE();

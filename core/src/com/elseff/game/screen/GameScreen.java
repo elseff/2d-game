@@ -5,8 +5,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.utils.Array;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.map.Map;
+import com.elseff.game.misc.Snowflake;
+import com.elseff.game.misc.SnowflakeController;
 import com.elseff.game.model.Player;
 
 /**
@@ -17,6 +20,7 @@ public class GameScreen implements Screen {
     private Player player;
     private OrthographicCamera camera;
     private Map map;
+    private SnowflakeController snowflakeController;
 
     public GameScreen(MyGdxGame game) {
         this.game = game;
@@ -29,13 +33,13 @@ public class GameScreen implements Screen {
         player = new Player(
                 game,
                 this,
-                0,0);
+                0, 0);
 
         map = new Map(game, this);
 
         //on the center of the start chunk
-        player.getPosition().set(map.getCurrentChunk().getPosition().x+map.getCurrentChunk().getWidthPixels()/2f,
-                map.getCurrentChunk().getPosition().y+map.getCurrentChunk().getHeightPixels()/2f);
+        player.getPosition().set(map.getCurrentChunk().getPosition().x + map.getCurrentChunk().getWidthPixels() / 2f,
+                map.getCurrentChunk().getPosition().y + map.getCurrentChunk().getHeightPixels() / 2f);
 
         camera.setToOrtho(
                 false,
@@ -50,7 +54,8 @@ public class GameScreen implements Screen {
         camera.zoom = 0.5f;
         camera.position.set(player.getPosition(), 0);
 
-//        Gdx.gl.glEnable(GL20.GL_BLEND);
+
+        snowflakeController = new SnowflakeController(game, this);
     }
 
     @Override
@@ -65,7 +70,7 @@ public class GameScreen implements Screen {
         player.render(delta);
         renderDebugMode();
         game.getBatch().end();
-
+        snowflakeController.render(delta);
         game.getWindowUtil().playerHpBar();
     }
 
@@ -75,14 +80,15 @@ public class GameScreen implements Screen {
         }
     }
 
-    private void update(float dt) {
+    private void update(float delta) {
         checkGameOver();
-        cameraUpdate(dt);
+        cameraUpdate(delta);
         game.getWindowUtil().update();
         game.getBatch().setProjectionMatrix(camera.combined);
         game.getShapeRenderer().setProjectionMatrix(camera.combined);
-        game.update(dt);
+        game.update(delta);
         map.update();
+        playerSpeedUpdate(delta);
     }
 
     private void cameraUpdate(float delta) {
@@ -104,10 +110,20 @@ public class GameScreen implements Screen {
         }
     }
 
-    private void checkGameOver(){
-        if (player.getHp()<0){
+    private void checkGameOver() {
+        if (player.getHp() < 0) {
             game.setScreen(game.getGameOverScreen());
         }
+    }
+
+    private void playerSpeedUpdate(float delta) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.EQUALS))
+            player.changeSpeed(100);
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.MINUS)) {
+            if (player.getSpeed().x >= 100)
+                player.changeSpeed(-100);
+        }
+
     }
 
     @Override
@@ -138,5 +154,13 @@ public class GameScreen implements Screen {
 
     public Map getMap() {
         return map;
+    }
+
+    public Array<Snowflake> getParticles() {
+        return snowflakeController.getParticles();
+    }
+
+    public OrthographicCamera getCamera() {
+        return camera;
     }
 }
