@@ -15,8 +15,8 @@ import com.elseff.game.map.chunk.trigger.ChunkTriggerPosition;
 import com.elseff.game.model.GameObject;
 import com.elseff.game.model.Player;
 import com.elseff.game.model.Slime;
+import com.elseff.game.model.box.RandomTextureBox;
 import com.elseff.game.model.box.SmallCardBox;
-import com.elseff.game.model.box.WoodenBox;
 import com.elseff.game.screen.GameScreen;
 
 import java.util.Objects;
@@ -105,9 +105,9 @@ public class Chunk {
 
             batch.begin();
             font.draw(game.getBatch(),
-                    String.format("%s (%.1f; %.1f)", id, position.x, position.y),
-                    position.x,
-                    position.y);
+                    String.format("chunk:%s (%.1f; %.1f) - (%s)", id, position.x, position.y, getObjects().size),
+                    position.x + 2,
+                    position.y + 10);
             batch.end();
         }
         shapeRenderer.end();
@@ -161,7 +161,7 @@ public class Chunk {
             if (random == 1) {
                 randomBox = new SmallCardBox(game, gameScreen, 0, 0);
             } else {
-                randomBox = new WoodenBox(game, gameScreen, 0, 0);
+                randomBox = new RandomTextureBox(game, gameScreen, 0, 0);
             }
             do {
                 randomBox.getPosition().set(gameScreen.getMap().randomPosition(this, randomBox));
@@ -174,12 +174,12 @@ public class Chunk {
         for (int i = 0; i < countRandomMonsters; i++) {
             Slime slime = new Slime(game, gameScreen, 0, 0);
             GameObject gameObject = null;
-                do {
-                    for (int j = 0; j < getObjects().size; j++) {
-                        gameObject = getObjects().get(i);
-                    }
-                    slime.getPosition().set(gameScreen.getMap().randomPosition(this, slime));
-                } while (slime.getRectangle().overlaps(Objects.requireNonNull(gameObject).getRectangle()));
+            do {
+                for (int j = 0; j < getObjects().size; j++) {
+                    gameObject = getObjects().get(i);
+                }
+                slime.getPosition().set(gameScreen.getMap().randomPosition(this, slime));
+            } while (slime.getRectangle().overlaps(Objects.requireNonNull(gameObject).getRectangle()));
 
             gameScreen.getMap().getEnemies().add(slime);
         }

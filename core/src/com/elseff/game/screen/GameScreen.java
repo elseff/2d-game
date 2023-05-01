@@ -16,18 +16,18 @@ import com.elseff.game.model.Player;
  * Main game screen class
  */
 public class GameScreen implements Screen {
-    private final MyGdxGame game;
+    private MyGdxGame game;
     private Player player;
     private OrthographicCamera camera;
     private Map map;
     private SnowflakeController snowflakeController;
 
     public GameScreen(MyGdxGame game) {
-        this.game = game;
+        init(game);
     }
 
-    @Override
-    public void show() {
+    public void init(MyGdxGame game){
+        this.game = game;
         camera = new OrthographicCamera();
 
         player = new Player(
@@ -59,11 +59,15 @@ public class GameScreen implements Screen {
     }
 
     @Override
+    public void show() {
+    }
+
+    @Override
     public void render(float delta) {
         update(delta);
+        Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glClearColor(0.01f, 0.4f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glEnable(GL20.GL_BLEND);
 
         game.getBatch().begin();
         map.render(delta);
@@ -81,12 +85,12 @@ public class GameScreen implements Screen {
     }
 
     private void update(float delta) {
+        game.update(delta);
         checkGameOver();
         cameraUpdate(delta);
         game.getWindowUtil().update();
         game.getBatch().setProjectionMatrix(camera.combined);
         game.getShapeRenderer().setProjectionMatrix(camera.combined);
-        game.update(delta);
         map.update();
         playerSpeedUpdate(delta);
     }
@@ -140,7 +144,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        player.dispose();
+//        player.dispose();
     }
 
     @Override
@@ -157,10 +161,14 @@ public class GameScreen implements Screen {
     }
 
     public Array<Snowflake> getParticles() {
-        return snowflakeController.getParticles();
+        return snowflakeController.getSnowflakes();
     }
 
     public OrthographicCamera getCamera() {
         return camera;
+    }
+
+    public SnowflakeController getSnowflakeController() {
+        return snowflakeController;
     }
 }

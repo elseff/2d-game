@@ -11,21 +11,21 @@ import com.elseff.game.MyGdxGame;
 import com.elseff.game.screen.GameScreen;
 
 public class SnowflakeController {
-    private final Array<Snowflake> particles;
-    private final Timer particleGenerationTimer;
+    private final Array<Snowflake> snowflakes;
+    private final Timer generationTimer;
     private final ShapeRenderer shapeRenderer;
 
     public SnowflakeController(MyGdxGame game, GameScreen gameScreen) {
-        particles = new Array<>();
-        particleGenerationTimer = new Timer();
+        snowflakes = new Array<>();
+        generationTimer = new Timer();
         Timer.Task task = new Timer.Task() {
             @Override
             public void run() {
                 Rectangle playerChunkGeneratorRectangle = gameScreen.getPlayer().getChunkGeneratorRectangle();
                 //225 degrees
                 Vector2 position1 = new Vector2(
-                        gameScreen.getCamera().position.x - playerChunkGeneratorRectangle.width / 2-100,
-                        gameScreen.getCamera().position.y - playerChunkGeneratorRectangle.height / 2-100);
+                        gameScreen.getCamera().position.x - playerChunkGeneratorRectangle.width / 2 - 100,
+                        gameScreen.getCamera().position.y - playerChunkGeneratorRectangle.height / 2 - 100);
                 //135 degrees
                 Vector2 position2 = new Vector2(
                         gameScreen.getCamera().position.x - playerChunkGeneratorRectangle.width / 2 - 100,
@@ -34,15 +34,15 @@ public class SnowflakeController {
                 for (int i = 0; i < 10; i++) {
                     float x = position1.x;
                     float y = (float) (Math.random() * playerChunkGeneratorRectangle.height + position1.y);
-                    particles.add(new Snowflake(x, y));
+                    snowflakes.add(new Snowflake(x, y));
                     float x1 = (float) (Math.random() * playerChunkGeneratorRectangle.width + position2.x);
                     float y1 = position2.y;
-                    particles.add(new Snowflake(x1, y1));
+                    snowflakes.add(new Snowflake(x1, y1));
                 }
             }
         };
-        particleGenerationTimer.scheduleTask(task, 0, 0.5f, -1);
-        particleGenerationTimer.start();
+        generationTimer.scheduleTask(task, 0, 0.5f, -1);
+        generationTimer.start();
         shapeRenderer = game.getShapeRenderer();
         shapeRenderer.setAutoShapeType(true);
     }
@@ -51,8 +51,8 @@ public class SnowflakeController {
         update(delta);
         Gdx.gl.glEnable(GL20.GL_BLEND);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        for (int i = 0; i < particles.size; i++) {
-            Snowflake snowflake = particles.get(i);
+        for (int i = 0; i < snowflakes.size; i++) {
+            Snowflake snowflake = snowflakes.get(i);
 
             shapeRenderer.setColor(snowflake.getColor());
             shapeRenderer.rect(snowflake.getRectangle().x,
@@ -64,17 +64,25 @@ public class SnowflakeController {
     }
 
     private void update(float delta) {
-        for (int i = 0; i < particles.size; i++) {
-            Snowflake snowflake = particles.get(i);
+        for (int i = 0; i < snowflakes.size; i++) {
+            Snowflake snowflake = snowflakes.get(i);
 
             if (snowflake.getLifetime() < 0)
-                particles.removeValue(particles.get(i), true);
+                snowflakes.removeValue(snowflakes.get(i), true);
 
             snowflake.update(delta);
         }
     }
 
-    public Array<Snowflake> getParticles() {
-        return particles;
+    public Array<Snowflake> getSnowflakes() {
+        return snowflakes;
+    }
+
+    public void dispose() {
+        snowflakes.clear();
+    }
+
+    public Timer getGenerationTimer() {
+        return generationTimer;
     }
 }

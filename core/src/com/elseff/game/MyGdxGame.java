@@ -6,10 +6,12 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.elseff.game.misc.GameResources;
 import com.elseff.game.screen.GameOverScreen;
 import com.elseff.game.screen.GameScreen;
+import com.elseff.game.screen.PauseScreen;
 import com.elseff.game.util.WindowUtil;
 
 /**
@@ -23,37 +25,69 @@ public class MyGdxGame extends Game {
     private GameResources gameResources;
     private int SCREEN_HEIGHT;
     private int SCREEN_WIDTH;
-    private boolean debug = false;
+    private boolean debug;
+    private boolean isPaused;
     private float time;
+
+    private ShaderProgram redShader;
+    private ShaderProgram blurShader;
+
     private GameScreen gameScreen;
     private GameOverScreen gameOverScreen;
+    private PauseScreen pauseScreen;
 
     @Override
     public void create() {
-        this.batch = new SpriteBatch();
-        this.SCREEN_WIDTH = 1920;
-        this.SCREEN_HEIGHT = 1080;
-        this.shapeRenderer = new ShapeRenderer();
-        this.shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
-        this.font = new BitmapFont();
-        this.font.setColor(Color.GREEN);
-        this.time = 0.0f;
-        this.gameResources = new GameResources();
-        this.gameScreen = new GameScreen(this);
-        this.gameOverScreen = new GameOverScreen(this);
-        this.windowUtil = new WindowUtil(this, gameScreen);
-        this.setScreen(gameScreen);
+        batch = new SpriteBatch();
+        SCREEN_WIDTH = 1920;
+        SCREEN_HEIGHT = 1080;
+        shapeRenderer = new ShapeRenderer();
+        shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
+
+        gameResources = new GameResources();
+
+        font = gameResources.getFont("arial.ttf", 15);
+        font.setColor(Color.GREEN);
+
+        reset();
+
+        gameScreen = new GameScreen(this);
+        gameOverScreen = new GameOverScreen(this);
+        pauseScreen = new PauseScreen(this);
+
+        redShader = new ShaderProgram(Gdx.files.internal("shaders/red.vert"),
+                Gdx.files.internal("shaders/red.frag"));
+        blurShader = new ShaderProgram(Gdx.files.internal("shaders/blur.vert"),
+                Gdx.files.internal("shaders/blur.frag"));
+
+        windowUtil = new WindowUtil(this, gameScreen);
+        setScreen(gameOverScreen);
     }
 
-    public void update(float dt) {
+    public void reset(){
+        time = 0.0f;
+        debug = false;
+        isPaused = false;
+    }
+
+    public void update(float delta) {
         this.SCREEN_WIDTH = Gdx.graphics.getWidth();
         this.SCREEN_HEIGHT = Gdx.graphics.getHeight();
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
-            Gdx.app.exit();
+            if (isPaused) {
+                isPaused = false;
+                gameScreen.getSnowflakeController().getGenerationTimer().start();
+                setScreen(gameScreen);
+            }
+            else {
+                isPaused = true;
+                gameScreen.getSnowflakeController().getGenerationTimer().stop();
+                setScreen(pauseScreen);
+            }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F12))
             this.debug = !this.debug;
 
-        time += dt;
+        time += delta;
         windowUtil.update();
     }
 
@@ -111,5 +145,9 @@ public class MyGdxGame extends Game {
 
     public GameOverScreen getGameOverScreen() {
         return gameOverScreen;
+    }
+
+    public ShaderProgram getRedShader() {
+        return redShader;
     }
 }

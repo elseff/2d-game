@@ -33,7 +33,7 @@ public abstract class GameObject {
         this.rectangle = new Rectangle(x, y, 0, 0);
     }
 
-    protected GameObject(MyGdxGame game,  GameScreen gameScreen,Vector2 position) {
+    protected GameObject(MyGdxGame game, GameScreen gameScreen, Vector2 position) {
         this(game, position.x, position.y, gameScreen);
     }
 
@@ -43,7 +43,7 @@ public abstract class GameObject {
             font.draw(batch,
                     String.format("(%.1f; %.1f)", getPosition().x, getPosition().y),
                     getPosition().x - getRectangle().width / 2f,
-                    getPosition().y - getRectangle().height / 2f);
+                    getPosition().y - getRectangle().height / 1.5f);
             batch.end();
             Gdx.gl.glEnable(GL20.GL_BLEND);
             shapeRenderer.setColor(getRectColor());

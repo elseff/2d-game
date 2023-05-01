@@ -60,6 +60,9 @@ public class WindowUtil {
         data.add(String.format("time: %.1f s.",
                 game
                         .getTime()));
+        data.add(String.format("camera.zoom: %.1f",
+                gameScreen
+                        .getCamera().zoom));
         data.add(String.format("count chunks: %s.",
                 gameScreen
                         .getMap()
@@ -84,7 +87,7 @@ public class WindowUtil {
                 gameScreen
                         .getMap()
                         .getEnemies().size));
-        data.add(String.format("particles count: %s",
+        data.add(String.format("snowflakes count: %s",
                 gameScreen
                         .getParticles()
                         .size));

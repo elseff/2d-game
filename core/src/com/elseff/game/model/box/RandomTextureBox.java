@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.screen.GameScreen;
 
-public class WoodenBox extends Box {
-    public WoodenBox(MyGdxGame game, GameScreen gameScreen, float x, float y) {
+public class RandomTextureBox extends Box {
+    public RandomTextureBox(MyGdxGame game, GameScreen gameScreen, float x, float y) {
         super(game, gameScreen,x, y);
     }
 

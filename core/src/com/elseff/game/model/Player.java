@@ -47,8 +47,6 @@ public class Player extends GameObject {
 
     private boolean isCollidingWithMonster;
 
-    private final ShaderProgram shader;
-
     public Player(MyGdxGame game, GameScreen gameScreen, float x, float y) {
         super(game, x, y, gameScreen);
         downAnimationFrames = new TextureRegion[10]; // 10 frames for down animation
@@ -82,7 +80,7 @@ public class Player extends GameObject {
         reversedDirection = new Vector2(direction.getVx(), direction.getVy());
 
         chunkGeneratorRectangle = new Rectangle();
-        chunkGeneratorRectangleColor = Color.BLUE;
+        chunkGeneratorRectangleColor = Color.YELLOW;
         chunkGeneratorRectangle.width = 1920;
         chunkGeneratorRectangle.height = 1080;
 
@@ -90,10 +88,6 @@ public class Player extends GameObject {
 
         hp = 100f;
         isCollidingWithMonster = false;
-
-//        ShaderProgram.pedantic = false;
-        shader = new ShaderProgram(Gdx.files.internal("shaders/default.vert"),
-                Gdx.files.internal("shaders/red.frag"));
     }
 
     @Override
@@ -102,7 +96,7 @@ public class Player extends GameObject {
         super.render(dt);
 
         if (isCollidingWithMonster)
-            batch.setShader(shader);
+            batch.setShader(getGame().getRedShader());
 
         batch.draw(currentFrame,
                 getPosition().x - currentFrame.getRegionWidth() / 2f,
