@@ -18,6 +18,7 @@ public abstract class Box extends GameObject {
         this.texture = getTexture();
         this.batch = getGame().getBatch();
         this.SCALE = 2.0f;
+        getRectColor().set(1,1,1,0.5f);
     }
 
     protected Box(MyGdxGame game,GameScreen gameScreen, Vector2 position){

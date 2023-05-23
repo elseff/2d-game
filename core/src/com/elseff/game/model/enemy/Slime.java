@@ -1,4 +1,4 @@
-package com.elseff.game.model;
+package com.elseff.game.model.enemy;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -54,7 +54,7 @@ public class Slime extends Enemy {
         preferredDirection = getRandomPreferredDirection();
 
         hpBarColor = new Color(0f, 1f, 0f, 0.5f);
-        getRectColor().set(1, 0.5f, 0, 0.5f);
+        getRectColor().set(1, 0.2f, 0, 0.5f);
 
         speed = new Vector2(50, 50);
 

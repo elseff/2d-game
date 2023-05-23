@@ -15,7 +15,6 @@ public abstract class GameObject {
     private final Vector2 position;
     private final MyGdxGame game;
     private final GameScreen gameScreen;
-    private final Rectangle rectangle;
     private final ShapeRenderer shapeRenderer;
     private final SpriteBatch batch;
     private final BitmapFont font;
@@ -29,8 +28,6 @@ public abstract class GameObject {
         this.font = game.getFont();
         this.batch = game.getBatch();
         this.rectColor = new Color(0, 1, 0, 0.5f);
-        this.shapeRenderer.setColor(rectColor);
-        this.rectangle = new Rectangle(x, y, 0, 0);
     }
 
     protected GameObject(MyGdxGame game, GameScreen gameScreen, Vector2 position) {
@@ -38,7 +35,6 @@ public abstract class GameObject {
     }
 
     public void render(float delta) {
-        update();
         if (getGame().isDebug()) {
             font.draw(batch,
                     String.format("(%.1f; %.1f)", getPosition().x, getPosition().y),
@@ -53,10 +49,6 @@ public abstract class GameObject {
             Gdx.gl.glDisable(GL20.GL_BLEND);
             batch.begin();
         }
-    }
-
-    private void update() {
-        this.rectangle.set(getRectangle());
     }
 
     public abstract Rectangle getRectangle();

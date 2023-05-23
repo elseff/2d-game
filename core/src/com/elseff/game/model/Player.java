@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -14,6 +13,8 @@ import com.badlogic.gdx.utils.Array;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.map.chunk.Chunk;
 import com.elseff.game.misc.Direction;
+import com.elseff.game.model.enemy.Enemy;
+import com.elseff.game.model.food.Food;
 import com.elseff.game.screen.GameScreen;
 
 public class Player extends GameObject {
@@ -219,6 +220,13 @@ public class Player extends GameObject {
                 break;
             } else {
                 speed.set(defaultSpeed);
+            }
+        }
+        for (int i = 0; i < currentChunk.getFoodArray().size; i++) {
+            Food food = currentChunk.getFoodArray().get(i);
+            if (getRectangle().overlaps(food.getRectangle())) {
+                currentChunk.getFoodArray().removeValue(food, true);
+                hit(-15);
             }
         }
     }

@@ -10,10 +10,10 @@ import com.badlogic.gdx.utils.Array;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.map.chunk.Chunk;
 import com.elseff.game.map.chunk.trigger.ChunkTrigger;
-import com.elseff.game.model.Enemy;
+import com.elseff.game.model.enemy.Enemy;
 import com.elseff.game.model.GameObject;
 import com.elseff.game.model.Player;
-import com.elseff.game.model.Slime;
+import com.elseff.game.model.enemy.Slime;
 import com.elseff.game.screen.GameScreen;
 
 import java.util.Optional;
@@ -229,6 +229,7 @@ public class Map {
         checkDeleteTriggers();
         chunk.fillRandomObjects();
         chunk.fillRandomMonsters();
+        chunk.fillRandomFood();
     }
 
     private void checkDeleteTriggers() {

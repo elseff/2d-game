@@ -14,10 +14,12 @@ import com.elseff.game.map.chunk.trigger.ChunkTrigger;
 import com.elseff.game.map.chunk.trigger.ChunkTriggerPosition;
 import com.elseff.game.model.GameObject;
 import com.elseff.game.model.Player;
-import com.elseff.game.model.Slime;
 import com.elseff.game.model.box.Box;
 import com.elseff.game.model.box.RandomTextureBox;
 import com.elseff.game.model.box.SmallCardBox;
+import com.elseff.game.model.enemy.Slime;
+import com.elseff.game.model.food.Food;
+import com.elseff.game.model.food.FriedChicken;
 import com.elseff.game.screen.GameScreen;
 
 import java.util.Objects;
@@ -30,7 +32,7 @@ public class Chunk {
     private final Rectangle rectangle;
     private final Array<GameObject> objects;
     private final Array<ChunkTrigger> triggers;
-
+    private final Array<Food> foodArray;
     private final SpriteBatch batch;
     private final ShapeRenderer shapeRenderer;
     private final BitmapFont font;
@@ -43,6 +45,7 @@ public class Chunk {
 
     private final int countRandomObjects;
     private final int countRandomMonsters;
+    private final int countRandomFood;
 
     private boolean isCurrent = false;
     private boolean hasTriggers = true;
@@ -57,17 +60,19 @@ public class Chunk {
         this.gameScreen = gameScreen;
         position = new Vector2(x, y);
         objects = new Array<>();
+        triggers = new Array<>();
+        foodArray = new Array<>();
         isNotCurrentColor = new Color(1, 1, 1, 0.3f);
         isCurrentColor = new Color(0.3f, 1, 0.3f, 0.1f);
         currentColor = isNotCurrentColor;
         rectangle = new Rectangle(position.x, position.y, getWidthPixels(), getHeightPixels());
-        triggers = new Array<>();
         batch = game.getBatch();
         shapeRenderer = game.getShapeRenderer();
         font = game.getFont();
         player = gameScreen.getPlayer();
         countRandomObjects = 10;
         countRandomMonsters = 3;
+        countRandomFood = 1;
         initTriggers();
     }
 
@@ -115,6 +120,7 @@ public class Chunk {
 
         batch.begin();
         renderObjects(delta);
+        renderFood(delta);
         batch.end();
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -155,6 +161,15 @@ public class Chunk {
         }
     }
 
+    public void renderFood(float delta) {
+        for (int i = 0; i < foodArray.size; i++) {
+            Food food = foodArray.get(i);
+            if (player.getChunkGeneratorRectangle().overlaps(food.getRectangle())) {
+                food.render(delta);
+            }
+        }
+    }
+
     public void fillRandomObjects() {
         for (int j = 0; j < countRandomObjects; j++) {
             int random = (int) (Math.random() * 3 + 1);
@@ -168,6 +183,16 @@ public class Chunk {
                 randomBox.getPosition().set(gameScreen.getMap().randomPosition(this, randomBox));
             } while (randomBox.getRectangle().overlaps(player.getRectangle()));
             addGameObject(randomBox);
+        }
+    }
+
+    public void fillRandomFood() {
+        for (int i = 0; i < countRandomFood; i++) {
+            Food randomFood = new FriedChicken(game, 0, 0, gameScreen);
+            do {
+                randomFood.getPosition().set(gameScreen.getMap().randomPosition(this, randomFood));
+            } while (randomFood.getRectangle().overlaps(player.getRectangle()));
+            foodArray.add(randomFood);
         }
     }
 
@@ -295,5 +320,9 @@ public class Chunk {
 
     public boolean isHasTriggers() {
         return hasTriggers;
+    }
+
+    public Array<Food> getFoodArray() {
+        return foodArray;
     }
 }
