@@ -15,6 +15,7 @@ import com.elseff.game.map.chunk.trigger.ChunkTriggerPosition;
 import com.elseff.game.model.GameObject;
 import com.elseff.game.model.Player;
 import com.elseff.game.model.Slime;
+import com.elseff.game.model.box.Box;
 import com.elseff.game.model.box.RandomTextureBox;
 import com.elseff.game.model.box.SmallCardBox;
 import com.elseff.game.screen.GameScreen;
@@ -56,7 +57,7 @@ public class Chunk {
         this.gameScreen = gameScreen;
         position = new Vector2(x, y);
         objects = new Array<>();
-        isNotCurrentColor = new Color(1, 1, 1, 0.5f);
+        isNotCurrentColor = new Color(1, 1, 1, 0.3f);
         isCurrentColor = new Color(0.3f, 1, 0.3f, 0.1f);
         currentColor = isNotCurrentColor;
         rectangle = new Rectangle(position.x, position.y, getWidthPixels(), getHeightPixels());
@@ -86,17 +87,17 @@ public class Chunk {
     }
 
     public void render(float delta) {
-        if (game.isDebug()) {
-            shapeRenderer.setColor(currentColor);
-            for (int j = 0; j < width; j++) {
-                for (int k = 0; k < height; k++) {
-                    shapeRenderer.rect(
-                            j * cellSize + position.x,
-                            k * cellSize + position.y,
-                            cellSize,
-                            cellSize);
-                }
+        shapeRenderer.setColor(currentColor);
+        for (int j = 0; j < width; j++) {
+            for (int k = 0; k < height; k++) {
+                shapeRenderer.rect(
+                        j * cellSize + position.x,
+                        k * cellSize + position.y,
+                        cellSize,
+                        cellSize);
             }
+        }
+        if (game.isDebug()) {
             if (isCurrent()) {
                 shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
                 shapeRenderer.rect(position.x, position.y, getWidthPixels(), getHeightPixels());
@@ -157,7 +158,7 @@ public class Chunk {
     public void fillRandomObjects() {
         for (int j = 0; j < countRandomObjects; j++) {
             int random = (int) (Math.random() * 3 + 1);
-            GameObject randomBox;
+            Box randomBox;
             if (random == 1) {
                 randomBox = new SmallCardBox(game, gameScreen, 0, 0);
             } else {

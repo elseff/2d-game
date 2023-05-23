@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.elseff.game.misc.GameResources;
+import com.elseff.game.misc.MouseController;
 import com.elseff.game.screen.GameOverScreen;
 import com.elseff.game.screen.GameScreen;
 import com.elseff.game.screen.PauseScreen;
@@ -23,6 +24,8 @@ public class MyGdxGame extends Game {
     private SpriteBatch batch;
     private BitmapFont font;
     private GameResources gameResources;
+    private MouseController mouseController;
+
     private int SCREEN_HEIGHT;
     private int SCREEN_WIDTH;
     private boolean debug;
@@ -45,6 +48,7 @@ public class MyGdxGame extends Game {
         shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
 
         gameResources = new GameResources();
+        mouseController = new MouseController(this);
 
         font = gameResources.getFont("arial.ttf", 15);
         font.setColor(Color.GREEN);
@@ -64,7 +68,7 @@ public class MyGdxGame extends Game {
         setScreen(gameOverScreen);
     }
 
-    public void reset(){
+    public void reset() {
         time = 0.0f;
         debug = false;
         isPaused = false;
@@ -78,8 +82,7 @@ public class MyGdxGame extends Game {
                 isPaused = false;
                 gameScreen.getSnowflakeController().getGenerationTimer().start();
                 setScreen(gameScreen);
-            }
-            else {
+            } else {
                 isPaused = true;
                 gameScreen.getSnowflakeController().getGenerationTimer().stop();
                 setScreen(pauseScreen);
@@ -88,6 +91,7 @@ public class MyGdxGame extends Game {
             this.debug = !this.debug;
 
         time += delta;
+        mouseController.update(delta);
         windowUtil.update();
     }
 
@@ -149,5 +153,9 @@ public class MyGdxGame extends Game {
 
     public ShaderProgram getRedShader() {
         return redShader;
+    }
+
+    public MouseController getMouseController() {
+        return mouseController;
     }
 }

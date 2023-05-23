@@ -3,26 +3,36 @@ package com.elseff.game.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.elseff.game.MyGdxGame;
-import com.elseff.game.misc.SnowflakeController;
 
+/**
+ * Pause screen class
+ */
 public class PauseScreen implements Screen {
     private final MyGdxGame game;
     private BitmapFont font;
-    private SpriteBatch batch;
+    private final SpriteBatch batch;
+    private final Pixmap cursorPixmap;
+    private final Cursor cursor;
 
     public PauseScreen(MyGdxGame game) {
         this.game = game;
+        font = game.getGameResources().getFont("arial.ttf", 50);
+        font.setColor(Color.WHITE);
+        batch = new SpriteBatch();
+
+        cursorPixmap = new Pixmap(Gdx.files.internal("images/menuCursor.png"));
+        cursor = Gdx.graphics.newCursor(cursorPixmap, 0, 0);
     }
 
     @Override
     public void show() {
-        font = game.getGameResources().getFont("arial.ttf", 50);
-        font.setColor(Color.WHITE);
-        batch = new SpriteBatch();
+        Gdx.graphics.setCursor(cursor);
     }
 
     @Override
@@ -63,5 +73,7 @@ public class PauseScreen implements Screen {
 
     @Override
     public void dispose() {
+        cursor.dispose();
+        cursorPixmap.dispose();
     }
 }

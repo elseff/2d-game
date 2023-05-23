@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.model.Player;
@@ -91,6 +92,12 @@ public class WindowUtil {
                 gameScreen
                         .getParticles()
                         .size));
+        data.add(String.format("mouse pos: (%s;%s)",
+                game.getMouseController().getMouseX(),
+                game.getMouseController().getMouseY()));
+        data.add(String.format("world mouse pos: (%s;%s)",
+                game.getMouseController().getWorldMouseX(),
+                game.getMouseController().getWorldMouseY()));
     }
 
     private void updateHpBarColor() {
@@ -100,7 +107,7 @@ public class WindowUtil {
         else if (player.getHp() >= 30)
             playerHpBarColor.set(1, 1, 0, 0.5f);
         else
-            playerHpBarColor.set(1,0,0,0.5f);
+            playerHpBarColor.set(1, 0, 0, 0.5f);
     }
 
     public void info() {
@@ -124,5 +131,14 @@ public class WindowUtil {
             font.draw(batch, String.valueOf((int) gameScreen.getPlayer().getHp()), 110, 55);
             batch.end();
         }
+    }
+
+    public void renderMouseGrid() {
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
+        game.getShapeRenderer().setColor(Color.WHITE);
+        Vector2 mousePos = game.getMouseController().getWorldMousePosition();
+        game.getShapeRenderer().circle(mousePos.x, mousePos.y, 5);
+        game.getShapeRenderer().end();
     }
 }

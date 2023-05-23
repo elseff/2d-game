@@ -73,7 +73,7 @@ public class Player extends GameObject {
         speed = new Vector2();
         speed.set(defaultSpeed);
 
-        SCALE = 1.3f;
+        SCALE = 2f;
         tmpRect = new Rectangle();
 
         direction = Direction.STAY;

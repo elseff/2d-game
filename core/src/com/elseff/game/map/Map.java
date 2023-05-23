@@ -139,9 +139,31 @@ public class Map {
             Chunk chunk = chunks.get(i);
             for (int j = 0; j < chunk.getObjects().size; j++) {
                 GameObject gameObject = chunk.getObjects().get(j);
-                if (gameObject.getRectangle().overlaps(rectangle) && !gameObject.getClass().equals(Slime.class))
+                if (gameObject.getRectangle().overlaps(rectangle))
                     return false;
             }
+        }
+//        for (int i = 0; i < enemies.size; i++) {
+//            Enemy enemy = enemies.get(i);
+//            if (enemy.getRectangle().overlaps(rectangle))
+//                return false;
+//        }
+        return true;
+    }
+
+    public boolean isAreaClearByPoint(Vector2 point){
+        for (int i = 0; i < chunks.size; i++) {
+            Chunk chunk = chunks.get(i);
+            for (int j = 0; j < chunk.getObjects().size; j++) {
+                GameObject gameObject = chunk.getObjects().get(j);
+                if (gameObject.getRectangle().contains(point))
+                    return false;
+            }
+        }
+        for (int i = 0; i < enemies.size; i++) {
+            Enemy enemy = enemies.get(i);
+            if (enemy.getRectangle().contains(point))
+                return false;
         }
         return true;
     }

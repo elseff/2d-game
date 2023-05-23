@@ -5,12 +5,20 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.map.Map;
+import com.elseff.game.map.chunk.Chunk;
 import com.elseff.game.misc.Snowflake;
 import com.elseff.game.misc.SnowflakeController;
+import com.elseff.game.model.GameObject;
 import com.elseff.game.model.Player;
+import com.elseff.game.model.box.Box;
+import com.elseff.game.model.box.SmallCardBox;
 
 /**
  * Main game screen class
@@ -19,16 +27,20 @@ public class GameScreen implements Screen {
     private MyGdxGame game;
     private Player player;
     private OrthographicCamera camera;
+    private Viewport viewport;
     private Map map;
     private SnowflakeController snowflakeController;
+    private Rectangle tempRect;
+    private Vector2 tempVector;
 
     public GameScreen(MyGdxGame game) {
         init(game);
     }
 
-    public void init(MyGdxGame game){
+    public void init(MyGdxGame game) {
         this.game = game;
-        camera = new OrthographicCamera();
+        camera = new OrthographicCamera(100, 100);
+        viewport = new ScreenViewport(camera);
 
         player = new Player(
                 game,
@@ -51,15 +63,18 @@ public class GameScreen implements Screen {
                 .getData()
                 .setScale(0.75f, 0.75f);
 
-        camera.zoom = 0.5f;
+        camera.zoom = 1f;
         camera.position.set(player.getPosition(), 0);
 
-
         snowflakeController = new SnowflakeController(game, this);
+
+        tempRect = new Rectangle();
+        tempVector = new Vector2();
     }
 
     @Override
     public void show() {
+        Gdx.input.setCursorCatched(true);
     }
 
     @Override
@@ -76,6 +91,7 @@ public class GameScreen implements Screen {
         game.getBatch().end();
         snowflakeController.render(delta);
         game.getWindowUtil().playerHpBar();
+        game.getWindowUtil().renderMouseGrid();
     }
 
     private void renderDebugMode() {
@@ -91,8 +107,15 @@ public class GameScreen implements Screen {
         game.getWindowUtil().update();
         game.getBatch().setProjectionMatrix(camera.combined);
         game.getShapeRenderer().setProjectionMatrix(camera.combined);
+        checkPutBox(delta);
         map.update();
         playerSpeedUpdate(delta);
+        killPlayer();
+    }
+
+    private void killPlayer() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.K))
+            player.hit(101);
     }
 
     private void cameraUpdate(float delta) {
@@ -102,6 +125,39 @@ public class GameScreen implements Screen {
         camera.update();
         player.getChunkGeneratorRectangle().x = camera.position.x - player.getChunkGeneratorRectangle().width / 2;
         player.getChunkGeneratorRectangle().y = camera.position.y - player.getChunkGeneratorRectangle().height / 2;
+    }
+
+    public void checkPutBox(float delta) {
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            Vector2 mousePos = game.getMouseController().getWorldMousePosition();
+            Box box = new SmallCardBox(game, this, 0, 0);
+            Chunk currentChunk = map.getCurrentChunk();
+            if (currentChunk.getRectangle().contains(mousePos)) {
+                tempVector.set(
+                        (float) (Math.floor(currentChunk.getPosition().x + (int) ((mousePos.x - currentChunk.getRectangle().x) / 32) * 32f))
+                                + box.getRectangle().width / 2f,
+                        (float) (Math.floor(currentChunk.getPosition().y + (int) ((mousePos.y - currentChunk.getRectangle().y) / 32) * 32f))
+                                + box.getRectangle().height / 2f);
+                box.getPosition().set(tempVector);
+                if (map.isAreaClear(box.getRectangle())) {
+                    currentChunk.addGameObject(box);
+                    System.out.println("added box to " + box.getPosition());
+                }
+            }
+
+        } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+            Vector2 mousePos = game.getMouseController().getWorldMousePosition();
+            Chunk currentChunk = map.getCurrentChunk();
+            for (int j = 0; j < currentChunk.getObjects().size; j++) {
+                GameObject gameObject = currentChunk.getObjects().get(j);
+                if (gameObject.getRectangle().contains(mousePos)) {
+                    currentChunk.getObjects().removeValue(gameObject, true);
+                    System.out.println("removed box from " + gameObject.getPosition());
+                    break;
+                }
+            }
+
+        }
     }
 
     private void cameraZoomUpdate(float delta) {
@@ -144,7 +200,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-//        player.dispose();
     }
 
     @Override
@@ -170,5 +225,9 @@ public class GameScreen implements Screen {
 
     public SnowflakeController getSnowflakeController() {
         return snowflakeController;
+    }
+
+    public Viewport getViewport() {
+        return viewport;
     }
 }

@@ -3,25 +3,34 @@ package com.elseff.game.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.elseff.game.MyGdxGame;
 
+/**
+ * Game Over screen class
+ */
 public class GameOverScreen implements Screen {
     private final MyGdxGame game;
     private BitmapFont font;
     private final SpriteBatch batch;
+    private final Pixmap cursorPixmap;
+    private final Cursor cursor;
 
     public GameOverScreen(MyGdxGame game) {
         this.game = game;
         batch = new SpriteBatch();
         font = game.getGameResources().getFont("arial.ttf", 50);
+        cursorPixmap = new Pixmap(Gdx.files.internal("images/menuCursor.png"));
+        cursor = Gdx.graphics.newCursor(cursorPixmap, 0, 0);
     }
 
     @Override
     public void show() {
-
+        Gdx.graphics.setCursor(cursor);
     }
 
     @Override
@@ -70,5 +79,7 @@ public class GameOverScreen implements Screen {
     public void dispose() {
         batch.dispose();
         font.dispose();
+        cursor.dispose();
+        cursorPixmap.dispose();
     }
 }
