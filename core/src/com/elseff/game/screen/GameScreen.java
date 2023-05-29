@@ -90,18 +90,19 @@ public class GameScreen implements Screen {
         game.getBatch().begin();
         map.render(delta);
         player.render(delta);
-        renderDebugMode();
         popUpMessagesController.render(delta);
         game.getBatch().end();
+
+        renderDebugMode();
+
         snowflakeController.render(delta);
         game.getWindowUtil().playerHpBar();
         game.getWindowUtil().renderMouseGrid();
     }
 
     private void renderDebugMode() {
-        if (game.isDebug()) {
+        if (game.isDebug())
             game.getWindowUtil().info();
-        }
     }
 
     private void update(float delta) {

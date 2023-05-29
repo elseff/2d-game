@@ -51,9 +51,6 @@ public class MyGdxGame extends Game {
         mouseController = new MouseController(this);
 
         font = gameResources.getFont("arial.ttf", 15);
-        font.setColor(Color.GREEN);
-
-        reset();
 
         gameScreen = new GameScreen(this);
         gameOverScreen = new GameOverScreen(this);
@@ -65,6 +62,9 @@ public class MyGdxGame extends Game {
                 Gdx.files.internal("shaders/blur.frag"));
 
         windowUtil = new WindowUtil(this, gameScreen);
+
+        reset();
+
         setScreen(gameOverScreen);
     }
 

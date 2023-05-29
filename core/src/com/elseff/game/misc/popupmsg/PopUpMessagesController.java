@@ -23,6 +23,7 @@ public class PopUpMessagesController {
 
         for (int i = 0; i < messages.size; i++) {
             PopUpMessage message = messages.get(i);
+            System.out.println(message.getText() + " - " + message.getPosition());
             font.setColor(message.getColor());
             font.draw(batch, message.getText(), message.getPosition().x, message.getPosition().y);
         }
@@ -34,7 +35,7 @@ public class PopUpMessagesController {
 
             checkRemoveMessage(message);
             move(message, delta);
-            message.subtractLife(1.5f);
+            message.subtractLife(3.5f);
         }
     }
 
@@ -44,7 +45,7 @@ public class PopUpMessagesController {
 
     private void move(PopUpMessage message, float delta) {
         Vector2 position = message.getPosition();
-        message.getPosition().set(position.x, position.y + delta * 50f);
+        message.getPosition().set(position.x, position.y + delta * 70f);
     }
 
     private void checkRemoveMessage(PopUpMessage message) {

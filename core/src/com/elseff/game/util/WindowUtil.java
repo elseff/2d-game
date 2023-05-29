@@ -93,11 +93,15 @@ public class WindowUtil {
                         .getParticles()
                         .size));
         data.add(String.format("mouse pos: (%s;%s)",
-                game.getMouseController().getMouseX(),
-                game.getMouseController().getMouseY()));
+                game
+                        .getMouseController().getMouseX(),
+                game
+                        .getMouseController().getMouseY()));
         data.add(String.format("world mouse pos: (%s;%s)",
-                game.getMouseController().getWorldMouseX(),
-                game.getMouseController().getWorldMouseY()));
+                game
+                        .getMouseController().getWorldMouseX(),
+                game
+                        .getMouseController().getWorldMouseY()));
     }
 
     private void updateHpBarColor() {
@@ -112,8 +116,10 @@ public class WindowUtil {
 
     public void info() {
         batch.begin();
-        for (int i = 0; i < data.size; i++)
+        for (int i = 0; i < data.size; i++) {
+            font.setColor(Color.WHITE);
             font.draw(batch, data.get(i), padding, game.getSCREEN_HEIGHT() - (margin * i) - padding);
+        }
         batch.end();
     }
 
