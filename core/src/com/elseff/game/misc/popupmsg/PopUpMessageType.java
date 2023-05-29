@@ -1,4 +1,4 @@
-package com.elseff.game;
+package com.elseff.game.misc.popupmsg;
 
 public enum PopUpMessageType {
     HIT,

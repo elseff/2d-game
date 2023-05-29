@@ -13,6 +13,8 @@ import com.badlogic.gdx.utils.Array;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.map.chunk.Chunk;
 import com.elseff.game.misc.Direction;
+import com.elseff.game.misc.popupmsg.PopUpMessage;
+import com.elseff.game.misc.popupmsg.PopUpMessageType;
 import com.elseff.game.model.enemy.Enemy;
 import com.elseff.game.model.food.Food;
 import com.elseff.game.screen.GameScreen;
@@ -138,7 +140,7 @@ public class Player extends GameObject {
         checkMovement(dt);
         changeCurrentFrame();
         updateChunkGeneratorRectangle();
-        regenerationHp(dt*2);
+        regenerationHp(dt * 2);
         updateRectColor();
     }
 
@@ -217,6 +219,23 @@ public class Player extends GameObject {
                 enemy.hit((float) (Math.random() * 5));
                 isCollidingWithMonster = true;
                 speed.set(defaultSpeed.x / 2f, defaultSpeed.y / 2f);
+                boolean listHasMessageWithTypePlayerHit = false;
+                for (int j = 0; j < getGameScreen().getPopUpMessagesController().getMessages().size; j++) {
+                    PopUpMessage message = getGameScreen().getPopUpMessagesController().getMessages().get(j);
+                    if (PopUpMessageType.PLAYER_HIT.equals(message.getType())) {
+                        listHasMessageWithTypePlayerHit = true;
+                        break;
+                    }
+                }
+                if (!listHasMessageWithTypePlayerHit)
+                    getGameScreen().getPopUpMessagesController().addMessage(
+                            new PopUpMessage(
+                                    "HIT",
+                                    getPosition().x - 10,
+                                    getPosition().y + 40,
+                                    Color.RED,
+                                    PopUpMessageType.PLAYER_HIT));
+
                 break;
             } else {
                 speed.set(defaultSpeed);
@@ -227,6 +246,23 @@ public class Player extends GameObject {
             if (getRectangle().overlaps(food.getRectangle())) {
                 currentChunk.getFoodArray().removeValue(food, true);
                 hit(-15);
+
+                boolean listHasMessageWithTypePlayerHealth = false;
+                for (int j = 0; j < getGameScreen().getPopUpMessagesController().getMessages().size; j++) {
+                    PopUpMessage message = getGameScreen().getPopUpMessagesController().getMessages().get(j);
+                    if (PopUpMessageType.PLAYER_HEALTH.equals(message.getType())) {
+                        listHasMessageWithTypePlayerHealth = true;
+                        break;
+                    }
+                }
+                if (!listHasMessageWithTypePlayerHealth)
+                    getGameScreen().getPopUpMessagesController().addMessage(
+                            new PopUpMessage(
+                                    "HEALTH",
+                                    getPosition().x - 40,
+                                    getPosition().y + 40,
+                                    new Color(0.2f, 0.8f, 0.2f, 1.0f),
+                                    PopUpMessageType.PLAYER_HEALTH));
             }
         }
     }
@@ -250,14 +286,12 @@ public class Player extends GameObject {
     }
 
     public void dispose() {
-        for (int i = 0; i < downAnimationFrames.length; i++)
-            downAnimationFrames[i].getTexture().dispose();
-        for (int i = 0; i < upAnimationFrames.length; i++)
-            upAnimationFrames[i].getTexture().dispose();
-        for (int i = 0; i < rightLeftAnimationFrames.length; i++)
-            rightLeftAnimationFrames[i].getTexture().dispose();
+        for (TextureRegion downAnimationFrame : downAnimationFrames) downAnimationFrame.getTexture().dispose();
+        for (TextureRegion upAnimationFrame : upAnimationFrames) upAnimationFrame.getTexture().dispose();
+        for (TextureRegion rightLeftAnimationFrame : rightLeftAnimationFrames)
+            rightLeftAnimationFrame.getTexture().dispose();
 
-        this.currentFrame.getTexture().dispose();
+        currentFrame.getTexture().dispose();
     }
 
     public Vector2 getSpeed() {

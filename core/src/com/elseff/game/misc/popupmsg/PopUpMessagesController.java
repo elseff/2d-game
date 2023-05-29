@@ -1,9 +1,10 @@
-package com.elseff.game;
+package com.elseff.game.misc.popupmsg;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.elseff.game.MyGdxGame;
 
 public class PopUpMessagesController {
     private final SpriteBatch batch;

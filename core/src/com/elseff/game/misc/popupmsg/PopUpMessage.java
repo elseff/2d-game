@@ -1,4 +1,4 @@
-package com.elseff.game;
+package com.elseff.game.misc.popupmsg;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;

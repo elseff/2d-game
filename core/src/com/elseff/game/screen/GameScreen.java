@@ -15,6 +15,7 @@ import com.elseff.game.map.Map;
 import com.elseff.game.map.chunk.Chunk;
 import com.elseff.game.misc.Snowflake;
 import com.elseff.game.misc.SnowflakeController;
+import com.elseff.game.misc.popupmsg.PopUpMessagesController;
 import com.elseff.game.model.GameObject;
 import com.elseff.game.model.Player;
 import com.elseff.game.model.box.Box;
@@ -30,6 +31,7 @@ public class GameScreen implements Screen {
     private Viewport viewport;
     private Map map;
     private SnowflakeController snowflakeController;
+    private PopUpMessagesController popUpMessagesController;
     private Rectangle tempRect;
     private Vector2 tempVector;
 
@@ -67,6 +69,7 @@ public class GameScreen implements Screen {
         camera.position.set(player.getPosition(), 0);
 
         snowflakeController = new SnowflakeController(game, this);
+        popUpMessagesController = new PopUpMessagesController(game);
 
         tempRect = new Rectangle();
         tempVector = new Vector2();
@@ -88,6 +91,7 @@ public class GameScreen implements Screen {
         map.render(delta);
         player.render(delta);
         renderDebugMode();
+        popUpMessagesController.render(delta);
         game.getBatch().end();
         snowflakeController.render(delta);
         game.getWindowUtil().playerHpBar();
@@ -111,11 +115,6 @@ public class GameScreen implements Screen {
         map.update();
         playerSpeedUpdate(delta);
         killPlayer();
-    }
-
-    private void killPlayer() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.K))
-            player.hit(101);
     }
 
     private void cameraUpdate(float delta) {
@@ -186,6 +185,11 @@ public class GameScreen implements Screen {
 
     }
 
+    private void killPlayer() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.K))
+            player.hit(101);
+    }
+
     @Override
     public void resize(int width, int height) {
     }
@@ -229,5 +233,9 @@ public class GameScreen implements Screen {
 
     public Viewport getViewport() {
         return viewport;
+    }
+
+    public PopUpMessagesController getPopUpMessagesController() {
+        return popUpMessagesController;
     }
 }
