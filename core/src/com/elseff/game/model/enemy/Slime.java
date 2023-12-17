@@ -10,7 +10,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.misc.Direction;
+import com.elseff.game.model.Player;
 import com.elseff.game.screen.GameScreen;
+import com.elseff.game.util.MathUtils;
 
 import java.util.UUID;
 
@@ -32,6 +34,7 @@ public class Slime extends Enemy {
     private final Timer timer;
     private final Color hpBarColor;
     private final Vector2 tmpVector;
+    private boolean isSeePlayer;
 
     public Slime(MyGdxGame game, GameScreen gameScreen, float x, float y) {
         super(game, x, y, gameScreen);
@@ -57,12 +60,14 @@ public class Slime extends Enemy {
         getRectColor().set(1, 0.2f, 0, 0.5f);
 
         speed = new Vector2(50, 50);
+        isSeePlayer = false;
 
         timer = new Timer();
         Timer.Task task = new Timer.Task() {
             @Override
             public void run() {
-                preferredDirection = getRandomPreferredDirection();
+                if (!isSeePlayer)
+                    preferredDirection = getRandomPreferredDirection();
             }
         };
         timer.scheduleTask(task, 0, 10, -1);
@@ -113,7 +118,37 @@ public class Slime extends Enemy {
     private void update(float delta) {
         updateCurrentFrame();
         regenerationHp(delta / 2);
-        move(delta);
+        if (!isSeePlayer)
+            move(delta);
+
+        attack(delta);
+    }
+
+    private void moveToPoint(float delta, Vector2 position) {
+        tmpVector.set(position).sub(getPosition());
+        tmpVector.set(tmpVector.nor());
+        tmpRect.set(
+                getRectangle().x + tmpVector.x * speed.x * delta,
+                getRectangle().y + tmpVector.y * speed.y * delta,
+                getRectangle().width,
+                getRectangle().height);
+        if (getGameScreen().getMap().isAreaClear(tmpRect)) {
+            getPosition().set(getPosition().x + tmpVector.x * speed.x * delta,
+                    getPosition().y + tmpVector.y * speed.y * delta);
+        }
+    }
+
+    private void attack(float delta) {
+        Player player = game.getGameScreen().getPlayer();
+        Vector2 playerPosition = player.getPosition();
+
+        double distanceToPlayer = MathUtils.distanceBetweenTwoPoints(playerPosition, getPosition());
+        if (distanceToPlayer < 500) {
+            isSeePlayer = true;
+            moveToPoint(delta, player.getPosition());
+        } else {
+            isSeePlayer = false;
+        }
     }
 
     private void updateHpBarColor() {
@@ -122,7 +157,7 @@ public class Slime extends Enemy {
         else if (getHp() >= 30)
             hpBarColor.set(1, 1, 0, 0.5f);
         else
-            hpBarColor.set(1,0,0,0.5f);
+            hpBarColor.set(1, 0, 0, 0.5f);
     }
 
     public void render(float delta) {

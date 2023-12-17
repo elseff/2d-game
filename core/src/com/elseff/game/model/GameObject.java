@@ -36,10 +36,14 @@ public abstract class GameObject {
 
     public void render(float delta) {
         if (getGame().isDebug()) {
+            Color oldColor = font.getColor();
+            font.setColor(Color.WHITE);
             font.draw(batch,
                     String.format("(%.1f; %.1f)", getPosition().x, getPosition().y),
                     getPosition().x - getRectangle().width / 2f,
                     getPosition().y - getRectangle().height / 1.5f);
+            font.setColor(oldColor);
+
             batch.end();
             Gdx.gl.glEnable(GL20.GL_BLEND);
             shapeRenderer.setColor(getRectColor());

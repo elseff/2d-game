@@ -3,9 +3,10 @@ package com.elseff.game.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -20,6 +21,8 @@ import com.elseff.game.model.GameObject;
 import com.elseff.game.model.Player;
 import com.elseff.game.model.box.Box;
 import com.elseff.game.model.box.SmallCardBox;
+import com.elseff.game.model.enemy.Enemy;
+import com.elseff.game.util.MathUtils;
 
 /**
  * Main game screen class
@@ -32,7 +35,6 @@ public class GameScreen implements Screen {
     private Map map;
     private SnowflakeController snowflakeController;
     private PopUpMessagesController popUpMessagesController;
-    private Rectangle tempRect;
     private Vector2 tempVector;
 
     public GameScreen(MyGdxGame game) {
@@ -71,7 +73,6 @@ public class GameScreen implements Screen {
         snowflakeController = new SnowflakeController(game, this);
         popUpMessagesController = new PopUpMessagesController(game);
 
-        tempRect = new Rectangle();
         tempVector = new Vector2();
     }
 
@@ -89,6 +90,7 @@ public class GameScreen implements Screen {
 
         game.getBatch().begin();
         map.render(delta);
+        renderDistances();
         player.render(delta);
         popUpMessagesController.render(delta);
         game.getBatch().end();
@@ -116,6 +118,47 @@ public class GameScreen implements Screen {
         map.update();
         playerSpeedUpdate(delta);
         killPlayer();
+    }
+
+    private void renderDistances() {
+        if (game.isDebug()) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            game.getBatch().end();
+            game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Line);
+            game.getShapeRenderer().setColor(1, 1, 1, 0.5f);
+            for (int i = 0; i < map.getEnemies().size; i++) {
+                Enemy enemy = map.getEnemies().get(i);
+                Vector2 playerPos = player.getPosition();
+                Vector2 enemyPos = enemy.getPosition();
+                if (player.getChunkGeneratorRectangle().overlaps(enemy.getRectangle())) {
+                    double distance = MathUtils.distanceBetweenTwoPoints(playerPos, enemyPos);
+                    Vector2 middleOfTheLine = tempVector.set(MathUtils.middleOfTwoPoints(playerPos, enemyPos));
+                    Color oldShRColor = game.getShapeRenderer().getColor();
+                    game.getShapeRenderer().setColor(Color.WHITE);
+                    game.getShapeRenderer().set(ShapeRenderer.ShapeType.Filled);
+                    int rectWidth = 35;
+                    int rectHeight = 15;
+                    game.getShapeRenderer().rect(middleOfTheLine.x,
+                            middleOfTheLine.y - rectHeight / 2f,
+                            rectWidth,
+                            rectHeight);
+                    game.getShapeRenderer().set(ShapeRenderer.ShapeType.Line);
+                    game.getShapeRenderer().setColor(oldShRColor);
+                    game.getBatch().begin();
+                    Color oldColor = game.getFont().getColor();
+                    game.getFont().getColor().set(Color.BLACK);
+                    game.getFont().draw(game.getBatch(),
+                            String.format("%.2f", distance),
+                            middleOfTheLine.x,
+                            middleOfTheLine.y);
+                    game.getFont().setColor(oldColor);
+                    game.getBatch().end();
+                    game.getShapeRenderer().line(playerPos, enemyPos);
+                }
+            }
+            game.getShapeRenderer().end();
+            game.getBatch().begin();
+        }
     }
 
     private void cameraUpdate(float delta) {
