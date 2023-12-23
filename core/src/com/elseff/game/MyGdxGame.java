@@ -3,13 +3,13 @@ package com.elseff.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.elseff.game.misc.GameResources;
 import com.elseff.game.misc.MouseController;
+import com.elseff.game.misc.font.FontDefinition;
 import com.elseff.game.screen.GameOverScreen;
 import com.elseff.game.screen.GameScreen;
 import com.elseff.game.screen.PauseScreen;
@@ -50,7 +50,7 @@ public class MyGdxGame extends Game {
         gameResources = new GameResources();
         mouseController = new MouseController(this);
 
-        font = gameResources.getFont("arial.ttf", 15);
+        font = gameResources.getFontFromDef(FontDefinition.ARIAL_15);
 
         gameScreen = new GameScreen(this);
         gameOverScreen = new GameOverScreen(this);
@@ -77,7 +77,7 @@ public class MyGdxGame extends Game {
     public void update(float delta) {
         this.SCREEN_WIDTH = Gdx.graphics.getWidth();
         this.SCREEN_HEIGHT = Gdx.graphics.getHeight();
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             if (isPaused) {
                 isPaused = false;
                 gameScreen.getSnowflakeController().getGenerationTimer().start();
@@ -87,8 +87,10 @@ public class MyGdxGame extends Game {
                 gameScreen.getSnowflakeController().getGenerationTimer().stop();
                 setScreen(pauseScreen);
             }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F12))
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F12)) {
             this.debug = !this.debug;
+        }
 
         time += delta;
         mouseController.update(delta);

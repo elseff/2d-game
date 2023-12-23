@@ -26,7 +26,7 @@ public abstract class Enemy extends GameObject {
                 textureRegion.getRegionHeight() * getSCALE());
     }
 
-    public void render(float delta){
+    public void render(float delta) {
         batch.draw(getTexture(),
                 getPosition().x - getTexture().getRegionWidth() / 2f,
                 getPosition().y - getTexture().getRegionHeight() / 2f,

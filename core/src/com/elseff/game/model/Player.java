@@ -227,7 +227,7 @@ public class Player extends GameObject {
                         break;
                     }
                 }
-                if (!listHasMessageWithTypePlayerHit)
+                if (!listHasMessageWithTypePlayerHit) {
                     getGameScreen().getPopUpMessagesController().addMessage(
                             new PopUpMessage(
                                     "HIT",
@@ -235,7 +235,7 @@ public class Player extends GameObject {
                                     getPosition().y + 40,
                                     Color.RED,
                                     PopUpMessageType.PLAYER_HIT));
-
+                }
                 break;
             } else {
                 speed.set(defaultSpeed);
@@ -255,7 +255,7 @@ public class Player extends GameObject {
                         break;
                     }
                 }
-                if (!listHasMessageWithTypePlayerHealth)
+                if (!listHasMessageWithTypePlayerHealth) {
                     getGameScreen().getPopUpMessagesController().addMessage(
                             new PopUpMessage(
                                     "HEALTH",
@@ -263,6 +263,7 @@ public class Player extends GameObject {
                                     getPosition().y + 40,
                                     new Color(0.2f, 0.8f, 0.2f, 1.0f),
                                     PopUpMessageType.PLAYER_HEALTH));
+                }
             }
         }
     }

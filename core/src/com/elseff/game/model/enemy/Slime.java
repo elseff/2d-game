@@ -14,10 +14,8 @@ import com.elseff.game.model.Player;
 import com.elseff.game.screen.GameScreen;
 import com.elseff.game.util.MathUtils;
 
-import java.util.UUID;
 
 public class Slime extends Enemy {
-    private final UUID id;
     private final MyGdxGame game;
     private final GameScreen gameScreen;
     private final SpriteBatch batch;
@@ -38,7 +36,6 @@ public class Slime extends Enemy {
 
     public Slime(MyGdxGame game, GameScreen gameScreen, float x, float y) {
         super(game, x, y, gameScreen);
-        id = UUID.randomUUID();
         this.game = game;
         this.gameScreen = gameScreen;
 
@@ -172,7 +169,6 @@ public class Slime extends Enemy {
             font.draw(batch, String.valueOf((int) getHp()), getRectangle().x + 5,
                     getRectangle().y + getRectangle().height + 20);
         }
-        super.render(delta);
     }
 
     private void renderHpBar() {
@@ -235,10 +231,6 @@ public class Slime extends Enemy {
     }
 
     private void updateCurrentFrame() {
-        this.currentFrame = animation.getKeyFrame(getGame().getTime(), true);
-    }
-
-    public UUID getId() {
-        return id;
+        currentFrame = animation.getKeyFrame(getGame().getTime(), true);
     }
 }

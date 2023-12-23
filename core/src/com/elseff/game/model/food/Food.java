@@ -23,10 +23,10 @@ public abstract class Food extends GameObject {
 
     @Override
     public Rectangle getRectangle() {
-        return new Rectangle(getPosition().x - getTexture().getRegionWidth() * getSCALE() / 2f,
-                getPosition().y - getTexture().getRegionHeight() * getSCALE() / 2f,
-                getTexture().getRegionWidth() * getSCALE(),
-                getTexture().getRegionHeight() * getSCALE());
+        return new Rectangle(getPosition().x - getTexture().getRegionWidth() * SCALE / 2f,
+                getPosition().y - getTexture().getRegionHeight() * SCALE / 2f,
+                getTexture().getRegionWidth() * SCALE,
+                getTexture().getRegionHeight() * SCALE);
     }
 
     public void render(float delta) {
@@ -44,8 +44,4 @@ public abstract class Food extends GameObject {
     }
 
     public abstract TextureRegion getTexture();
-
-    public float getSCALE() {
-        return SCALE;
-    }
 }

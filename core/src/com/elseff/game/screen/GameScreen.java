@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.elseff.game.MyGdxGame;
+import com.elseff.game.log.LogTag;
 import com.elseff.game.map.Map;
 import com.elseff.game.map.chunk.Chunk;
 import com.elseff.game.misc.Snowflake;
@@ -24,10 +25,12 @@ import com.elseff.game.model.box.SmallCardBox;
 import com.elseff.game.model.enemy.Enemy;
 import com.elseff.game.util.MathUtils;
 
+import static com.elseff.game.log.LogTag.*;
+
 /**
  * Main game screen class
  */
-public class GameScreen implements Screen {
+public class GameScreen extends AbstractScreen {
     private MyGdxGame game;
     private Player player;
     private OrthographicCamera camera;
@@ -79,6 +82,7 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
         Gdx.input.setCursorCatched(true);
+        super.show();
     }
 
     @Override
@@ -184,7 +188,6 @@ public class GameScreen implements Screen {
                 box.getPosition().set(tempVector);
                 if (map.isAreaClear(box.getRectangle())) {
                     currentChunk.addGameObject(box);
-                    System.out.println("added box to " + box.getPosition());
                 }
             }
 
@@ -195,7 +198,6 @@ public class GameScreen implements Screen {
                 GameObject gameObject = currentChunk.getObjects().get(j);
                 if (gameObject.getRectangle().contains(mousePos)) {
                     currentChunk.getObjects().removeValue(gameObject, true);
-                    System.out.println("removed box from " + gameObject.getPosition());
                     break;
                 }
             }

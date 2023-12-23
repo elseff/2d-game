@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.elseff.game.MyGdxGame;
+import com.elseff.game.misc.font.FontDefinition;
 
 public class PopUpMessagesController {
     private final SpriteBatch batch;
@@ -15,7 +16,7 @@ public class PopUpMessagesController {
     public PopUpMessagesController(MyGdxGame game) {
         messages = new Array<>();
         batch = game.getBatch();
-        font = game.getGameResources().updateFontSize(game.getFont(), 20);
+        font = game.getGameResources().getFontFromDef(FontDefinition.ARIAL_20);
     }
 
     public void render(float delta) {

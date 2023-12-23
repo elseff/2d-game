@@ -9,11 +9,12 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.elseff.game.MyGdxGame;
+import com.elseff.game.misc.font.FontDefinition;
 
 /**
  * Game Over screen class
  */
-public class GameOverScreen implements Screen {
+public class GameOverScreen extends AbstractScreen {
     private final MyGdxGame game;
     private BitmapFont font;
     private final SpriteBatch batch;
@@ -23,7 +24,7 @@ public class GameOverScreen implements Screen {
     public GameOverScreen(MyGdxGame game) {
         this.game = game;
         batch = new SpriteBatch();
-        font = game.getGameResources().getFont("arial.ttf", 50);
+        font = game.getGameResources().getFontFromDef(FontDefinition.ARIAL_50);
         cursorPixmap = new Pixmap(Gdx.files.internal("images/menuCursor.png"));
         cursor = Gdx.graphics.newCursor(cursorPixmap, 0, 0);
     }
@@ -31,6 +32,7 @@ public class GameOverScreen implements Screen {
     @Override
     public void show() {
         Gdx.graphics.setCursor(cursor);
+        super.show();
     }
 
     @Override
@@ -39,9 +41,9 @@ public class GameOverScreen implements Screen {
         Gdx.gl.glClearColor(0, 0f, 0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        font = game.getGameResources().updateFontSize(font, 50);
+        font = game.getGameResources().getFontFromDef(FontDefinition.ARIAL_50);
         font.draw(batch, "GAME OVER", game.getSCREEN_WIDTH() / 2f - 80, game.getSCREEN_HEIGHT() / 1.25f);
-        font = game.getGameResources().updateFontSize(font, 30);
+        font = game.getGameResources().getFontFromDef(FontDefinition.ARIAL_30);
         font.draw(batch, "Press ESC to exit", game.getSCREEN_WIDTH() / 2f - 100, game.getSCREEN_HEIGHT() / 4f);
         font.draw(batch, "Press SPACE to restart", game.getSCREEN_WIDTH() / 2f - 120, game.getSCREEN_HEIGHT() / 5f);
         batch.end();
@@ -55,7 +57,6 @@ public class GameOverScreen implements Screen {
             game.getGameScreen().init(game);
             game.setScreen(game.getGameScreen());
         }
-
     }
 
 

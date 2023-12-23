@@ -11,17 +11,17 @@ import com.elseff.game.screen.GameScreen;
 public abstract class Box extends GameObject {
     private final TextureRegion texture;
     private final SpriteBatch batch;
-    private float SCALE;
+    private final float SCALE;
 
-    protected Box(MyGdxGame game, GameScreen gameScreen,float x, float y) {
+    protected Box(MyGdxGame game, GameScreen gameScreen, float x, float y) {
         super(game, x, y, gameScreen);
         this.texture = getTexture();
         this.batch = getGame().getBatch();
         this.SCALE = 2.0f;
-        getRectColor().set(1,1,1,0.5f);
+        getRectColor().set(1, 1, 1, 0.5f);
     }
 
-    protected Box(MyGdxGame game,GameScreen gameScreen, Vector2 position){
+    protected Box(MyGdxGame game, GameScreen gameScreen, Vector2 position) {
         this(game, gameScreen, position.x, position.y);
     }
 
@@ -29,10 +29,10 @@ public abstract class Box extends GameObject {
 
     @Override
     public Rectangle getRectangle() {
-            return new Rectangle(getPosition().x - getTexture().getRegionWidth() * getSCALE() / 2f,
-                    getPosition().y - getTexture().getRegionHeight() * getSCALE() / 2f,
-                    getTexture().getRegionWidth() * getSCALE(),
-                    getTexture().getRegionHeight() * getSCALE());
+        return new Rectangle(getPosition().x - getTexture().getRegionWidth() * SCALE / 2f,
+                getPosition().y - getTexture().getRegionHeight() * SCALE / 2f,
+                getTexture().getRegionWidth() * SCALE,
+                getTexture().getRegionHeight() * SCALE);
     }
 
     public void render(float delta) {
@@ -47,13 +47,5 @@ public abstract class Box extends GameObject {
                 SCALE,
                 0.0f);
         super.render(delta);
-    }
-
-    public float getSCALE() {
-        return SCALE;
-    }
-
-    public void setSCALE(float SCALE) {
-        this.SCALE = SCALE;
     }
 }
