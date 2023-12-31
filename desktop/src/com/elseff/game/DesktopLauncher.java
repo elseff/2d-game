@@ -5,12 +5,17 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
 public class DesktopLauncher {
     public static void main(String[] arg) {
+        GameScreenDimension dimension = GameScreenDimension.MEDIUM;
+
+        int width = dimension.getWidth();
+        int height = dimension.getHeight();
+
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setDecorated(false);
-        config.setWindowedMode(1920, 1080);
+        config.setWindowedMode(width, height);
         config.setResizable(false);
         config.setForegroundFPS(60);
         config.setTitle("Game");
-        new Lwjgl3Application(new MyGdxGame(), config);
+        new Lwjgl3Application(new MyGdxGame(width, height), config);
     }
 }

@@ -17,7 +17,7 @@ public class Snowflake {
         direction = new Vector2();
         direction.x = (float) Math.random() + 1;
         direction.y = -1;
-        speed = (float) Math.random()*2 + 2;
+        speed = (float) Math.random()*2 + 5;
         lifetime = (float) (Math.random() * 5 + 2);
         color = new Color();
     }

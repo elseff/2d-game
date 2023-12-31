@@ -13,6 +13,7 @@ import com.elseff.game.misc.font.FontDefinition;
 import com.elseff.game.screen.GameOverScreen;
 import com.elseff.game.screen.GameScreen;
 import com.elseff.game.screen.PauseScreen;
+import com.elseff.game.screen.TestScreen;
 import com.elseff.game.util.WindowUtil;
 
 /**
@@ -39,11 +40,16 @@ public class MyGdxGame extends Game {
     private GameOverScreen gameOverScreen;
     private PauseScreen pauseScreen;
 
+    public MyGdxGame(int width, int height) {
+        this.SCREEN_WIDTH = width;
+        this.SCREEN_HEIGHT = height;
+    }
+
     @Override
     public void create() {
         batch = new SpriteBatch();
-        SCREEN_WIDTH = 1920;
-        SCREEN_HEIGHT = 1080;
+//        SCREEN_WIDTH = 1920;
+//        SCREEN_HEIGHT = 1080;
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
 
@@ -66,6 +72,7 @@ public class MyGdxGame extends Game {
         reset();
 
         setScreen(gameOverScreen);
+//        setScreen(new TestScreen(this));
     }
 
     public void reset() {
@@ -107,6 +114,8 @@ public class MyGdxGame extends Game {
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
+        this.SCREEN_WIDTH = Gdx.graphics.getWidth();
+        this.SCREEN_HEIGHT = Gdx.graphics.getHeight();
     }
 
     public int getSCREEN_WIDTH() {

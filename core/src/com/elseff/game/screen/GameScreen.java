@@ -2,7 +2,6 @@ package com.elseff.game.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -12,7 +11,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.elseff.game.MyGdxGame;
-import com.elseff.game.log.LogTag;
 import com.elseff.game.map.Map;
 import com.elseff.game.map.chunk.Chunk;
 import com.elseff.game.misc.Snowflake;
@@ -24,8 +22,6 @@ import com.elseff.game.model.box.Box;
 import com.elseff.game.model.box.SmallCardBox;
 import com.elseff.game.model.enemy.Enemy;
 import com.elseff.game.util.MathUtils;
-
-import static com.elseff.game.log.LogTag.*;
 
 /**
  * Main game screen class
@@ -103,7 +99,7 @@ public class GameScreen extends AbstractScreen {
 
         snowflakeController.render(delta);
         game.getWindowUtil().playerHpBar();
-        game.getWindowUtil().renderMouseGrid();
+        game.getWindowUtil().renderMouse();
     }
 
     private void renderDebugMode() {
@@ -201,7 +197,6 @@ public class GameScreen extends AbstractScreen {
                     break;
                 }
             }
-
         }
     }
 

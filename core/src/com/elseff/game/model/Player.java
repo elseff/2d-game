@@ -84,8 +84,8 @@ public class Player extends GameObject {
 
         chunkGeneratorRectangle = new Rectangle();
         chunkGeneratorRectangleColor = Color.YELLOW;
-        chunkGeneratorRectangle.width = 1920;
-        chunkGeneratorRectangle.height = 1080;
+        chunkGeneratorRectangle.width = game.getSCREEN_WIDTH();
+        chunkGeneratorRectangle.height = game.getSCREEN_HEIGHT();
 
         getRectColor().set(0.8f, 0.7f, 0.1f, 0.8f);
 
@@ -208,7 +208,7 @@ public class Player extends GameObject {
         }
     }
 
-    public void checkCollision(float delta) {
+    private void checkCollision(float delta) {
         Chunk currentChunk = getGameScreen().getMap().getCurrentChunk();
         Array<Enemy> enemies = getGameScreen().getMap().getEnemies();
         isCollidingWithMonster = false;
@@ -228,13 +228,16 @@ public class Player extends GameObject {
                     }
                 }
                 if (!listHasMessageWithTypePlayerHit) {
+                    PopUpMessage message = new PopUpMessage(
+                            "HIT",
+                            getPosition().x - 10,
+                            getPosition().y + 40,
+                            Color.RED,
+                            PopUpMessageType.PLAYER_HIT);
                     getGameScreen().getPopUpMessagesController().addMessage(
-                            new PopUpMessage(
-                                    "HIT",
-                                    getPosition().x - 10,
-                                    getPosition().y + 40,
-                                    Color.RED,
-                                    PopUpMessageType.PLAYER_HIT));
+                            message
+                    );
+                    Gdx.app.log("Message", message.getText() + " - " + message.getPosition());
                 }
                 break;
             } else {
@@ -256,13 +259,16 @@ public class Player extends GameObject {
                     }
                 }
                 if (!listHasMessageWithTypePlayerHealth) {
+                    PopUpMessage message = new PopUpMessage(
+                            "HEALTH",
+                            getPosition().x - 40,
+                            getPosition().y + 40,
+                            new Color(0.2f, 0.8f, 0.2f, 1.0f),
+                            PopUpMessageType.PLAYER_HEALTH);
                     getGameScreen().getPopUpMessagesController().addMessage(
-                            new PopUpMessage(
-                                    "HEALTH",
-                                    getPosition().x - 40,
-                                    getPosition().y + 40,
-                                    new Color(0.2f, 0.8f, 0.2f, 1.0f),
-                                    PopUpMessageType.PLAYER_HEALTH));
+                            message
+                    );
+                    Gdx.app.log("Message", message.getText() + " - " + message.getPosition());
                 }
             }
         }
@@ -295,6 +301,10 @@ public class Player extends GameObject {
         currentFrame.getTexture().dispose();
     }
 
+    public void changeSpeed(float value) {
+        defaultSpeed.add(value, value);
+    }
+
     public Vector2 getSpeed() {
         return speed;
     }
@@ -317,9 +327,5 @@ public class Player extends GameObject {
 
     public Vector2 getReversedDirection() {
         return reversedDirection;
-    }
-
-    public void changeSpeed(float value) {
-        defaultSpeed.add(value, value);
     }
 }

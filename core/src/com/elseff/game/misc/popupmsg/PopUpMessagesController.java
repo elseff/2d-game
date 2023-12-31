@@ -24,7 +24,6 @@ public class PopUpMessagesController {
 
         for (int i = 0; i < messages.size; i++) {
             PopUpMessage message = messages.get(i);
-            System.out.println(message.getText() + " - " + message.getPosition());
             font.setColor(message.getColor());
             font.draw(batch, message.getText(), message.getPosition().x, message.getPosition().y);
         }

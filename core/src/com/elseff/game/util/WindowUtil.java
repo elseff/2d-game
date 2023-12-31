@@ -139,7 +139,7 @@ public class WindowUtil {
         }
     }
 
-    public void renderMouseGrid() {
+    public void renderMouse() {
         Gdx.gl.glEnable(GL20.GL_BLEND);
         game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
         game.getShapeRenderer().setColor(Color.WHITE);
