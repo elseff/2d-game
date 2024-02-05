@@ -32,7 +32,7 @@ public class WindowUtil {
         this.gameScreen = gameScreen;
         this.batch = new SpriteBatch(); // own batch
 
-        this.data = new Array<>(); // info with 8 lines
+        this.data = new Array<>();
         data.add("DEBUG MODE"); // first line in info tab is title of debug mode
         this.font = new BitmapFont();
         this.font.setColor(Color.GREEN);

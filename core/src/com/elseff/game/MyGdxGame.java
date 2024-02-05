@@ -13,7 +13,6 @@ import com.elseff.game.misc.font.FontDefinition;
 import com.elseff.game.screen.GameOverScreen;
 import com.elseff.game.screen.GameScreen;
 import com.elseff.game.screen.PauseScreen;
-import com.elseff.game.screen.TestScreen;
 import com.elseff.game.util.WindowUtil;
 
 /**
@@ -34,22 +33,20 @@ public class MyGdxGame extends Game {
     private float time;
 
     private ShaderProgram redShader;
-    private ShaderProgram blurShader;
 
     private GameScreen gameScreen;
     private GameOverScreen gameOverScreen;
     private PauseScreen pauseScreen;
 
     public MyGdxGame(int width, int height) {
-        this.SCREEN_WIDTH = width;
-        this.SCREEN_HEIGHT = height;
+        SCREEN_WIDTH = width;
+        SCREEN_HEIGHT = height;
     }
 
     @Override
     public void create() {
         batch = new SpriteBatch();
-//        SCREEN_WIDTH = 1920;
-//        SCREEN_HEIGHT = 1080;
+
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
 
@@ -64,15 +61,12 @@ public class MyGdxGame extends Game {
 
         redShader = new ShaderProgram(Gdx.files.internal("shaders/red.vert"),
                 Gdx.files.internal("shaders/red.frag"));
-        blurShader = new ShaderProgram(Gdx.files.internal("shaders/blur.vert"),
-                Gdx.files.internal("shaders/blur.frag"));
 
         windowUtil = new WindowUtil(this, gameScreen);
 
         reset();
 
-        setScreen(gameOverScreen);
-//        setScreen(new TestScreen(this));
+        setScreen(gameScreen);
     }
 
     public void reset() {
@@ -82,8 +76,8 @@ public class MyGdxGame extends Game {
     }
 
     public void update(float delta) {
-        this.SCREEN_WIDTH = Gdx.graphics.getWidth();
-        this.SCREEN_HEIGHT = Gdx.graphics.getHeight();
+        SCREEN_WIDTH = Gdx.graphics.getWidth();
+        SCREEN_HEIGHT = Gdx.graphics.getHeight();
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             if (isPaused) {
                 isPaused = false;
@@ -96,7 +90,7 @@ public class MyGdxGame extends Game {
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F12)) {
-            this.debug = !this.debug;
+            debug = !debug;
         }
 
         time += delta;
@@ -114,8 +108,8 @@ public class MyGdxGame extends Game {
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
-        this.SCREEN_WIDTH = Gdx.graphics.getWidth();
-        this.SCREEN_HEIGHT = Gdx.graphics.getHeight();
+        SCREEN_WIDTH = Gdx.graphics.getWidth();
+        SCREEN_HEIGHT = Gdx.graphics.getHeight();
     }
 
     public int getSCREEN_WIDTH() {

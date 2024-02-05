@@ -45,10 +45,7 @@ public class GameScreen extends AbstractScreen {
         camera = new OrthographicCamera(100, 100);
         viewport = new ScreenViewport(camera);
 
-        player = new Player(
-                game,
-                this,
-                0, 0);
+        player = new Player(game, this, 0, 0);
 
         map = new Map(game, this);
 
@@ -88,8 +85,9 @@ public class GameScreen extends AbstractScreen {
         Gdx.gl.glClearColor(0.01f, 0.4f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        game.getBatch().begin();
         map.render(delta);
+        game.getBatch().begin();
+
         renderDistances();
         player.render(delta);
         popUpMessagesController.render(delta);
@@ -111,7 +109,6 @@ public class GameScreen extends AbstractScreen {
         game.update(delta);
         checkGameOver();
         cameraUpdate(delta);
-        game.getWindowUtil().update();
         game.getBatch().setProjectionMatrix(camera.combined);
         game.getShapeRenderer().setProjectionMatrix(camera.combined);
         checkPutBox(delta);
@@ -211,9 +208,8 @@ public class GameScreen extends AbstractScreen {
     }
 
     private void checkGameOver() {
-        if (player.getHp() < 0) {
+        if (player.getHp() < 0)
             game.setScreen(game.getGameOverScreen());
-        }
     }
 
     private void playerSpeedUpdate(float delta) {
@@ -223,7 +219,6 @@ public class GameScreen extends AbstractScreen {
             if (player.getSpeed().x >= 100)
                 player.changeSpeed(-100);
         }
-
     }
 
     private void killPlayer() {

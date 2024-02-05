@@ -103,8 +103,6 @@ public class Map {
     }
 
     public void render(float delta) {
-        batch.end();
-
         Gdx.gl.glEnable(GL20.GL_BLEND);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         for (int i = 0; i < chunks.size; i++) {
@@ -122,16 +120,17 @@ public class Map {
         }
         shapeRenderer.end();
 
-        batch.begin();
         renderEnemies(delta);
     }
 
     private void renderEnemies(float delta){
+        game.getBatch().begin();
         for (int i = 0; i < enemies.size; i++) {
             Enemy enemy = enemies.get(i);
             if(player.getChunkGeneratorRectangle().overlaps(enemy.getRectangle()))
                 enemy.render(delta);
         }
+        game.getBatch().end();
     }
 
     public boolean isAreaClear(Rectangle rectangle) {

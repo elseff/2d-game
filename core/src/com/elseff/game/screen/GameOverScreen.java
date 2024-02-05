@@ -24,7 +24,6 @@ public class GameOverScreen extends AbstractScreen {
     public GameOverScreen(MyGdxGame game) {
         this.game = game;
         batch = new SpriteBatch();
-        font = game.getGameResources().getFontFromDef(FontDefinition.ARIAL_50);
         cursorPixmap = new Pixmap(Gdx.files.internal("images/menuCursor.png"));
         cursor = Gdx.graphics.newCursor(cursorPixmap, 0, 0);
     }
@@ -50,6 +49,10 @@ public class GameOverScreen extends AbstractScreen {
     }
 
     public void update(float dt) {
+        checkInput();
+    }
+
+    private void checkInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
             Gdx.app.exit();
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {

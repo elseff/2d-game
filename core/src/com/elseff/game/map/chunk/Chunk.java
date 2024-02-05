@@ -93,15 +93,15 @@ public class Chunk {
 
     public void render(float delta) {
         shapeRenderer.setColor(currentColor);
-//        for (int j = 0; j < width; j++) {
-//            for (int k = 0; k < height; k++) {
-//                shapeRenderer.rect(
-//                        j * cellSize + position.x,
-//                        k * cellSize + position.y,
-//                        cellSize,
-//                        cellSize);
-//            }
-//        }
+        for (int j = 0; j < width; j++) {
+            for (int k = 0; k < height; k++) {
+                shapeRenderer.rect(
+                        j * cellSize + position.x,
+                        k * cellSize + position.y,
+                        cellSize,
+                        cellSize);
+            }
+        }
         if (game.isDebug()) {
             if (isCurrent()) {
                 shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
