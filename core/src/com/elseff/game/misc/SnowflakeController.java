@@ -42,7 +42,6 @@ public class SnowflakeController {
             }
         };
         generationTimer.scheduleTask(task, 0, 0.5f, -1);
-        generationTimer.start();
         shapeRenderer = game.getShapeRenderer();
         shapeRenderer.setAutoShapeType(true);
     }
@@ -84,5 +83,9 @@ public class SnowflakeController {
 
     public Timer getGenerationTimer() {
         return generationTimer;
+    }
+
+    public void start() {
+        generationTimer.start();
     }
 }

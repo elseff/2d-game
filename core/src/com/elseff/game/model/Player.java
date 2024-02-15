@@ -237,7 +237,7 @@ public class Player extends GameObject {
                     getGameScreen().getPopUpMessagesController().addMessage(
                             message
                     );
-                    Gdx.app.log("Message", message.getText() + " - " + message.getPosition());
+                    Gdx.app.log("PLAYER", message.getText() + " - " + message.getPosition());
                 }
                 break;
             } else {
@@ -268,7 +268,7 @@ public class Player extends GameObject {
                     getGameScreen().getPopUpMessagesController().addMessage(
                             message
                     );
-                    Gdx.app.log("Message", message.getText() + " - " + message.getPosition());
+                    Gdx.app.log("PLAYER", message.getText() + " - " + message.getPosition());
                 }
             }
         }

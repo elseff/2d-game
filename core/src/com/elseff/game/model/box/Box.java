@@ -9,13 +9,11 @@ import com.elseff.game.model.GameObject;
 import com.elseff.game.screen.GameScreen;
 
 public abstract class Box extends GameObject {
-    private final TextureRegion texture;
     private final SpriteBatch batch;
     private final float SCALE;
 
     protected Box(MyGdxGame game, GameScreen gameScreen, float x, float y) {
         super(game, x, y, gameScreen);
-        this.texture = getTexture();
         this.batch = getGame().getBatch();
         this.SCALE = 2.0f;
         getRectColor().set(1, 1, 1, 0.5f);
@@ -36,13 +34,13 @@ public abstract class Box extends GameObject {
     }
 
     public void render(float delta) {
-        batch.draw(texture,
-                getPosition().x - texture.getRegionWidth() / 2f,
-                getPosition().y - texture.getRegionHeight() / 2f,
-                texture.getRegionWidth() / 2f,
-                texture.getRegionHeight() / 2f,
-                texture.getRegionWidth(),
-                texture.getRegionHeight(),
+        batch.draw(getTexture(),
+                getPosition().x - getTexture().getRegionWidth() / 2f,
+                getPosition().y - getTexture().getRegionHeight() / 2f,
+                getTexture().getRegionWidth() / 2f,
+                getTexture().getRegionHeight() / 2f,
+                getTexture().getRegionWidth(),
+                getTexture().getRegionHeight(),
                 SCALE,
                 SCALE,
                 0.0f);

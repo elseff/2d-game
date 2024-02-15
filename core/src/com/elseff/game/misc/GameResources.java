@@ -13,7 +13,9 @@ public class GameResources {
     private final HashMap<FontDefinition, BitmapFont> fonts;
 
     public GameResources() {
-        atlas = new TextureAtlas(Gdx.files.internal("textures.atlas"));
+        String name = "textures.atlas";
+        atlas = new TextureAtlas(Gdx.files.internal(name));
+        Gdx.app.log("RESOURCE", "loaded - " + name);
         fonts = new HashMap<>();
     }
 
@@ -37,6 +39,7 @@ public class GameResources {
         parameter.size = definition.getFontSize();
         BitmapFont font = generator.generateFont(parameter);
         generator.dispose();
+        Gdx.app.log("FONT", "Generated font - " + definition);
         return font;
     }
 }

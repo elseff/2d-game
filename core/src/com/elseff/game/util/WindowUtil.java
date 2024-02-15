@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.elseff.game.MyGdxGame;
+import com.elseff.game.misc.font.FontDefinition;
 import com.elseff.game.model.Player;
 import com.elseff.game.screen.GameScreen;
 
@@ -26,6 +27,7 @@ public class WindowUtil {
     private final Array<String> data; // info tab data
     private final ShapeRenderer shapeRenderer;
     private final Color playerHpBarColor;
+    private final float playerHpBarColorOpacity;
 
     public WindowUtil(MyGdxGame game, GameScreen gameScreen) {
         this.game = game;
@@ -38,7 +40,8 @@ public class WindowUtil {
         this.font.setColor(Color.GREEN);
         this.shapeRenderer = new ShapeRenderer();
         shapeRenderer.scale(2, 2, 2);
-        playerHpBarColor = new Color(0f, 1f, 0f, 0.5f);
+        playerHpBarColorOpacity = 0.65f;
+        playerHpBarColor = new Color(0f, 1f, 0f, playerHpBarColorOpacity);
     }
 
     public void render() {
@@ -106,12 +109,12 @@ public class WindowUtil {
 
     private void updateHpBarColor() {
         Player player = gameScreen.getPlayer();
-        if (player.getHp() >= 70)
-            playerHpBarColor.set(0f, 1f, 0f, 0.5f);
-        else if (player.getHp() >= 30)
-            playerHpBarColor.set(1, 1, 0, 0.5f);
+        if (player.getHp() >= 70) {
+            playerHpBarColor.set(0f, 1f, 0f, playerHpBarColorOpacity);
+        } else if (player.getHp() >= 30)
+            playerHpBarColor.set(1, 1, 0, playerHpBarColorOpacity);
         else
-            playerHpBarColor.set(1, 0, 0, 0.5f);
+            playerHpBarColor.set(1, 0, 0, playerHpBarColorOpacity);
     }
 
     public void info() {
@@ -124,6 +127,11 @@ public class WindowUtil {
     }
 
     public void playerHpBar() {
+        batch.begin();
+        BitmapFont arial30 = game.getGameResources().getFontFromDef(FontDefinition.ARIAL_30);
+        arial30.setColor(Color.GOLDENROD);
+        arial30.draw(batch, "Your hp", 30, 110);
+        batch.end();
         Gdx.gl.glEnable(GL20.GL_BLEND);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(0.1f, 0.1f, 0.1f, 0.5f);
@@ -133,8 +141,8 @@ public class WindowUtil {
         shapeRenderer.end();
         if (game.isDebug()) {
             batch.begin();
-            font.setColor(Color.WHITE);
-            font.draw(batch, String.valueOf((int) gameScreen.getPlayer().getHp()), 110, 55);
+            this.font.setColor(Color.WHITE);
+            this.font.draw(batch, String.valueOf((int) gameScreen.getPlayer().getHp()), 110, 55);
             batch.end();
         }
     }

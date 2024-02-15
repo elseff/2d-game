@@ -29,6 +29,14 @@ public class FontDefinition {
         return Objects.hash(getFontName(), getFontSize());
     }
 
+    @Override
+    public String toString() {
+        return "FontDefinition{" +
+                "fontName='" + fontName + '\'' +
+                ", fontSize=" + fontSize +
+                '}';
+    }
+
     public String getFontName() {
         return fontName;
     }

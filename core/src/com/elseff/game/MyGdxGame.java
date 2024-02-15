@@ -12,6 +12,7 @@ import com.elseff.game.misc.MouseController;
 import com.elseff.game.misc.font.FontDefinition;
 import com.elseff.game.screen.GameOverScreen;
 import com.elseff.game.screen.GameScreen;
+import com.elseff.game.screen.InitialScreen;
 import com.elseff.game.screen.PauseScreen;
 import com.elseff.game.util.WindowUtil;
 
@@ -54,7 +55,6 @@ public class MyGdxGame extends Game {
         mouseController = new MouseController(this);
 
         font = gameResources.getFontFromDef(FontDefinition.ARIAL_15);
-
         gameScreen = new GameScreen(this);
         gameOverScreen = new GameOverScreen(this);
         pauseScreen = new PauseScreen(this);
@@ -66,7 +66,8 @@ public class MyGdxGame extends Game {
 
         reset();
 
-        setScreen(gameScreen);
+        setScreen(new InitialScreen(this));
+//        setScreen(gameScreen);
     }
 
     public void reset() {
@@ -110,6 +111,7 @@ public class MyGdxGame extends Game {
         super.resize(width, height);
         SCREEN_WIDTH = Gdx.graphics.getWidth();
         SCREEN_HEIGHT = Gdx.graphics.getHeight();
+        System.out.println("resized game");
     }
 
     public int getSCREEN_WIDTH() {
@@ -149,6 +151,9 @@ public class MyGdxGame extends Game {
     }
 
     public GameScreen getGameScreen() {
+        if (gameScreen == null)
+            gameScreen = new GameScreen(this);
+
         return gameScreen;
     }
 

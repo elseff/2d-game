@@ -2,6 +2,8 @@ package com.elseff.game.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -35,6 +37,7 @@ public class GameScreen extends AbstractScreen {
     private SnowflakeController snowflakeController;
     private PopUpMessagesController popUpMessagesController;
     private Vector2 tempVector;
+    private Music oselSound;
 
     public GameScreen(MyGdxGame game) {
         init(game);
@@ -70,11 +73,14 @@ public class GameScreen extends AbstractScreen {
         popUpMessagesController = new PopUpMessagesController(game);
 
         tempVector = new Vector2();
+
+        oselSound = Gdx.audio.newMusic(Gdx.files.internal("sounds/osel.mp3"));
     }
 
     @Override
     public void show() {
         Gdx.input.setCursorCatched(true);
+        snowflakeController.start();
         super.show();
     }
 
@@ -181,6 +187,7 @@ public class GameScreen extends AbstractScreen {
                 box.getPosition().set(tempVector);
                 if (map.isAreaClear(box.getRectangle())) {
                     currentChunk.addGameObject(box);
+                    Gdx.app.log("SCENE", "added box to " + box.getPosition());
                 }
             }
 
@@ -191,6 +198,7 @@ public class GameScreen extends AbstractScreen {
                 GameObject gameObject = currentChunk.getObjects().get(j);
                 if (gameObject.getRectangle().contains(mousePos)) {
                     currentChunk.getObjects().removeValue(gameObject, true);
+                    Gdx.app.log("SCENE", "removed box from " + gameObject.getPosition());
                     break;
                 }
             }
@@ -208,8 +216,11 @@ public class GameScreen extends AbstractScreen {
     }
 
     private void checkGameOver() {
-        if (player.getHp() < 0)
+        if (player.getHp() < 0) {
             game.setScreen(game.getGameOverScreen());
+            oselSound.play();
+            Gdx.app.log("GAME", "\tGAME OVER!!!");
+        }
     }
 
     private void playerSpeedUpdate(float delta) {
