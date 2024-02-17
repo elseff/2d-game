@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.misc.font.FontDefinition;
-import com.elseff.game.model.Player;
+import com.elseff.game.model.player.Player;
 import com.elseff.game.screen.GameScreen;
 
 /**
@@ -105,6 +105,8 @@ public class WindowUtil {
                         .getMouseController().getWorldMouseX(),
                 game
                         .getMouseController().getWorldMouseY()));
+        data.add(String.format("player shadow particles count: %s",
+                game.getGameScreen().getPlayer().getParticlesPositions().size()));
     }
 
     private void updateHpBarColor() {

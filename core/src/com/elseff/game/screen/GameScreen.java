@@ -3,13 +3,13 @@ package com.elseff.game.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.elseff.game.MyGdxGame;
@@ -19,11 +19,14 @@ import com.elseff.game.misc.Snowflake;
 import com.elseff.game.misc.SnowflakeController;
 import com.elseff.game.misc.popupmsg.PopUpMessagesController;
 import com.elseff.game.model.GameObject;
-import com.elseff.game.model.Player;
+import com.elseff.game.model.player.Player;
 import com.elseff.game.model.box.Box;
 import com.elseff.game.model.box.SmallCardBox;
 import com.elseff.game.model.enemy.Enemy;
 import com.elseff.game.util.MathUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Main game screen class
@@ -38,6 +41,8 @@ public class GameScreen extends AbstractScreen {
     private PopUpMessagesController popUpMessagesController;
     private Vector2 tempVector;
     private Music oselSound;
+    private SimpleDateFormat simpleDateFormat;
+    private Date date;
 
     public GameScreen(MyGdxGame game) {
         init(game);
@@ -75,6 +80,9 @@ public class GameScreen extends AbstractScreen {
         tempVector = new Vector2();
 
         oselSound = Gdx.audio.newMusic(Gdx.files.internal("sounds/osel.mp3"));
+
+        simpleDateFormat = new SimpleDateFormat("yy-MM-dd hh:mm:ss:SSS");
+        date= new Date();
     }
 
     @Override
@@ -173,6 +181,11 @@ public class GameScreen extends AbstractScreen {
         player.getChunkGeneratorRectangle().y = camera.position.y - player.getChunkGeneratorRectangle().height / 2;
     }
 
+    private Date now(){
+        date.setTime(TimeUtils.millis());
+        return date;
+    }
+
     public void checkPutBox(float delta) {
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             Vector2 mousePos = game.getMouseController().getWorldMousePosition();
@@ -187,7 +200,7 @@ public class GameScreen extends AbstractScreen {
                 box.getPosition().set(tempVector);
                 if (map.isAreaClear(box.getRectangle())) {
                     currentChunk.addGameObject(box);
-                    Gdx.app.log("SCENE", "added box to " + box.getPosition());
+                    Gdx.app.log(CURRENT_TIME(), "added box to " + box.getPosition());
                 }
             }
 
@@ -198,11 +211,15 @@ public class GameScreen extends AbstractScreen {
                 GameObject gameObject = currentChunk.getObjects().get(j);
                 if (gameObject.getRectangle().contains(mousePos)) {
                     currentChunk.getObjects().removeValue(gameObject, true);
-                    Gdx.app.log("SCENE", "removed box from " + gameObject.getPosition());
+                    Gdx.app.log(CURRENT_TIME(), "removed box from " + gameObject.getPosition());
                     break;
                 }
             }
         }
+    }
+
+    private String CURRENT_TIME(){
+        return simpleDateFormat.format(now());
     }
 
     private void cameraZoomUpdate(float delta) {
@@ -219,7 +236,7 @@ public class GameScreen extends AbstractScreen {
         if (player.getHp() < 0) {
             game.setScreen(game.getGameOverScreen());
             oselSound.play();
-            Gdx.app.log("GAME", "\tGAME OVER!!!");
+            Gdx.app.log(CURRENT_TIME(), "\tGAME OVER!!!");
         }
     }
 

@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.misc.Direction;
-import com.elseff.game.model.Player;
+import com.elseff.game.model.player.Player;
 import com.elseff.game.screen.GameScreen;
 import com.elseff.game.util.MathUtils;
 

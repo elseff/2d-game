@@ -1,8 +1,9 @@
-package com.elseff.game.model;
+package com.elseff.game.model.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -10,14 +11,20 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.map.chunk.Chunk;
 import com.elseff.game.misc.Direction;
 import com.elseff.game.misc.popupmsg.PopUpMessage;
 import com.elseff.game.misc.popupmsg.PopUpMessageType;
+import com.elseff.game.model.GameObject;
 import com.elseff.game.model.enemy.Enemy;
 import com.elseff.game.model.food.Food;
 import com.elseff.game.screen.GameScreen;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Player extends GameObject {
     private final Animation<TextureRegion> downAnimation;
@@ -49,6 +56,11 @@ public class Player extends GameObject {
     private float hp;
 
     private boolean isCollidingWithMonster;
+
+    Timer shadowParticlesGenerationTimer;
+    Timer shadowParticlesDegenerationTimer;
+
+    private Map<Vector2, Float> particlesPositions;
 
     public Player(MyGdxGame game, GameScreen gameScreen, float x, float y) {
         super(game, x, y, gameScreen);
@@ -91,11 +103,58 @@ public class Player extends GameObject {
 
         hp = 100f;
         isCollidingWithMonster = false;
+
+
+        particlesPositions = new HashMap<>();
+        shadowParticlesGenerationTimer = new Timer();
+        shadowParticlesDegenerationTimer = new Timer();
+
+        Timer.Task generationTask = new Timer.Task() {
+            @Override
+            public void run() {
+                if (!direction.equals(Direction.STAY)) {
+                    Vector2 playerPos = getPosition();
+                    Vector2 vector2 = new Vector2(playerPos.x - (direction.getVx() * 15), playerPos.y - (direction.getVy() * 15));
+                    particlesPositions.put(vector2, 0.1f);
+                }
+            }
+        };
+
+        Timer.Task degenerationTask = new Timer.Task() {
+            @Override
+            public void run() {
+                particlesPositions = particlesPositions.entrySet()
+                        .stream()
+                        .filter(e -> e.getValue() > 0)
+                        .peek(e -> e.setValue(e.getValue() - 0.01f))
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            }
+        };
+
+        shadowParticlesGenerationTimer.scheduleTask(generationTask, 0, 0.2f, -1);
+        shadowParticlesGenerationTimer.start();
+        shadowParticlesDegenerationTimer.scheduleTask(degenerationTask, 0, 0.3f, -1);
+        shadowParticlesDegenerationTimer.start();
     }
+
 
     @Override
     public void render(float dt) {
         update(dt);
+        batch.end();
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        for (Map.Entry<Vector2, Float> e : particlesPositions.entrySet()) {
+            Vector2 pos = e.getKey();
+            Float lifetime = e.getValue();
+            Color color = new Color(0, 0, 0, lifetime);
+            shapeRenderer.setColor(color);
+            shapeRenderer.circle(pos.x, pos.y, 20, 12);
+        }
+        shapeRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+        batch.begin();
         super.render(dt);
 
         if (isCollidingWithMonster)
@@ -327,5 +386,9 @@ public class Player extends GameObject {
 
     public Vector2 getReversedDirection() {
         return reversedDirection;
+    }
+
+    public Map<Vector2, Float> getParticlesPositions() {
+        return particlesPositions;
     }
 }

@@ -53,12 +53,15 @@ public class GameOverScreen extends AbstractScreen {
     }
 
     private void checkInput() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            Gdx.app.log("GAME", "\tEXIT");
             Gdx.app.exit();
+        }
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             game.reset();
             game.getGameScreen().init(game);
             game.setScreen(game.getGameScreen());
+            Gdx.app.log("GAME", "\tRESTART");
         }
     }
 

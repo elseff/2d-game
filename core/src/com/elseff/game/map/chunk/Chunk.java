@@ -13,7 +13,7 @@ import com.elseff.game.MyGdxGame;
 import com.elseff.game.map.chunk.trigger.ChunkTrigger;
 import com.elseff.game.map.chunk.trigger.ChunkTriggerPosition;
 import com.elseff.game.model.GameObject;
-import com.elseff.game.model.Player;
+import com.elseff.game.model.player.Player;
 import com.elseff.game.model.box.Box;
 import com.elseff.game.model.box.RandomTextureBox;
 import com.elseff.game.model.box.SmallCardBox;
