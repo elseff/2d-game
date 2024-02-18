@@ -141,7 +141,6 @@ public class Player extends GameObject {
     @Override
     public void render(float dt) {
         update(dt);
-        batch.end();
         Gdx.gl.glEnable(GL20.GL_BLEND);
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -154,6 +153,7 @@ public class Player extends GameObject {
         }
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
+
         batch.begin();
         super.render(dt);
 

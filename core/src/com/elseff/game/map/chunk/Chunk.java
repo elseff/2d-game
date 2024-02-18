@@ -13,13 +13,13 @@ import com.elseff.game.MyGdxGame;
 import com.elseff.game.map.chunk.trigger.ChunkTrigger;
 import com.elseff.game.map.chunk.trigger.ChunkTriggerPosition;
 import com.elseff.game.model.GameObject;
-import com.elseff.game.model.player.Player;
 import com.elseff.game.model.box.Box;
 import com.elseff.game.model.box.RandomTextureBox;
 import com.elseff.game.model.box.SmallCardBox;
 import com.elseff.game.model.enemy.Slime;
 import com.elseff.game.model.food.Food;
 import com.elseff.game.model.food.FriedChicken;
+import com.elseff.game.model.player.Player;
 import com.elseff.game.screen.GameScreen;
 
 import java.util.Objects;
@@ -115,6 +115,7 @@ public class Chunk {
                     position.x + 2,
                     position.y + 10);
             batch.end();
+            shapeRenderer.begin();
         }
         shapeRenderer.end();
 
@@ -122,9 +123,8 @@ public class Chunk {
         renderObjects(delta);
         renderFood(delta);
         batch.end();
-
         Gdx.gl.glEnable(GL20.GL_BLEND);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.begin();
     }
 
     public void update() {
@@ -147,17 +147,18 @@ public class Chunk {
     }
 
     public void renderTriggers() {
-        if (hasTriggers) {
-            if (game.isDebug()) {
-                for (int j = 0; j < triggers.size; j++) {
-                    ChunkTrigger chunkTrigger = triggers.get(j);
-                    shapeRenderer.rect(
-                            chunkTrigger.getRectangle().x,
-                            chunkTrigger.getRectangle().y,
-                            chunkTrigger.getRectangle().width,
-                            chunkTrigger.getRectangle().height);
-                }
-            }
+        if (!hasTriggers)
+            return;
+        if (!game.isDebug())
+            return;
+
+        for (int j = 0; j < triggers.size; j++) {
+            ChunkTrigger chunkTrigger = triggers.get(j);
+            shapeRenderer.rect(
+                    chunkTrigger.getRectangle().x,
+                    chunkTrigger.getRectangle().y,
+                    chunkTrigger.getRectangle().width,
+                    chunkTrigger.getRectangle().height);
         }
     }
 

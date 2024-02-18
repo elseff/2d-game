@@ -110,7 +110,6 @@ public class Map {
             if(player.getChunkGeneratorRectangle().overlaps(chunk.getRectangle()))
                 chunk.render(delta);
         }
-
         shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(ChunkTrigger.getColor());
         for (int i = 0; i < chunks.size; i++) {
@@ -119,7 +118,7 @@ public class Map {
                 chunk.renderTriggers();
         }
         shapeRenderer.end();
-
+        Gdx.gl.glDisable(GL20.GL_BLEND);
         renderEnemies(delta);
     }
 

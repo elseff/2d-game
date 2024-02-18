@@ -19,10 +19,10 @@ import com.elseff.game.misc.Snowflake;
 import com.elseff.game.misc.SnowflakeController;
 import com.elseff.game.misc.popupmsg.PopUpMessagesController;
 import com.elseff.game.model.GameObject;
-import com.elseff.game.model.player.Player;
 import com.elseff.game.model.box.Box;
 import com.elseff.game.model.box.SmallCardBox;
 import com.elseff.game.model.enemy.Enemy;
+import com.elseff.game.model.player.Player;
 import com.elseff.game.util.MathUtils;
 
 import java.text.SimpleDateFormat;
@@ -82,7 +82,7 @@ public class GameScreen extends AbstractScreen {
         oselSound = Gdx.audio.newMusic(Gdx.files.internal("sounds/osel.mp3"));
 
         simpleDateFormat = new SimpleDateFormat("yy-MM-dd hh:mm:ss:SSS");
-        date= new Date();
+        date = new Date();
     }
 
     @Override
@@ -100,7 +100,6 @@ public class GameScreen extends AbstractScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         map.render(delta);
-        game.getBatch().begin();
 
         renderDistances();
         player.render(delta);
@@ -132,44 +131,47 @@ public class GameScreen extends AbstractScreen {
     }
 
     private void renderDistances() {
-        if (game.isDebug()) {
-            Gdx.gl.glEnable(GL20.GL_BLEND);
+        if (!game.isDebug())
+            return;
+
+        if(game.getBatch().isDrawing())
             game.getBatch().end();
-            game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Line);
-            game.getShapeRenderer().setColor(1, 1, 1, 0.5f);
-            for (int i = 0; i < map.getEnemies().size; i++) {
-                Enemy enemy = map.getEnemies().get(i);
-                Vector2 playerPos = player.getPosition();
-                Vector2 enemyPos = enemy.getPosition();
-                if (player.getChunkGeneratorRectangle().overlaps(enemy.getRectangle())) {
-                    double distance = MathUtils.distanceBetweenTwoPoints(playerPos, enemyPos);
-                    Vector2 middleOfTheLine = tempVector.set(MathUtils.middleOfTwoPoints(playerPos, enemyPos));
-                    Color oldShRColor = game.getShapeRenderer().getColor();
-                    game.getShapeRenderer().setColor(Color.WHITE);
-                    game.getShapeRenderer().set(ShapeRenderer.ShapeType.Filled);
-                    int rectWidth = 35;
-                    int rectHeight = 15;
-                    game.getShapeRenderer().rect(middleOfTheLine.x,
-                            middleOfTheLine.y - rectHeight / 2f,
-                            rectWidth,
-                            rectHeight);
-                    game.getShapeRenderer().set(ShapeRenderer.ShapeType.Line);
-                    game.getShapeRenderer().setColor(oldShRColor);
-                    game.getBatch().begin();
-                    Color oldColor = game.getFont().getColor();
-                    game.getFont().getColor().set(Color.BLACK);
-                    game.getFont().draw(game.getBatch(),
-                            String.format("%.2f", distance),
-                            middleOfTheLine.x,
-                            middleOfTheLine.y);
-                    game.getFont().setColor(oldColor);
-                    game.getBatch().end();
-                    game.getShapeRenderer().line(playerPos, enemyPos);
-                }
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Line);
+        game.getShapeRenderer().setColor(1, 1, 1, 0.5f);
+        for (int i = 0; i < map.getEnemies().size; i++) {
+            Enemy enemy = map.getEnemies().get(i);
+            Vector2 playerPos = player.getPosition();
+            Vector2 enemyPos = enemy.getPosition();
+            if (player.getChunkGeneratorRectangle().overlaps(enemy.getRectangle())) {
+                double distance = MathUtils.distanceBetweenTwoPoints(playerPos, enemyPos);
+                Vector2 middleOfTheLine = tempVector.set(MathUtils.middleOfTwoPoints(playerPos, enemyPos));
+                Color oldShRColor = game.getShapeRenderer().getColor();
+                game.getShapeRenderer().setColor(Color.WHITE);
+                game.getShapeRenderer().set(ShapeRenderer.ShapeType.Filled);
+                int rectWidth = 35;
+                int rectHeight = 15;
+                game.getShapeRenderer().rect(middleOfTheLine.x,
+                        middleOfTheLine.y - rectHeight / 2f,
+                        rectWidth,
+                        rectHeight);
+                game.getShapeRenderer().set(ShapeRenderer.ShapeType.Line);
+                game.getShapeRenderer().setColor(oldShRColor);
+                game.getBatch().begin();
+                Color oldColor = game.getFont().getColor();
+                game.getFont().getColor().set(Color.BLACK);
+                game.getFont().draw(game.getBatch(),
+                        String.format("%.2f", distance),
+                        middleOfTheLine.x,
+                        middleOfTheLine.y);
+                game.getFont().setColor(oldColor);
+                game.getBatch().end();
+                game.getShapeRenderer().line(playerPos, enemyPos);
             }
-            game.getShapeRenderer().end();
-            game.getBatch().begin();
         }
+        game.getShapeRenderer().end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     private void cameraUpdate(float delta) {
@@ -181,7 +183,7 @@ public class GameScreen extends AbstractScreen {
         player.getChunkGeneratorRectangle().y = camera.position.y - player.getChunkGeneratorRectangle().height / 2;
     }
 
-    private Date now(){
+    private Date now() {
         date.setTime(TimeUtils.millis());
         return date;
     }
@@ -218,7 +220,7 @@ public class GameScreen extends AbstractScreen {
         }
     }
 
-    private String CURRENT_TIME(){
+    private String CURRENT_TIME() {
         return simpleDateFormat.format(now());
     }
 
