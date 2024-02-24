@@ -196,7 +196,7 @@ public class Slime extends Enemy {
 
     private Direction getReversedDirection() {
         return switch (preferredDirection) {
-            case STAY -> Direction.STAY;
+            case IDLE -> Direction.IDLE;
             case LEFT -> Direction.RIGHT;
             case RIGHT -> Direction.LEFT;
             case UP -> Direction.DOWN;
@@ -221,7 +221,7 @@ public class Slime extends Enemy {
     private Direction getRandomPreferredDirection() {
         int random = (int) (Math.random() * 5);
         return switch (random) {
-            case 0 -> Direction.STAY;
+            case 0 -> Direction.IDLE;
             case 1 -> Direction.UP;
             case 2 -> Direction.LEFT;
             case 3 -> Direction.RIGHT;

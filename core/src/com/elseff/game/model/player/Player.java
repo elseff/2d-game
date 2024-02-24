@@ -91,7 +91,7 @@ public class Player extends GameObject {
         SCALE = 2f;
         tmpRect = new Rectangle();
 
-        direction = Direction.STAY;
+        direction = Direction.IDLE;
         reversedDirection = new Vector2(direction.getVx(), direction.getVy());
 
         chunkGeneratorRectangle = new Rectangle();
@@ -112,7 +112,7 @@ public class Player extends GameObject {
         Timer.Task generationTask = new Timer.Task() {
             @Override
             public void run() {
-                if (!direction.equals(Direction.STAY)) {
+                if (!direction.equals(Direction.IDLE)) {
                     Vector2 playerPos = getPosition();
                     Vector2 vector2 = new Vector2(playerPos.x - (direction.getVx() * 15), playerPos.y - (direction.getVy() * 15));
                     particlesPositions.put(vector2, 0.1f);
@@ -223,7 +223,7 @@ public class Player extends GameObject {
 
     private void changeCurrentFrame() {
         switch (this.direction) {
-            case STAY -> currentFrame = downAnimation.getKeyFrames()[0];
+            case IDLE -> currentFrame = downAnimation.getKeyFrames()[0];
             case DOWN -> currentFrame = downAnimation.getKeyFrame(getGame().getTime(), true);
             case UP -> currentFrame = upAnimation.getKeyFrame(getGame().getTime(), true);
             case LEFT -> {
@@ -243,11 +243,11 @@ public class Player extends GameObject {
 
     private void checkMovement(float dt) {
         if (Gdx.input.isKeyPressed(Input.Keys.A) && Gdx.input.isKeyPressed(Input.Keys.D)) {
-            move(Direction.STAY, dt);
+            move(Direction.IDLE, dt);
             return;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.W) && Gdx.input.isKeyPressed(Input.Keys.S)) {
-            move(Direction.STAY, dt);
+            move(Direction.IDLE, dt);
             return;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.W))
@@ -263,7 +263,7 @@ public class Player extends GameObject {
                 Gdx.input.isKeyPressed(Input.Keys.A) ||
                 Gdx.input.isKeyPressed(Input.Keys.W) ||
                 Gdx.input.isKeyPressed(Input.Keys.S))) {
-            move(Direction.STAY, dt);
+            move(Direction.IDLE, dt);
         }
     }
 

@@ -20,6 +20,7 @@ import com.elseff.game.misc.SnowflakeController;
 import com.elseff.game.misc.popupmsg.PopUpMessagesController;
 import com.elseff.game.model.GameObject;
 import com.elseff.game.model.box.Box;
+import com.elseff.game.model.box.RandomTextureBox;
 import com.elseff.game.model.box.SmallCardBox;
 import com.elseff.game.model.enemy.Enemy;
 import com.elseff.game.model.player.Player;

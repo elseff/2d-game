@@ -5,7 +5,7 @@ public enum Direction {
     RIGHT(1, 0),
     UP(0, 1),
     DOWN(0, -1),
-    STAY(0, 0);
+    IDLE(0, 0);
 
     private final int vx;
     private final int vy;
