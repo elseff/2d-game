@@ -35,6 +35,8 @@ public class PauseScreen extends AbstractScreen {
     @Override
     public void show() {
         Gdx.graphics.setCursor(cursor);
+        Gdx.input.setCursorCatched(true);
+        Gdx.input.setCursorPosition(game.getSCREEN_WIDTH()/2,game.getSCREEN_HEIGHT()/2);
         super.show();
     }
 

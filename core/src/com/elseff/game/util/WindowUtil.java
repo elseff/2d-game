@@ -82,11 +82,6 @@ public class WindowUtil {
                 gameScreen
                         .getPlayer()
                         .getSpeed().x));
-        data.add(String.format("current chunk: %s",
-                gameScreen
-                        .getMap()
-                        .getCurrentChunk()
-                        .getId()));
         data.add(String.format("monsters count: %s",
                 gameScreen
                         .getMap()

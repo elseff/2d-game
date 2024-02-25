@@ -1,32 +1,41 @@
 package com.elseff.game.model.enemy;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.objects.CircleMapObject;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.elseff.game.MyGdxGame;
+import com.elseff.game.misc.font.FontDefinition;
 import com.elseff.game.model.GameObject;
 import com.elseff.game.model.player.Player;
 import com.elseff.game.screen.GameScreen;
+import com.elseff.game.util.MathUtils;
 
 public abstract class Enemy extends GameObject {
     private TextureRegion textureRegion;
     private final SpriteBatch batch;
     private final ShapeRenderer shapeRenderer;
     private Circle collideCircle;
-    private boolean isSeePlayer;
+    private EnemyState state;
     private float hp;
+    private final Color circlesToPlayerColor;
+    private final Color rectColor;
+    private Color collideCircleColor;
 
     protected Enemy(MyGdxGame game, float x, float y, GameScreen gameScreen) {
         super(game, x, y, gameScreen);
         hp = 100;
         batch = game.getBatch();
         shapeRenderer = game.getShapeRenderer();
-        collideCircle = new Circle(0,0,300);
+        collideCircle = new Circle(0, 0, 300);
+        circlesToPlayerColor = new Color(0, 1, 0, 0.5f);
+        rectColor = new Color(1, 0.2f, 0, 0.4f);
+        getRectColor().set(rectColor);
+        state = EnemyState.IDLE;
     }
 
     @Override
@@ -37,7 +46,7 @@ public abstract class Enemy extends GameObject {
                 textureRegion.getRegionHeight() * getSCALE());
     }
 
-    private void update(){
+    private void update() {
         collideCircle.x = getPosition().x;
         collideCircle.y = getPosition().y;
         updatePlayerVisibility();
@@ -45,7 +54,9 @@ public abstract class Enemy extends GameObject {
 
     private void updatePlayerVisibility() {
         Player player = getGame().getGameScreen().getPlayer();
-        isSeePlayer = collideCircle.contains(player.getPosition());
+        boolean overlapsWithPlayer = collideCircle.contains(player.getPosition());
+        state = overlapsWithPlayer ? EnemyState.SEES_PLAYER : EnemyState.IDLE;
+        collideCircleColor = overlapsWithPlayer ? Color.RED : Color.GREEN;
     }
 
     public void render(float delta) {
@@ -62,27 +73,48 @@ public abstract class Enemy extends GameObject {
                 getSCALE(),
                 0.0f);
         getGame().GRACEFUL_SHAPE_RENDERER_BEGIN();
-        shapeRenderer.circle(collideCircle.x, collideCircle.y, collideCircle.radius);
         renderDebug();
         super.render(delta);
     }
 
     private void renderDebug() {
         if (!getGame().isDebug()) return;
-        getGame().getShapeRenderer().setColor(new Color(1f, 1f, 1f, 0.5f));
-        //CIRCLES
-        int countCircles = 25;
-        float x1 = getPosition().x;
+
+        shapeRenderer.setColor(getCollideCircleColor());
+        shapeRenderer.set(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.circle(collideCircle.x, collideCircle.y, collideCircle.radius);
+        //CIRCLES TO PLAYER
         Vector2 playerPos = getGame().getGameScreen().getPlayer().getPosition();
-        float x2 = playerPos.x;
-        float y1 = getPosition().y;
-        float y2 = playerPos.y;
+        double distance = MathUtils.distanceBetweenTwoPoints(playerPos, getPosition());
+        float x1 = playerPos.x;
+        float x2 = getPosition().x;
+        float y1 = playerPos.y;
+        float y2 = getPosition().y;
         int radius = 10;
+//        for (int j = 0; j < countCircles; j++) {
+//            float x = x1 + (x2 - x1) / countCircles * j;
+//            float y = y1 + (y2 - y1) / countCircles * j;
+//            shapeRenderer.circle(x, y, radius);
+//        }
+        shapeRenderer.setColor(circlesToPlayerColor);
+        double countCircles = distance / (radius * 2);
         for (int j = 0; j < countCircles; j++) {
-            float x = x1 + (x2 - x1) / countCircles * j;
-            float y = y1 + (y2 - y1) / countCircles * j;
-            shapeRenderer.circle(x, y, radius);
+            double x = x1 + (x2 - x1) / countCircles * j;
+            double y = y1 + (y2 - y1) / countCircles * j;
+            shapeRenderer.circle((float) x, (float) y, radius);
         }
+        getGame().GRACEFUL_SHAPE_RENDERER_END();
+        BitmapFont font = getGame().getGameResources().getFontFromDef(FontDefinition.ARIAL_20);
+        font.setColor(Color.WHITE);
+        font.draw(batch,
+                getState().getName(),
+                getPosition().x - getState().getName().length() * 3f,
+                getPosition().y + 50);
+        getGame().GRACEFUL_SHAPE_RENDERER_BEGIN();
+    }
+
+    private Color getCollideCircleColor() {
+        return collideCircleColor;
     }
 
     public abstract void hit(float damage);
@@ -97,8 +129,8 @@ public abstract class Enemy extends GameObject {
         return hp;
     }
 
-    public boolean isSeePlayer(){
-        return isSeePlayer;
+    public EnemyState getState() {
+        return state;
     }
 
     public void setHp(float hp) {

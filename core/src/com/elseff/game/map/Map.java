@@ -14,14 +14,16 @@ import com.elseff.game.model.enemy.Slime;
 import com.elseff.game.model.player.Player;
 import com.elseff.game.screen.GameScreen;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 public class Map {
     private final MyGdxGame game;
     private final GameScreen gameScreen;
     private final Array<Chunk> chunks;
     private final Array<Enemy> enemies;
-    private Chunk currentChunk;
+    private final Set<Chunk> currentChunks;
 
     private final Player player;
 
@@ -42,10 +44,11 @@ public class Map {
         enemies = new Array<>();
 
         addChunk(0, 0);
-        currentChunk = chunks.get(0);
 
         player = gameScreen.getPlayer();
         tmpVector = new Vector2();
+        currentChunks = new HashSet<>();
+        currentChunks.add(chunks.get(0));
     }
 
     public void addChunk(Vector2 position) {
@@ -92,10 +95,11 @@ public class Map {
             if (chunk.getRectangle().overlaps(player.getRectangle())) {
                 chunk.setCurrent(true);
                 chunk.update();
-                setCurrentChunk(chunk);
+                currentChunks.add(chunk);
             } else {
                 chunk.setCurrent(false);
                 chunk.update();
+                currentChunks.remove(chunk);
             }
         }
     }
@@ -266,16 +270,12 @@ public class Map {
         return chunks;
     }
 
-    public void setCurrentChunk(Chunk currentChunk) {
-        this.currentChunk = currentChunk;
+    public Set<Chunk> getCurrentChunks() {
+        return currentChunks;
     }
 
     public Array<Enemy> getEnemies() {
         return enemies;
-    }
-
-    public Chunk getCurrentChunk() {
-        return currentChunk;
     }
 
 }

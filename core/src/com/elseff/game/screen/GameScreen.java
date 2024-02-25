@@ -58,8 +58,9 @@ public class GameScreen extends AbstractScreen {
         map = new Map(game, this);
 
         //on the center of the start chunk
-        player.getPosition().set(map.getCurrentChunk().getPosition().x + map.getCurrentChunk().getWidthPixels() / 2f,
-                map.getCurrentChunk().getPosition().y + map.getCurrentChunk().getHeightPixels() / 2f);
+        Chunk initialChunk = map.getCurrentChunks().iterator().next();
+        player.getPosition().set(initialChunk.getPosition().x + initialChunk.getWidthPixels() / 2f,
+                initialChunk.getPosition().y + initialChunk.getHeightPixels() / 2f);
 
         camera.setToOrtho(
                 false,
@@ -189,31 +190,32 @@ public class GameScreen extends AbstractScreen {
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             Vector2 mousePos = game.getMouseController().getWorldMousePosition();
             Box box = new SmallCardBox(game, this, 0, 0);
-            Chunk currentChunk = map.getCurrentChunk();
-            if (currentChunk.getRectangle().contains(mousePos)) {
-                tempVector.set(
-                        (float) (Math.floor(currentChunk.getPosition().x + (int) ((mousePos.x - currentChunk.getRectangle().x) / 32) * 32f))
-                                + box.getRectangle().width / 2f,
-                        (float) (Math.floor(currentChunk.getPosition().y + (int) ((mousePos.y - currentChunk.getRectangle().y) / 32) * 32f))
-                                + box.getRectangle().height / 2f);
-                box.getPosition().set(tempVector);
-                if (map.isAreaClear(box.getRectangle())) {
-                    currentChunk.addGameObject(box);
-                    Gdx.app.log(CURRENT_TIME(), "added box to " + box.getPosition());
-                }
-            }
+            map.getCurrentChunks().forEach(currentChunk -> {
+                        tempVector.set(
+                                (float) (Math.floor(currentChunk.getPosition().x + (int) ((mousePos.x - currentChunk.getRectangle().x) / 32) * 32f))
+                                        + box.getRectangle().width / 2f,
+                                (float) (Math.floor(currentChunk.getPosition().y + (int) ((mousePos.y - currentChunk.getRectangle().y) / 32) * 32f))
+                                        + box.getRectangle().height / 2f);
+                        box.getPosition().set(tempVector);
+                        if (map.isAreaClear(box.getRectangle())) {
+                            currentChunk.addGameObject(box);
+                            Gdx.app.log(CURRENT_TIME(), "added box to " + box.getPosition());
+                        }
+                    }
+            );
 
         } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
             Vector2 mousePos = game.getMouseController().getWorldMousePosition();
-            Chunk currentChunk = map.getCurrentChunk();
-            for (int j = 0; j < currentChunk.getObjects().size; j++) {
-                GameObject gameObject = currentChunk.getObjects().get(j);
-                if (gameObject.getRectangle().contains(mousePos)) {
-                    currentChunk.getObjects().removeValue(gameObject, true);
-                    Gdx.app.log(CURRENT_TIME(), "removed box from " + gameObject.getPosition());
-                    break;
+            map.getCurrentChunks().forEach(currentChunk -> {
+                for (int j = 0; j < currentChunk.getObjects().size; j++) {
+                    GameObject gameObject = currentChunk.getObjects().get(j);
+                    if (gameObject.getRectangle().contains(mousePos)) {
+                        currentChunk.getObjects().removeValue(gameObject, true);
+                        Gdx.app.log(CURRENT_TIME(), "removed box from " + gameObject.getPosition());
+                        break;
+                    }
                 }
-            }
+            });
         }
     }
 

@@ -1,5 +1,6 @@
 package com.elseff.game.model.food;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
@@ -10,13 +11,14 @@ import com.elseff.game.screen.GameScreen;
 public abstract class Food extends GameObject {
     private final SpriteBatch batch;
     private final float SCALE;
+    private final Color rectColor;
 
     protected Food(MyGdxGame game, float x, float y, GameScreen gameScreen) {
         super(game, x, y, gameScreen);
         batch = game.getBatch();
         SCALE = 2.0f;
-
-        getRectColor().set(0.1f, 1.0f, 0.1f, 0.5f);
+        rectColor = new Color(0.1f, 1.0f, 0.1f, 0.3f);
+        getRectColor().set(rectColor);
     }
 
     @Override

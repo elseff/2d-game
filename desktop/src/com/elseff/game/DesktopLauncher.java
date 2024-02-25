@@ -2,6 +2,7 @@ package com.elseff.game;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.elseff.game.util.GameScreenDimension;
 
 public class DesktopLauncher {
     public static void main(String[] arg) {

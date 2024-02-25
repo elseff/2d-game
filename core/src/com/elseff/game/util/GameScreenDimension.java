@@ -1,4 +1,4 @@
-package com.elseff.game;
+package com.elseff.game.util;
 
 public enum GameScreenDimension {
     SMALL(854, 480),

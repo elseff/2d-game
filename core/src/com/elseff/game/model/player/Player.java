@@ -24,6 +24,7 @@ import com.elseff.game.screen.GameScreen;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Player extends GameObject {
@@ -57,10 +58,13 @@ public class Player extends GameObject {
 
     private boolean isCollidingWithMonster;
 
-    Timer shadowParticlesGenerationTimer;
-    Timer shadowParticlesDegenerationTimer;
+    private final Timer shadowParticlesGenerationTimer;
+    private final Timer shadowParticlesDegenerationTimer;
 
     private Map<Vector2, Float> particlesPositions;
+
+    private final Color defaultRectColor;
+    private final Color hittingByEnemyColor;
 
     public Player(MyGdxGame game, GameScreen gameScreen, float x, float y) {
         super(game, x, y, gameScreen);
@@ -99,8 +103,6 @@ public class Player extends GameObject {
         chunkGeneratorRectangle.width = game.getSCREEN_WIDTH();
         chunkGeneratorRectangle.height = game.getSCREEN_HEIGHT();
 
-        getRectColor().set(0.8f, 0.7f, 0.1f, 0.8f);
-
         hp = 100f;
         isCollidingWithMonster = false;
 
@@ -135,6 +137,9 @@ public class Player extends GameObject {
         shadowParticlesGenerationTimer.start();
         shadowParticlesDegenerationTimer.scheduleTask(degenerationTask, 0, 0.3f, -1);
         shadowParticlesDegenerationTimer.start();
+        defaultRectColor = new Color(0.8f, 0.7f, 0.1f, 0.5f);
+        hittingByEnemyColor = new Color(1, 0, 0, 0.5f);
+        getRectColor().set(defaultRectColor);
     }
 
 
@@ -149,7 +154,7 @@ public class Player extends GameObject {
         if (isCollidingWithMonster)
             batch.setShader(getGame().getRedShader());
 
-        if(!batch.isDrawing())
+        if (!batch.isDrawing())
             batch.begin();
 
         batch.draw(currentFrame,
@@ -278,76 +283,79 @@ public class Player extends GameObject {
     }
 
     private void checkCollision(float delta) {
-        Chunk currentChunk = getGameScreen().getMap().getCurrentChunk();
-        Array<Enemy> enemies = getGameScreen().getMap().getEnemies();
-        isCollidingWithMonster = false;
-        for (int i = 0; i < enemies.size; i++) {
-            Enemy enemy = enemies.get(i);
-            if (getRectangle().overlaps(enemy.getRectangle())) {
-                hit((float) (Math.random()));
-                enemy.hit((float) (Math.random() * 5));
-                isCollidingWithMonster = true;
-                speed.set(defaultSpeed.x / 2f, defaultSpeed.y / 2f);
-                boolean listHasMessageWithTypePlayerHit = false;
-                for (int j = 0; j < getGameScreen().getPopUpMessagesController().getMessages().size; j++) {
-                    PopUpMessage message = getGameScreen().getPopUpMessagesController().getMessages().get(j);
-                    if (PopUpMessageType.PLAYER_HIT.equals(message.getType())) {
-                        listHasMessageWithTypePlayerHit = true;
-                        break;
+        Set<Chunk> currentChunks = getGameScreen().getMap().getCurrentChunks();
+        currentChunks.forEach(currentChunk -> {
+                    Array<Enemy> enemies = getGameScreen().getMap().getEnemies();
+                    isCollidingWithMonster = false;
+                    for (int i = 0; i < enemies.size; i++) {
+                        Enemy enemy = enemies.get(i);
+                        if (getRectangle().overlaps(enemy.getRectangle())) {
+                            hit((float) (Math.random()));
+                            enemy.hit((float) (Math.random() * 5));
+                            isCollidingWithMonster = true;
+                            speed.set(defaultSpeed.x / 2f, defaultSpeed.y / 2f);
+                            boolean listHasMessageWithTypePlayerHit = false;
+                            for (int j = 0; j < getGameScreen().getPopUpMessagesController().getMessages().size; j++) {
+                                PopUpMessage message = getGameScreen().getPopUpMessagesController().getMessages().get(j);
+                                if (PopUpMessageType.PLAYER_HIT.equals(message.getType())) {
+                                    listHasMessageWithTypePlayerHit = true;
+                                    break;
+                                }
+                            }
+                            if (!listHasMessageWithTypePlayerHit) {
+                                PopUpMessage message = new PopUpMessage(
+                                        "HIT",
+                                        getPosition().x - 10,
+                                        getPosition().y + 40,
+                                        Color.RED,
+                                        PopUpMessageType.PLAYER_HIT);
+                                getGameScreen().getPopUpMessagesController().addMessage(
+                                        message
+                                );
+                                Gdx.app.log("PLAYER", message.getText() + " - " + message.getPosition());
+                            }
+                            break;
+                        } else {
+                            speed.set(defaultSpeed);
+                        }
                     }
-                }
-                if (!listHasMessageWithTypePlayerHit) {
-                    PopUpMessage message = new PopUpMessage(
-                            "HIT",
-                            getPosition().x - 10,
-                            getPosition().y + 40,
-                            Color.RED,
-                            PopUpMessageType.PLAYER_HIT);
-                    getGameScreen().getPopUpMessagesController().addMessage(
-                            message
-                    );
-                    Gdx.app.log("PLAYER", message.getText() + " - " + message.getPosition());
-                }
-                break;
-            } else {
-                speed.set(defaultSpeed);
-            }
-        }
-        for (int i = 0; i < currentChunk.getFoodArray().size; i++) {
-            Food food = currentChunk.getFoodArray().get(i);
-            if (getRectangle().overlaps(food.getRectangle())) {
-                currentChunk.getFoodArray().removeValue(food, true);
-                hit(-15);
+                    for (int i = 0; i < currentChunk.getFoodArray().size; i++) {
+                        Food food = currentChunk.getFoodArray().get(i);
+                        if (getRectangle().overlaps(food.getRectangle())) {
+                            currentChunk.getFoodArray().removeValue(food, true);
+                            hit(-15);
 
-                boolean listHasMessageWithTypePlayerHealth = false;
-                for (int j = 0; j < getGameScreen().getPopUpMessagesController().getMessages().size; j++) {
-                    PopUpMessage message = getGameScreen().getPopUpMessagesController().getMessages().get(j);
-                    if (PopUpMessageType.PLAYER_HEALTH.equals(message.getType())) {
-                        listHasMessageWithTypePlayerHealth = true;
-                        break;
+                            boolean listHasMessageWithTypePlayerHealth = false;
+                            for (int j = 0; j < getGameScreen().getPopUpMessagesController().getMessages().size; j++) {
+                                PopUpMessage message = getGameScreen().getPopUpMessagesController().getMessages().get(j);
+                                if (PopUpMessageType.PLAYER_HEALTH.equals(message.getType())) {
+                                    listHasMessageWithTypePlayerHealth = true;
+                                    break;
+                                }
+                            }
+                            if (!listHasMessageWithTypePlayerHealth) {
+                                PopUpMessage message = new PopUpMessage(
+                                        "HEALTH",
+                                        getPosition().x - 40,
+                                        getPosition().y + 40,
+                                        new Color(0.2f, 0.8f, 0.2f, 1.0f),
+                                        PopUpMessageType.PLAYER_HEALTH);
+                                getGameScreen().getPopUpMessagesController().addMessage(
+                                        message
+                                );
+                                Gdx.app.log("PLAYER", message.getText() + " - " + message.getPosition());
+                            }
+                        }
                     }
                 }
-                if (!listHasMessageWithTypePlayerHealth) {
-                    PopUpMessage message = new PopUpMessage(
-                            "HEALTH",
-                            getPosition().x - 40,
-                            getPosition().y + 40,
-                            new Color(0.2f, 0.8f, 0.2f, 1.0f),
-                            PopUpMessageType.PLAYER_HEALTH);
-                    getGameScreen().getPopUpMessagesController().addMessage(
-                            message
-                    );
-                    Gdx.app.log("PLAYER", message.getText() + " - " + message.getPosition());
-                }
-            }
-        }
+        );
     }
 
     private void updateRectColor() {
         if (isCollidingWithMonster)
-            getRectColor().set(1, 0, 0, 0.5f);
+            getRectColor().set(hittingByEnemyColor);
         else
-            getRectColor().set(0.8f, 0.7f, 0.1f, 0.8f);
+            getRectColor().set(defaultRectColor);
     }
 
     public void hit(float damage) {

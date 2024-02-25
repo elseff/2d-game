@@ -50,7 +50,6 @@ public class Slime extends Enemy {
         preferredDirection = getRandomPreferredDirection();
 
         hpBarColor = new Color(0f, 1f, 0f, 0.5f);
-        getRectColor().set(1, 0.2f, 0, 0.5f);
 
         speed = new Vector2(100, 100);
 
@@ -58,7 +57,7 @@ public class Slime extends Enemy {
         Timer.Task task = new Timer.Task() {
             @Override
             public void run() {
-                if (!isSeePlayer())
+                if (EnemyState.IDLE.equals(getState()))
                     preferredDirection = getRandomPreferredDirection();
             }
         };
@@ -110,7 +109,7 @@ public class Slime extends Enemy {
     private void update(float delta) {
         updateCurrentFrame();
         regenerationHp(delta / 2);
-        if (!isSeePlayer())
+        if (EnemyState.IDLE.equals(getState()))
             move(delta);
 
         attack(delta);
@@ -134,9 +133,8 @@ public class Slime extends Enemy {
         Player player = game.getGameScreen().getPlayer();
         Vector2 playerPosition = player.getPosition();
 
-        if (isSeePlayer())
+        if (EnemyState.SEES_PLAYER.equals(getState()))
             moveToPoint(delta, player.getPosition());
-
     }
 
     private void updateHpBarColor() {
