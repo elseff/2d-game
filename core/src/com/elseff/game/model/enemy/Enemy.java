@@ -12,7 +12,7 @@ import com.elseff.game.MyGdxGame;
 import com.elseff.game.map.chunk.Chunk;
 import com.elseff.game.misc.font.FontDefinition;
 import com.elseff.game.model.GameObject;
-import com.elseff.game.model.box.Box;
+import com.elseff.game.model.Obstacle;
 import com.elseff.game.model.player.Player;
 import com.elseff.game.screen.GameScreen;
 import com.elseff.game.util.MathUtils;
@@ -38,7 +38,7 @@ public abstract class Enemy extends GameObject {
         hp = 100;
         batch = game.getBatch();
         shapeRenderer = game.getShapeRenderer();
-        collideCircle = new Circle(0, 0, 500);
+        collideCircle = new Circle(0, 0, 200);
         circlesToPlayerColor = new Color(1, 1, 1, 0.5f);
         Color rectColor = new Color(1, 0.2f, 0, 0.4f);
         getRectColor().set(rectColor);
@@ -107,7 +107,7 @@ public abstract class Enemy extends GameObject {
         for (Circle circle : circlesToPlayer) // for every circles to player
             for (Chunk chunk : getGameScreen().getMap().getCurrentChunks()) // for every current chunks
                 for (GameObject gameObject : chunk.getObjects()) // for every gameobject in curreny chunk
-                    if (gameObject instanceof Box) // // TODO: 2/25/24 OBSTACLE INTERFACE MARK
+                    if (gameObject instanceof Obstacle)
                         if (MathUtils.isCircleOverlapsWithRectangle(circle, gameObject.getRectangle()))
                             return true;
         return false;

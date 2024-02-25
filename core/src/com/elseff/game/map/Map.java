@@ -9,6 +9,7 @@ import com.elseff.game.MyGdxGame;
 import com.elseff.game.map.chunk.Chunk;
 import com.elseff.game.map.chunk.trigger.ChunkTrigger;
 import com.elseff.game.model.GameObject;
+import com.elseff.game.model.Obstacle;
 import com.elseff.game.model.enemy.Enemy;
 import com.elseff.game.model.enemy.Slime;
 import com.elseff.game.model.player.Player;
@@ -133,8 +134,9 @@ public class Map {
             Chunk chunk = chunks.get(i);
             for (int j = 0; j < chunk.getObjects().size; j++) {
                 GameObject gameObject = chunk.getObjects().get(j);
-                if (gameObject.getRectangle().overlaps(rectangle))
-                    return false;
+                if (gameObject instanceof Obstacle)
+                    if (gameObject.getRectangle().overlaps(rectangle))
+                        return false;
             }
         }
 //        for (int i = 0; i < enemies.size; i++) {

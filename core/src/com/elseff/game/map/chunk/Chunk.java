@@ -189,9 +189,17 @@ public class Chunk {
             } else {
                 randomBox = new RandomTextureBox(game, gameScreen, 0, 0);
             }
+            boolean findCollision;
             do {
+                findCollision = false;
                 randomBox.getPosition().set(gameScreen.getMap().randomPosition(this, randomBox));
-            } while (randomBox.getRectangle().overlaps(player.getRectangle()));
+                for (GameObject object : objects) {
+                    if (object.getRectangle().overlaps(randomBox.getRectangle())){
+                        findCollision = true;
+                        break;
+                    }
+                }
+            } while (randomBox.getRectangle().overlaps(player.getRectangle()) || findCollision);
             addGameObject(randomBox);
         }
     }

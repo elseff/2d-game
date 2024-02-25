@@ -6,9 +6,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.model.GameObject;
+import com.elseff.game.model.Obstacle;
 import com.elseff.game.screen.GameScreen;
 
-public abstract class Box extends GameObject {
+public abstract class Box extends GameObject implements Obstacle {
     private final SpriteBatch batch;
     private final float SCALE;
     private final Rectangle rectangle;
@@ -16,7 +17,7 @@ public abstract class Box extends GameObject {
     protected Box(MyGdxGame game, GameScreen gameScreen, float x, float y) {
         super(game, x, y, gameScreen);
         this.batch = getGame().getBatch();
-        this.SCALE = 2.0f;
+        this.SCALE = 8.0f;
         getRectColor().set(1, 1, 1, 0.5f);
         rectangle = new Rectangle();
     }
