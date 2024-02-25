@@ -96,31 +96,21 @@ public abstract class Enemy extends GameObject {
     private void updateEnemyState() {
         Player player = getGame().getGameScreen().getPlayer();
         boolean collideCircleOverlapsWithPlayer = MathUtils.isCircleOverlapsWithRectangle(collideCircle, player.getRectangle());
-        boolean find = false;
-        if (collideCircleOverlapsWithPlayer) {
-            for (Circle circle : circlesToPlayer) {
-                if (find) break;
-                for (Chunk chunk : getGameScreen().getMap().getCurrentChunks()) {
-                    if (find) break;
-                    for (GameObject gameObject : chunk.getObjects()) {
-                        if (gameObject instanceof Box) {
-                            boolean circleToPlayerOverlapsWithObstacle = MathUtils.isCircleOverlapsWithRectangle(circle, gameObject.getRectangle());
-                            if (circleToPlayerOverlapsWithObstacle) {
-                                find = true;
-                                state = EnemyState.LOST_PLAYER;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            if (!find)
-                state = EnemyState.SEES_PLAYER;
-        } else {
+        if (collideCircleOverlapsWithPlayer)
+            state = isCircleToPlayerCollidesWithObstacle() ? EnemyState.LOST_PLAYER : EnemyState.SEES_PLAYER;
+        else
             state = EnemyState.IDLE;
-            collideCircleColor = Color.GREEN;
-        }
         collideCircleColor = collideCircleOverlapsWithPlayer ? Color.RED : Color.GREEN;
+    }
+
+    private boolean isCircleToPlayerCollidesWithObstacle() {
+        for (Circle circle : circlesToPlayer) // for every circles to player
+            for (Chunk chunk : getGameScreen().getMap().getCurrentChunks()) // for every current chunks
+                for (GameObject gameObject : chunk.getObjects()) // for every gameobject in curreny chunk
+                    if (gameObject instanceof Box) // // TODO: 2/25/24 OBSTACLE INTERFACE MARK
+                        if (MathUtils.isCircleOverlapsWithRectangle(circle, gameObject.getRectangle()))
+                            return true;
+        return false;
     }
 
     public void render(float delta) {
