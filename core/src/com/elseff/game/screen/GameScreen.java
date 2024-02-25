@@ -95,24 +95,21 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void render(float delta) {
         update(delta);
-        Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glClearColor(0.01f, 0.4f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
+        game.BATCH_BEGIN();
         map.render(delta);
 
         renderDistances();
         player.render(delta);
         popUpMessagesController.render(delta);
-        game.getBatch().end();
-        Gdx.gl.glEnable(GL20.GL_BLEND);
         renderDebugMode();
 
         snowflakeController.render(delta);
         game.getWindowUtil().playerHpBar();
         game.getWindowUtil().renderMouse();
-        game.getShapeRenderer().end();
+        game.BATCH_END();
     }
 
     private void renderDebugMode() {
@@ -137,11 +134,7 @@ public class GameScreen extends AbstractScreen {
         if (!game.isDebug())
             return;
 
-        if (game.getBatch().isDrawing()) {
-            game.getBatch().end();
-            Gdx.gl.glEnable(GL20.GL_BLEND);
-        }
-        game.getShapeRenderer().set(ShapeRenderer.ShapeType.Line);
+        game.GRACEFUL_SHAPE_RENDERER_BEGIN(ShapeRenderer.ShapeType.Line);
         game.getShapeRenderer().setColor(1, 1, 1, 0.5f);
         for (int i = 0; i < map.getEnemies().size; i++) {
             Enemy enemy = map.getEnemies().get(i);
@@ -153,8 +146,6 @@ public class GameScreen extends AbstractScreen {
             double distance = MathUtils.distanceBetweenTwoPoints(playerPos, enemyPos);
             Vector2 middleOfTheLine = tempVector.set(MathUtils.middleOfTwoPoints(playerPos, enemyPos));
             Color oldShRColor = game.getShapeRenderer().getColor();
-//            game.getBatch().end();
-//            Gdx.gl.glEnable(GL20.GL_BLEND);
 
             game.getShapeRenderer().setColor(Color.WHITE);
             game.getShapeRenderer().set(ShapeRenderer.ShapeType.Filled);
@@ -166,8 +157,7 @@ public class GameScreen extends AbstractScreen {
                     rectHeight);
             game.getShapeRenderer().set(ShapeRenderer.ShapeType.Line);
             game.getShapeRenderer().setColor(oldShRColor);
-            if (!game.getBatch().isDrawing())
-                game.getBatch().begin();
+            game.GRACEFUL_SHAPE_RENDERER_END();
             Color oldColor = game.getFont().getColor();
             game.getFont().getColor().set(Color.BLACK);
             game.getFont().draw(game.getBatch(),
@@ -175,11 +165,10 @@ public class GameScreen extends AbstractScreen {
                     middleOfTheLine.x,
                     middleOfTheLine.y);
             game.getFont().setColor(oldColor);
-            game.getBatch().end();
+            game.GRACEFUL_SHAPE_RENDERER_BEGIN();
 //            game.getShapeRenderer().line(playerPos, enemyPos);
         }
-        if (!game.getBatch().isDrawing())
-            game.getBatch().begin();
+        game.GRACEFUL_SHAPE_RENDERER_END();
     }
 
     private void cameraUpdate(float delta) {

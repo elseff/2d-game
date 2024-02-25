@@ -1,8 +1,6 @@
 package com.elseff.game.model.enemy;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -12,7 +10,6 @@ import com.elseff.game.MyGdxGame;
 import com.elseff.game.misc.Direction;
 import com.elseff.game.model.player.Player;
 import com.elseff.game.screen.GameScreen;
-import com.elseff.game.util.MathUtils;
 
 
 public class Slime extends Enemy {
@@ -32,7 +29,6 @@ public class Slime extends Enemy {
     private final Timer timer;
     private final Color hpBarColor;
     private final Vector2 tmpVector;
-    private boolean isSeePlayer;
 
     public Slime(MyGdxGame game, GameScreen gameScreen, float x, float y) {
         super(game, x, y, gameScreen);
@@ -57,13 +53,12 @@ public class Slime extends Enemy {
         getRectColor().set(1, 0.2f, 0, 0.5f);
 
         speed = new Vector2(100, 100);
-        isSeePlayer = false;
 
         timer = new Timer();
         Timer.Task task = new Timer.Task() {
             @Override
             public void run() {
-                if (!isSeePlayer)
+                if (!isSeePlayer())
                     preferredDirection = getRandomPreferredDirection();
             }
         };
@@ -115,7 +110,7 @@ public class Slime extends Enemy {
     private void update(float delta) {
         updateCurrentFrame();
         regenerationHp(delta / 2);
-        if (!isSeePlayer)
+        if (!isSeePlayer())
             move(delta);
 
         attack(delta);
@@ -139,13 +134,9 @@ public class Slime extends Enemy {
         Player player = game.getGameScreen().getPlayer();
         Vector2 playerPosition = player.getPosition();
 
-        double distanceToPlayer = MathUtils.distanceBetweenTwoPoints(playerPosition, getPosition());
-        if (distanceToPlayer < 500) {
-            isSeePlayer = true;
+        if (isSeePlayer())
             moveToPoint(delta, player.getPosition());
-        } else {
-            isSeePlayer = false;
-        }
+
     }
 
     private void updateHpBarColor() {
@@ -167,35 +158,16 @@ public class Slime extends Enemy {
     private void renderDebug() {
         if (!game.isDebug()) return;
 
+        game.GRACEFUL_SHAPE_RENDERER_END();
         // HP
         font.draw(batch, String.valueOf((int) getHp()), getRectangle().x + 5,
                 getRectangle().y + getRectangle().height + 20);
-        batch.end();
-        Gdx.gl.glEnable(GL20.GL_BLEND);
 
-        //CIRCLES
-        shapeRenderer.set(ShapeRenderer.ShapeType.Line);
-        int countCircles = 25;
-        float x1 = getPosition().x;
-        Vector2 playerPos = getGame().getGameScreen().getPlayer().getPosition();
-        float x2 = playerPos.x;
-        float y1 = getPosition().y;
-        float y2 = playerPos.y;
-        int radius = 10;
-        for (int j = 0; j < countCircles; j++) {
-            float x = x1 + (x2 - x1) / countCircles * j;
-            float y = y1 + (y2 - y1) / countCircles * j;
-
-            shapeRenderer.circle(x, y, radius);
-        }
-
-        batch.begin();
+        game.GRACEFUL_SHAPE_RENDERER_BEGIN(ShapeRenderer.ShapeType.Line);
     }
 
     private void renderHpBar() {
-        batch.end();
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
+        game.GRACEFUL_SHAPE_RENDERER_BEGIN(ShapeRenderer.ShapeType.Filled);
 
         //border rectangle of hp bar
         shapeRenderer.setColor(0.1f, 0.1f, 0.1f, 0.5f);
@@ -211,7 +183,7 @@ public class Slime extends Enemy {
                 getHp() / 2f,
                 10);
 
-        batch.begin();
+        game.GRACEFUL_SHAPE_RENDERER_END();
     }
 
     private Direction getReversedDirection() {

@@ -34,6 +34,7 @@ public abstract class Box extends GameObject {
     }
 
     public void render(float delta) {
+        getGame().GRACEFUL_SHAPE_RENDERER_END();
         batch.draw(getTexture(),
                 getPosition().x - getTexture().getRegionWidth() / 2f,
                 getPosition().y - getTexture().getRegionHeight() / 2f,
@@ -44,6 +45,7 @@ public abstract class Box extends GameObject {
                 SCALE,
                 SCALE,
                 0.0f);
+        getGame().GRACEFUL_SHAPE_RENDERER_BEGIN();
         super.render(delta);
     }
 }

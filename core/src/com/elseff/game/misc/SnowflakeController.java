@@ -11,11 +11,13 @@ import com.elseff.game.MyGdxGame;
 import com.elseff.game.screen.GameScreen;
 
 public class SnowflakeController {
+    private final MyGdxGame game;
     private final Array<Snowflake> snowflakes;
     private final Timer generationTimer;
     private final ShapeRenderer shapeRenderer;
 
     public SnowflakeController(MyGdxGame game, GameScreen gameScreen) {
+        this.game = game;
         snowflakes = new Array<>();
         generationTimer = new Timer();
         Timer.Task task = new Timer.Task() {
@@ -49,8 +51,7 @@ public class SnowflakeController {
 
     public void render(float delta) {
         update(delta);
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
+        game.GRACEFUL_SHAPE_RENDERER_BEGIN(ShapeRenderer.ShapeType.Filled);
         for (int i = 0; i < snowflakes.size; i++) {
             Snowflake snowflake = snowflakes.get(i);
 
@@ -60,7 +61,7 @@ public class SnowflakeController {
                     snowflake.getRectangle().width,
                     snowflake.getRectangle().height);
         }
-//        shapeRenderer.end();
+        game.GRACEFUL_SHAPE_RENDERER_END();
     }
 
     private void update(float delta) {

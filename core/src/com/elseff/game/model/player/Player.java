@@ -170,7 +170,7 @@ public class Player extends GameObject {
     }
 
     private void renderParticles() {
-        Gdx.gl.glEnable(GL20.GL_BLEND);
+        getGame().GRACEFUL_SHAPE_RENDERER_BEGIN();
         shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
         for (Map.Entry<Vector2, Float> e : particlesPositions.entrySet()) {
             Vector2 pos = e.getKey();
@@ -179,6 +179,7 @@ public class Player extends GameObject {
             shapeRenderer.setColor(color);
             shapeRenderer.circle(pos.x, pos.y, 20, 12);
         }
+        getGame().GRACEFUL_SHAPE_RENDERER_END();
     }
 
     private void renderDebug() {

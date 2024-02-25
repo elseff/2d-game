@@ -41,8 +41,7 @@ public abstract class GameObject {
     private void renderDebug() {
         if (!getGame().isDebug()) return;
 
-        if (!batch.isDrawing())
-            batch.begin();
+        game.GRACEFUL_SHAPE_RENDERER_END();
         Color oldColor = font.getColor();
         font.setColor(Color.WHITE);
         font.draw(batch,
@@ -50,14 +49,9 @@ public abstract class GameObject {
                 getPosition().x - getRectangle().width / 2f,
                 getPosition().y - getRectangle().height / 1.5f);
         font.setColor(oldColor);
-
-        batch.end();
-        Gdx.gl.glEnable(GL20.GL_BLEND);
+        game.GRACEFUL_SHAPE_RENDERER_BEGIN(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(getRectColor());
-        shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.rect(getRectangle().x, getRectangle().y, getRectangle().width, getRectangle().height);
-        batch.begin();
-
     }
 
     public abstract Rectangle getRectangle();

@@ -3,6 +3,7 @@ package com.elseff.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -112,6 +113,40 @@ public class MyGdxGame extends Game {
         SCREEN_WIDTH = Gdx.graphics.getWidth();
         SCREEN_HEIGHT = Gdx.graphics.getHeight();
         System.out.println("resized game");
+    }
+
+    public void BATCH_BEGIN() {
+        if (batch.isDrawing()) return;
+        batch.begin();
+    }
+
+    public void BATCH_END() {
+        if (!batch.isDrawing()) return;
+        batch.end();
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+    }
+
+    public void GRACEFUL_SHAPE_RENDERER_BEGIN(ShapeRenderer.ShapeType type) {
+        if (shapeRenderer.isDrawing()) {
+            shapeRenderer.set(type);
+            return;
+        }
+
+        BATCH_END();
+        shapeRenderer.begin(type);
+    }
+
+    public void GRACEFUL_SHAPE_RENDERER_BEGIN() {
+        if (shapeRenderer.isDrawing()) return;
+
+        BATCH_END();
+        shapeRenderer.begin();
+    }
+
+    public void GRACEFUL_SHAPE_RENDERER_END() {
+        if (!shapeRenderer.isDrawing()) return;
+        shapeRenderer.end();
+        BATCH_BEGIN();
     }
 
     public int getSCREEN_WIDTH() {

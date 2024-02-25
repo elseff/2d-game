@@ -1,7 +1,5 @@
 package com.elseff.game.map;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -103,7 +101,7 @@ public class Map {
     }
 
     public void render(float delta) {
-        shapeRenderer.set(ShapeRenderer.ShapeType.Line);
+        game.GRACEFUL_SHAPE_RENDERER_BEGIN(ShapeRenderer.ShapeType.Line);
         for (int i = 0; i < chunks.size; i++) {
             Chunk chunk = chunks.get(i);
             if (player.getChunkGeneratorRectangle().overlaps(chunk.getRectangle()))
@@ -116,18 +114,18 @@ public class Map {
             if (chunk.getRectangle().overlaps(player.getChunkGeneratorRectangle()))
                 chunk.renderTriggers();
         }
+        game.GRACEFUL_SHAPE_RENDERER_END();
         renderEnemies(delta);
     }
 
     private void renderEnemies(float delta) {
-        batch.begin();
+        game.GRACEFUL_SHAPE_RENDERER_END();
         for (int i = 0; i < enemies.size; i++) {
             Enemy enemy = enemies.get(i);
             if (player.getChunkGeneratorRectangle().overlaps(enemy.getRectangle()))
                 enemy.render(delta);
         }
-        batch.end();
-        Gdx.gl.glEnable(GL20.GL_BLEND);
+        game.GRACEFUL_SHAPE_RENDERER_BEGIN();
     }
 
     public boolean isAreaClear(Rectangle rectangle) {

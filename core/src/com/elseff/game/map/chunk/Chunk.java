@@ -92,7 +92,14 @@ public class Chunk {
     }
 
     public void render(float delta) {
-        shapeRenderer.set(ShapeRenderer.ShapeType.Line);
+        renderCells();
+        renderDebug();
+        renderObjects(delta);
+        renderFood(delta);
+    }
+
+    private void renderCells() {
+        game.GRACEFUL_SHAPE_RENDERER_BEGIN(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(currentColor);
         for (int j = 0; j < width; j++) {
             for (int k = 0; k < height; k++) {
@@ -103,30 +110,63 @@ public class Chunk {
                         cellSize);
             }
         }
-
-        renderDebug();
-        batch.begin();
-        renderObjects(delta);
-        renderFood(delta);
-        batch.end();
-        Gdx.gl.glEnable(GL20.GL_BLEND);
+        game.GRACEFUL_SHAPE_RENDERER_END();
     }
 
     private void renderDebug() {
         if (!game.isDebug()) return;
 
+        game.GRACEFUL_SHAPE_RENDERER_BEGIN();
         if (isCurrent()) {
             shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.rect(position.x, position.y, getWidthPixels(), getHeightPixels());
         }
 
-        batch.begin();
+        game.GRACEFUL_SHAPE_RENDERER_END();
         font.draw(game.getBatch(),
                 String.format("chunk:%s (%.1f; %.1f) - (%s)", id, position.x, position.y, getObjects().size),
                 position.x + 2,
                 position.y + 10);
-        batch.end();
-        Gdx.gl.glEnable(GL20.GL_BLEND);
+        game.GRACEFUL_SHAPE_RENDERER_BEGIN();
+    }
+
+    private void renderObjects(float delta) {
+        game.GRACEFUL_SHAPE_RENDERER_END();
+        for (int j = 0; j < objects.size; j++) {
+            GameObject object = objects.get(j);
+            if (player.getChunkGeneratorRectangle().overlaps(object.getRectangle()))
+                object.render(delta);
+        }
+        game.GRACEFUL_SHAPE_RENDERER_BEGIN();
+    }
+
+    public void renderTriggers() {
+        if (!game.isDebug())
+            return;
+        if (!hasTriggers)
+            return;
+
+        game.GRACEFUL_SHAPE_RENDERER_BEGIN(ShapeRenderer.ShapeType.Filled);
+        for (int j = 0; j < triggers.size; j++) {
+            ChunkTrigger chunkTrigger = triggers.get(j);
+            shapeRenderer.rect(
+                    chunkTrigger.getRectangle().x,
+                    chunkTrigger.getRectangle().y,
+                    chunkTrigger.getRectangle().width,
+                    chunkTrigger.getRectangle().height);
+        }
+        game.GRACEFUL_SHAPE_RENDERER_END();
+    }
+
+    public void renderFood(float delta) {
+        game.GRACEFUL_SHAPE_RENDERER_END();
+        for (int i = 0; i < foodArray.size; i++) {
+            Food food = foodArray.get(i);
+            if (player.getChunkGeneratorRectangle().overlaps(food.getRectangle())) {
+                food.render(delta);
+            }
+        }
+        game.GRACEFUL_SHAPE_RENDERER_BEGIN();
     }
 
     public void update() {
@@ -138,40 +178,6 @@ public class Chunk {
             currentColor = isCurrentColor;
         else
             currentColor = isNotCurrentColor;
-    }
-
-    private void renderObjects(float delta) {
-        for (int j = 0; j < objects.size; j++) {
-            GameObject object = objects.get(j);
-            if (player.getChunkGeneratorRectangle().overlaps(object.getRectangle()))
-                object.render(delta);
-        }
-    }
-
-    public void renderTriggers() {
-        if (!game.isDebug())
-            return;
-        if (!hasTriggers)
-            return;
-
-        for (int j = 0; j < triggers.size; j++) {
-            ChunkTrigger chunkTrigger = triggers.get(j);
-            Gdx.gl.glEnable(GL20.GL_BLEND);
-            shapeRenderer.rect(
-                    chunkTrigger.getRectangle().x,
-                    chunkTrigger.getRectangle().y,
-                    chunkTrigger.getRectangle().width,
-                    chunkTrigger.getRectangle().height);
-        }
-    }
-
-    public void renderFood(float delta) {
-        for (int i = 0; i < foodArray.size; i++) {
-            Food food = foodArray.get(i);
-            if (player.getChunkGeneratorRectangle().overlaps(food.getRectangle())) {
-                food.render(delta);
-            }
-        }
     }
 
     public void fillRandomObjects() {

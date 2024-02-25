@@ -22,24 +22,24 @@ public class WindowUtil {
     private final GameScreen gameScreen;
     private final int margin = 20; // 20 by default
     private final int padding = 5; // 5 by default
-    private final SpriteBatch batch;
+    private final SpriteBatch ownBatch;
     private final BitmapFont font;
     private final Array<String> data; // info tab data
-    private final ShapeRenderer shapeRenderer;
+    private final ShapeRenderer ownShapeRenderer;
     private final Color playerHpBarColor;
     private final float playerHpBarColorOpacity;
 
     public WindowUtil(MyGdxGame game, GameScreen gameScreen) {
         this.game = game;
         this.gameScreen = gameScreen;
-        this.batch = new SpriteBatch(); // own batch
+        this.ownBatch = new SpriteBatch(); // own batch
 
         this.data = new Array<>();
         data.add("DEBUG MODE"); // first line in info tab is title of debug mode
         this.font = new BitmapFont();
         this.font.setColor(Color.GREEN);
-        this.shapeRenderer = new ShapeRenderer();
-        shapeRenderer.scale(2, 2, 2);
+        this.ownShapeRenderer = new ShapeRenderer();
+        ownShapeRenderer.scale(2, 2, 2);
         playerHpBarColorOpacity = 0.65f;
         playerHpBarColor = new Color(0f, 1f, 0f, playerHpBarColorOpacity);
     }
@@ -120,45 +120,44 @@ public class WindowUtil {
     }
 
     public void info() {
-        batch.begin();
+        ownBatch.begin();
         for (int i = 0; i < data.size; i++) {
             font.setColor(Color.WHITE);
-            font.draw(batch, data.get(i), padding, game.getSCREEN_HEIGHT() - (margin * i) - padding);
+            font.draw(ownBatch, data.get(i), padding, game.getSCREEN_HEIGHT() - (margin * i) - padding);
         }
-        batch.end();
+        ownBatch.end();
         Gdx.gl.glEnable(GL20.GL_BLEND);
     }
 
     public void playerHpBar() {
-        batch.begin();
+        ownBatch.begin();
         BitmapFont arial30 = game.getGameResources().getFontFromDef(FontDefinition.ARIAL_30);
         arial30.setColor(Color.GOLDENROD);
-        arial30.draw(batch, "Your hp", 30, 110);
-        batch.end();
+        arial30.draw(ownBatch, "Your hp", 30, 110);
+        ownBatch.end();
         Gdx.gl.glEnable(GL20.GL_BLEND);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(0.1f, 0.1f, 0.1f, 0.5f);
-        shapeRenderer.rect(10, 10, 104, 32);
-        shapeRenderer.setColor(playerHpBarColor);
-        shapeRenderer.rect(12, 12, gameScreen.getPlayer().getHp(), 28);
-        shapeRenderer.end();
+        ownShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        ownShapeRenderer.setColor(0.1f, 0.1f, 0.1f, 0.5f);
+        ownShapeRenderer.rect(10, 10, 104, 32);
+        ownShapeRenderer.setColor(playerHpBarColor);
+        ownShapeRenderer.rect(12, 12, gameScreen.getPlayer().getHp(), 28);
+        ownShapeRenderer.end();
 
         // count of hp text
         if (game.isDebug()) {
-            batch.begin();
+            ownBatch.begin();
             this.font.setColor(Color.WHITE);
-            this.font.draw(batch, String.valueOf((int) gameScreen.getPlayer().getHp()), 110, 55);
-            batch.end();
+            this.font.draw(ownBatch, String.valueOf((int) gameScreen.getPlayer().getHp()), 110, 55);
+            ownBatch.end();
             Gdx.gl.glEnable(GL20.GL_BLEND);
         }
     }
 
     public void renderMouse() {
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        game.getShapeRenderer().set(ShapeRenderer.ShapeType.Filled);
+        game.GRACEFUL_SHAPE_RENDERER_BEGIN(ShapeRenderer.ShapeType.Filled);
         game.getShapeRenderer().setColor(Color.WHITE);
         Vector2 mousePos = game.getMouseController().getWorldMousePosition();
         game.getShapeRenderer().circle(mousePos.x, mousePos.y, 5);
-//        game.getShapeRenderer().end();
+        game.GRACEFUL_SHAPE_RENDERER_END();
     }
 }
