@@ -84,7 +84,7 @@ public class Player extends GameObject {
         batch = getGame().getBatch();
         shapeRenderer = game.getShapeRenderer();
 
-        defaultSpeed = new Vector2(200f, 200f);
+        defaultSpeed = new Vector2(300f, 300f);
         speed = new Vector2();
         speed.set(defaultSpeed);
 
@@ -141,23 +141,16 @@ public class Player extends GameObject {
     @Override
     public void render(float dt) {
         update(dt);
-        Gdx.gl.glEnable(GL20.GL_BLEND);
 
-        shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
-        for (Map.Entry<Vector2, Float> e : particlesPositions.entrySet()) {
-            Vector2 pos = e.getKey();
-            Float lifetime = e.getValue();
-            Color color = new Color(0, 0, 0, lifetime);
-            shapeRenderer.setColor(color);
-            shapeRenderer.circle(pos.x, pos.y, 20, 12);
-        }
-//        shapeRenderer.end();
+        renderParticles();
 
-        batch.begin();
         super.render(dt);
 
         if (isCollidingWithMonster)
             batch.setShader(getGame().getRedShader());
+
+        if(!batch.isDrawing())
+            batch.begin();
 
         batch.draw(currentFrame,
                 getPosition().x - currentFrame.getRegionWidth() / 2f,
@@ -169,21 +162,37 @@ public class Player extends GameObject {
                 SCALE,
                 SCALE,
                 0.0f);
-
         batch.setShader(null); // disable shader
 
-        if (getGame().isDebug()) {
-            batch.end();
-            Gdx.gl.glEnable(GL20.GL_BLEND);
-            shapeRenderer.setColor(chunkGeneratorRectangleColor);
-            shapeRenderer.set(ShapeRenderer.ShapeType.Line);
-            shapeRenderer.rect(chunkGeneratorRectangle.x,
-                    chunkGeneratorRectangle.y,
-                    chunkGeneratorRectangle.width,
-                    chunkGeneratorRectangle.height);
-//            shapeRenderer.end();
-            batch.begin();
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+
+        renderDebug();
+    }
+
+    private void renderParticles() {
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
+        for (Map.Entry<Vector2, Float> e : particlesPositions.entrySet()) {
+            Vector2 pos = e.getKey();
+            Float lifetime = e.getValue();
+            Color color = new Color(0, 0, 0, lifetime);
+            shapeRenderer.setColor(color);
+            shapeRenderer.circle(pos.x, pos.y, 20, 12);
         }
+    }
+
+    private void renderDebug() {
+        if (!getGame().isDebug()) return;
+
+        batch.end();
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        shapeRenderer.setColor(chunkGeneratorRectangleColor);
+        shapeRenderer.set(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.rect(chunkGeneratorRectangle.x,
+                chunkGeneratorRectangle.y,
+                chunkGeneratorRectangle.width,
+                chunkGeneratorRectangle.height);
+        batch.begin();
     }
 
     @Override

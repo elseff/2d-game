@@ -116,8 +116,9 @@ public class GameScreen extends AbstractScreen {
     }
 
     private void renderDebugMode() {
-        if (game.isDebug())
-            game.getWindowUtil().info();
+        if (!game.isDebug()) return;
+
+        game.getWindowUtil().info();
     }
 
     private void update(float delta) {
@@ -140,8 +141,6 @@ public class GameScreen extends AbstractScreen {
             game.getBatch().end();
             Gdx.gl.glEnable(GL20.GL_BLEND);
         }
-
-        Gdx.gl.glEnable(GL20.GL_BLEND);
         game.getShapeRenderer().set(ShapeRenderer.ShapeType.Line);
         game.getShapeRenderer().setColor(1, 1, 1, 0.5f);
         for (int i = 0; i < map.getEnemies().size; i++) {
@@ -154,6 +153,9 @@ public class GameScreen extends AbstractScreen {
             double distance = MathUtils.distanceBetweenTwoPoints(playerPos, enemyPos);
             Vector2 middleOfTheLine = tempVector.set(MathUtils.middleOfTwoPoints(playerPos, enemyPos));
             Color oldShRColor = game.getShapeRenderer().getColor();
+//            game.getBatch().end();
+//            Gdx.gl.glEnable(GL20.GL_BLEND);
+
             game.getShapeRenderer().setColor(Color.WHITE);
             game.getShapeRenderer().set(ShapeRenderer.ShapeType.Filled);
             int rectWidth = 35;
@@ -164,7 +166,8 @@ public class GameScreen extends AbstractScreen {
                     rectHeight);
             game.getShapeRenderer().set(ShapeRenderer.ShapeType.Line);
             game.getShapeRenderer().setColor(oldShRColor);
-            game.getBatch().begin();
+            if (!game.getBatch().isDrawing())
+                game.getBatch().begin();
             Color oldColor = game.getFont().getColor();
             game.getFont().getColor().set(Color.BLACK);
             game.getFont().draw(game.getBatch(),
@@ -173,9 +176,10 @@ public class GameScreen extends AbstractScreen {
                     middleOfTheLine.y);
             game.getFont().setColor(oldColor);
             game.getBatch().end();
-            Gdx.gl.glEnable(GL20.GL_BLEND);
 //            game.getShapeRenderer().line(playerPos, enemyPos);
         }
+        if (!game.getBatch().isDrawing())
+            game.getBatch().begin();
     }
 
     private void cameraUpdate(float delta) {

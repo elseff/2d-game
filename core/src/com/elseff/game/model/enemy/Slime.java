@@ -56,7 +56,7 @@ public class Slime extends Enemy {
         hpBarColor = new Color(0f, 1f, 0f, 0.5f);
         getRectColor().set(1, 0.2f, 0, 0.5f);
 
-        speed = new Vector2(50, 50);
+        speed = new Vector2(100, 100);
         isSeePlayer = false;
 
         timer = new Timer();
