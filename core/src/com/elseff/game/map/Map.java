@@ -51,10 +51,6 @@ public class Map {
         currentChunks.add(chunks.get(0));
     }
 
-    public void addChunk(Vector2 position) {
-        addChunk(position.x, position.y);
-    }
-
     public Chunk addChunk(float xPos, float yPos) {
         int id = chunks.size;
         Chunk chunk = new Chunk(id, game, gameScreen, xPos, yPos);

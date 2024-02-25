@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -21,6 +22,7 @@ import com.elseff.game.model.GameObject;
 import com.elseff.game.model.enemy.Enemy;
 import com.elseff.game.model.food.Food;
 import com.elseff.game.screen.GameScreen;
+import com.elseff.game.util.MathUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -200,18 +202,24 @@ public class Player extends GameObject {
     private void renderDebug() {
         if (!getGame().isDebug()) return;
 
-        batch.end();
-        Gdx.gl.glEnable(GL20.GL_BLEND);
+        getGame().GRACEFUL_SHAPE_RENDERER_BEGIN();
         shapeRenderer.setColor(chunkGeneratorRectangleColor);
         shapeRenderer.set(ShapeRenderer.ShapeType.Line);
         shapeRenderer.rect(chunkGeneratorRectangle.x,
                 chunkGeneratorRectangle.y,
                 chunkGeneratorRectangle.width,
                 chunkGeneratorRectangle.height);
-        batch.begin();
+
+        shapeRenderer.setColor(new Color(1,0,0,0.5f));
+        shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.circle(0,0,300);
+        getGame().GRACEFUL_SHAPE_RENDERER_END();
     }
 
     private void update(float dt) {
+        if (MathUtils.isCircleOverlapsWithRectangle(new Circle(0,0,300), getRectangle())){
+            System.out.println("DICK");
+        }
         checkCollision(dt);
         checkMovement(dt);
         changeCurrentFrame();
