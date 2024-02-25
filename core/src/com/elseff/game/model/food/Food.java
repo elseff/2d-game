@@ -12,6 +12,7 @@ public abstract class Food extends GameObject {
     private final SpriteBatch batch;
     private final float SCALE;
     private final Color rectColor;
+    private final Rectangle rectangle;
 
     protected Food(MyGdxGame game, float x, float y, GameScreen gameScreen) {
         super(game, x, y, gameScreen);
@@ -19,14 +20,17 @@ public abstract class Food extends GameObject {
         SCALE = 2.0f;
         rectColor = new Color(0.1f, 1.0f, 0.1f, 0.3f);
         getRectColor().set(rectColor);
+        rectangle = new Rectangle();
     }
 
     @Override
     public Rectangle getRectangle() {
-        return new Rectangle(getPosition().x - getTexture().getRegionWidth() * SCALE / 2f,
+        rectangle.set(getPosition().x - getTexture().getRegionWidth() * SCALE / 2f,
                 getPosition().y - getTexture().getRegionHeight() * SCALE / 2f,
                 getTexture().getRegionWidth() * SCALE,
                 getTexture().getRegionHeight() * SCALE);
+
+        return rectangle;
     }
 
     public void render(float delta) {

@@ -26,6 +26,7 @@ public class Slime extends Enemy {
     private Direction preferredDirection;
     private final Vector2 speed;
     private final Rectangle tmpRect;
+    private final Rectangle rectangle;
     private final Timer timer;
     private final Color hpBarColor;
     private final Vector2 tmpVector;
@@ -70,6 +71,7 @@ public class Slime extends Enemy {
         font = game.getFont();
         font.setColor(Color.WHITE);
         font.getData().setScale(0.75f, 0.75f);
+        rectangle = new Rectangle();
     }
 
     @Override
@@ -84,10 +86,12 @@ public class Slime extends Enemy {
 
     @Override
     public Rectangle getRectangle() {
-        return new Rectangle(getPosition().x - currentFrame.getRegionWidth() * getSCALE() / 2f + 3,
+        rectangle.set(getPosition().x - currentFrame.getRegionWidth() * getSCALE() / 2f + 3,
                 getPosition().y - currentFrame.getRegionHeight() * getSCALE() / 2f + 3,
                 currentFrame.getRegionWidth() * getSCALE() - 6,
                 currentFrame.getRegionHeight() * getSCALE() - 6);
+
+        return rectangle;
     }
 
     @Override

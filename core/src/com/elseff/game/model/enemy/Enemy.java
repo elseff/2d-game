@@ -19,12 +19,13 @@ public abstract class Enemy extends GameObject {
     private TextureRegion textureRegion;
     private final SpriteBatch batch;
     private final ShapeRenderer shapeRenderer;
-    private Circle collideCircle;
+    private final Circle collideCircle;
     private EnemyState state;
     private float hp;
     private final Color circlesToPlayerColor;
-    private final Color rectColor;
     private Color collideCircleColor;
+    private final int circlesToPlayerRadius;
+    private final Rectangle rectangle;
 
     protected Enemy(MyGdxGame game, float x, float y, GameScreen gameScreen) {
         super(game, x, y, gameScreen);
@@ -33,17 +34,21 @@ public abstract class Enemy extends GameObject {
         shapeRenderer = game.getShapeRenderer();
         collideCircle = new Circle(0, 0, 300);
         circlesToPlayerColor = new Color(0, 1, 0, 0.5f);
-        rectColor = new Color(1, 0.2f, 0, 0.4f);
+        Color rectColor = new Color(1, 0.2f, 0, 0.4f);
         getRectColor().set(rectColor);
         state = EnemyState.IDLE;
+        circlesToPlayerRadius = 10;
+        rectangle = new Rectangle();
     }
 
     @Override
     public Rectangle getRectangle() {
-        return new Rectangle(getPosition().x - textureRegion.getRegionWidth() * getSCALE() / 2f,
+        rectangle.set(getPosition().x - textureRegion.getRegionWidth() * getSCALE() / 2f,
                 getPosition().y - textureRegion.getRegionHeight() * getSCALE() / 2f,
                 textureRegion.getRegionWidth() * getSCALE(),
                 textureRegion.getRegionHeight() * getSCALE());
+
+        return rectangle;
     }
 
     private void update() {
@@ -90,18 +95,17 @@ public abstract class Enemy extends GameObject {
         float x2 = getPosition().x;
         float y1 = playerPos.y;
         float y2 = getPosition().y;
-        int radius = 10;
 //        for (int j = 0; j < countCircles; j++) {
 //            float x = x1 + (x2 - x1) / countCircles * j;
 //            float y = y1 + (y2 - y1) / countCircles * j;
 //            shapeRenderer.circle(x, y, radius);
 //        }
         shapeRenderer.setColor(circlesToPlayerColor);
-        double countCircles = distance / (radius * 2);
+        double countCircles = distance / (circlesToPlayerRadius * 2);
         for (int j = 0; j < countCircles; j++) {
             double x = x1 + (x2 - x1) / countCircles * j;
             double y = y1 + (y2 - y1) / countCircles * j;
-            shapeRenderer.circle((float) x, (float) y, radius);
+            shapeRenderer.circle((float) x, (float) y, circlesToPlayerRadius);
         }
         getGame().GRACEFUL_SHAPE_RENDERER_END();
         BitmapFont font = getGame().getGameResources().getFontFromDef(FontDefinition.ARIAL_20);

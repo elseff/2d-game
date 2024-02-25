@@ -50,7 +50,7 @@ public class Player extends GameObject {
     private final float SCALE;
 
     private final Rectangle tmpRect;
-
+    private final Rectangle rectangle;
     private final Rectangle chunkGeneratorRectangle;
     private final Color chunkGeneratorRectangleColor;
 
@@ -140,8 +140,18 @@ public class Player extends GameObject {
         defaultRectColor = new Color(0.8f, 0.7f, 0.1f, 0.5f);
         hittingByEnemyColor = new Color(1, 0, 0, 0.5f);
         getRectColor().set(defaultRectColor);
+        rectangle = new Rectangle();
     }
 
+    @Override
+    public Rectangle getRectangle() {
+        rectangle.set(getPosition().x - currentFrame.getRegionWidth() * SCALE / 2f + 2,
+                getPosition().y - currentFrame.getRegionHeight() * SCALE / 2f,
+                currentFrame.getRegionWidth() * SCALE - 2,
+                currentFrame.getRegionHeight() * SCALE);
+
+        return rectangle;
+    }
 
     @Override
     public void render(float dt) {
@@ -199,14 +209,6 @@ public class Player extends GameObject {
                 chunkGeneratorRectangle.width,
                 chunkGeneratorRectangle.height);
         batch.begin();
-    }
-
-    @Override
-    public Rectangle getRectangle() {
-        return new Rectangle(getPosition().x - currentFrame.getRegionWidth() * SCALE / 2f + 2,
-                getPosition().y - currentFrame.getRegionHeight() * SCALE / 2f,
-                currentFrame.getRegionWidth() * SCALE - 2,
-                currentFrame.getRegionHeight() * SCALE);
     }
 
     private void update(float dt) {

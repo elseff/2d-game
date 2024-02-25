@@ -20,6 +20,7 @@ public class FireBall extends GameObject {
     private final float rotationSpeed;
     private final boolean rotating;
     private final boolean moving;
+    private final Rectangle rectangle;
 
     public FireBall(MyGdxGame game, GameScreen gameScreen, float x, float y, float SCALE, boolean rotating, boolean moving) {
         super(game, x, y, gameScreen);
@@ -33,6 +34,7 @@ public class FireBall extends GameObject {
         this.rotating = rotating;
         this.moving = moving;
         this.batch = game.getBatch();
+        rectangle = new Rectangle();
     }
 
     @Override
@@ -51,13 +53,14 @@ public class FireBall extends GameObject {
         super.render(delta);
     }
 
-
     @Override
     public Rectangle getRectangle() {
-        return new Rectangle(getPosition().x - texture.getRegionWidth() * SCALE / 2f,
+        rectangle.set(getPosition().x - texture.getRegionWidth() * SCALE / 2f,
                 getPosition().y - texture.getRegionHeight() * SCALE / 2f,
                 texture.getRegionWidth() * SCALE,
                 texture.getRegionHeight() * SCALE);
+
+        return rectangle;
     }
 
     private void update(float dt) {
