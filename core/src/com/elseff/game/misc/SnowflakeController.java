@@ -50,7 +50,7 @@ public class SnowflakeController {
     public void render(float delta) {
         update(delta);
         Gdx.gl.glEnable(GL20.GL_BLEND);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
         for (int i = 0; i < snowflakes.size; i++) {
             Snowflake snowflake = snowflakes.get(i);
 
@@ -60,7 +60,7 @@ public class SnowflakeController {
                     snowflake.getRectangle().width,
                     snowflake.getRectangle().height);
         }
-        shapeRenderer.end();
+//        shapeRenderer.end();
     }
 
     private void update(float delta) {

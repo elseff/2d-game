@@ -7,10 +7,11 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.elseff.game.misc.font.FontDefinition;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class GameResources {
     private final TextureAtlas atlas;
-    private final HashMap<FontDefinition, BitmapFont> fonts;
+    private final Map<FontDefinition, BitmapFont> fonts;
 
     public GameResources() {
         String name = "textures.atlas";

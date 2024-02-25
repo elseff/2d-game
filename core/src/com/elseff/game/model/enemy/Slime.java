@@ -160,38 +160,58 @@ public class Slime extends Enemy {
     public void render(float delta) {
         update(delta);
         super.render(delta);
-        batch.end();
-
         renderHpBar();
+        renderDebug();
+    }
+
+    private void renderDebug() {
+        if (!game.isDebug()) return;
+
+        // HP
+        font.draw(batch, String.valueOf((int) getHp()), getRectangle().x + 5,
+                getRectangle().y + getRectangle().height + 20);
+        batch.end();
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+
+        //CIRCLES
+        shapeRenderer.set(ShapeRenderer.ShapeType.Line);
+        int countCircles = 25;
+        float x1 = getPosition().x;
+        Vector2 playerPos = getGame().getGameScreen().getPlayer().getPosition();
+        float x2 = playerPos.x;
+        float y1 = getPosition().y;
+        float y2 = playerPos.y;
+        int radius = 10;
+        for (int j = 0; j < countCircles; j++) {
+            float x = x1 + (x2 - x1) / countCircles * j;
+            float y = y1 + (y2 - y1) / countCircles * j;
+
+            shapeRenderer.circle(x, y, radius);
+        }
 
         batch.begin();
-        if (game.isDebug()) {
-            font.draw(batch, String.valueOf((int) getHp()), getRectangle().x + 5,
-                    getRectangle().y + getRectangle().height + 20);
-        }
     }
 
     private void renderHpBar() {
+        batch.end();
         Gdx.gl.glEnable(GL20.GL_BLEND);
-        shapeRenderer.setColor(0.1f, 0.1f, 0.1f, 0.5f);
-
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
 
         //border rectangle of hp bar
+        shapeRenderer.setColor(0.1f, 0.1f, 0.1f, 0.5f);
         shapeRenderer.rect(getRectangle().x - 12,
                 getRectangle().y + getRectangle().height + 8,
                 54,
                 14);
 
-        shapeRenderer.setColor(hpBarColor);
-
         //hp bar
+        shapeRenderer.setColor(hpBarColor);
         shapeRenderer.rect(getRectangle().x - 10,
                 getRectangle().y + getRectangle().height + 10,
                 getHp() / 2f,
                 10);
 
-        shapeRenderer.end();
+        batch.begin();
     }
 
     private Direction getReversedDirection() {

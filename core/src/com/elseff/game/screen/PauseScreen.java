@@ -48,6 +48,7 @@ public class PauseScreen extends AbstractScreen {
         font = game.getGameResources().getFontFromDef(FontDefinition.ARIAL_30);
         font.draw(batch, "Press ESC to continue", game.getSCREEN_WIDTH() / 2f - 120, game.getSCREEN_HEIGHT() / 4f);
         batch.end();
+        Gdx.gl.glEnable(GL20.GL_BLEND);
     }
 
     private void update(float delta) {

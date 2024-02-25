@@ -92,6 +92,7 @@ public class Chunk {
     }
 
     public void render(float delta) {
+        shapeRenderer.set(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(currentColor);
         for (int j = 0; j < width; j++) {
             for (int k = 0; k < height; k++) {
@@ -102,29 +103,30 @@ public class Chunk {
                         cellSize);
             }
         }
-        if (game.isDebug()) {
-            if (isCurrent()) {
-                shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
-                shapeRenderer.rect(position.x, position.y, getWidthPixels(), getHeightPixels());
-            }
-            shapeRenderer.end();
 
-            batch.begin();
-            font.draw(game.getBatch(),
-                    String.format("chunk:%s (%.1f; %.1f) - (%s)", id, position.x, position.y, getObjects().size),
-                    position.x + 2,
-                    position.y + 10);
-            batch.end();
-            shapeRenderer.begin();
-        }
-        shapeRenderer.end();
-
+        renderDebug();
         batch.begin();
         renderObjects(delta);
         renderFood(delta);
         batch.end();
         Gdx.gl.glEnable(GL20.GL_BLEND);
-        shapeRenderer.begin();
+    }
+
+    private void renderDebug() {
+        if (!game.isDebug()) return;
+
+        if (isCurrent()) {
+            shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.rect(position.x, position.y, getWidthPixels(), getHeightPixels());
+        }
+
+        batch.begin();
+        font.draw(game.getBatch(),
+                String.format("chunk:%s (%.1f; %.1f) - (%s)", id, position.x, position.y, getObjects().size),
+                position.x + 2,
+                position.y + 10);
+        batch.end();
+        Gdx.gl.glEnable(GL20.GL_BLEND);
     }
 
     public void update() {
@@ -147,13 +149,14 @@ public class Chunk {
     }
 
     public void renderTriggers() {
-        if (!hasTriggers)
-            return;
         if (!game.isDebug())
+            return;
+        if (!hasTriggers)
             return;
 
         for (int j = 0; j < triggers.size; j++) {
             ChunkTrigger chunkTrigger = triggers.get(j);
+            Gdx.gl.glEnable(GL20.GL_BLEND);
             shapeRenderer.rect(
                     chunkTrigger.getRectangle().x,
                     chunkTrigger.getRectangle().y,

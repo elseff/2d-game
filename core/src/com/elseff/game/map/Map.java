@@ -10,10 +10,10 @@ import com.badlogic.gdx.utils.Array;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.map.chunk.Chunk;
 import com.elseff.game.map.chunk.trigger.ChunkTrigger;
-import com.elseff.game.model.enemy.Enemy;
 import com.elseff.game.model.GameObject;
-import com.elseff.game.model.player.Player;
+import com.elseff.game.model.enemy.Enemy;
 import com.elseff.game.model.enemy.Slime;
+import com.elseff.game.model.player.Player;
 import com.elseff.game.screen.GameScreen;
 
 import java.util.Optional;
@@ -77,12 +77,12 @@ public class Map {
         updateKillMonsters();
     }
 
-    private void updateKillMonsters(){
+    private void updateKillMonsters() {
         for (int i = 0; i < enemies.size; i++) {
             Enemy enemy = enemies.get(i);
-            if (enemy.getClass().equals(Slime.class)){
+            if (enemy.getClass().equals(Slime.class)) {
                 Slime slime = (Slime) enemy;
-                if (slime.getHp()<0)
+                if (slime.getHp() < 0)
                     enemies.removeValue(slime, true);
             }
         }
@@ -103,33 +103,31 @@ public class Map {
     }
 
     public void render(float delta) {
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.set(ShapeRenderer.ShapeType.Line);
         for (int i = 0; i < chunks.size; i++) {
             Chunk chunk = chunks.get(i);
-            if(player.getChunkGeneratorRectangle().overlaps(chunk.getRectangle()))
+            if (player.getChunkGeneratorRectangle().overlaps(chunk.getRectangle()))
                 chunk.render(delta);
         }
         shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(ChunkTrigger.getColor());
         for (int i = 0; i < chunks.size; i++) {
             Chunk chunk = chunks.get(i);
-            if(chunk.getRectangle().overlaps(player.getChunkGeneratorRectangle()))
+            if (chunk.getRectangle().overlaps(player.getChunkGeneratorRectangle()))
                 chunk.renderTriggers();
         }
-        shapeRenderer.end();
-        Gdx.gl.glDisable(GL20.GL_BLEND);
         renderEnemies(delta);
     }
 
-    private void renderEnemies(float delta){
-        game.getBatch().begin();
+    private void renderEnemies(float delta) {
+        batch.begin();
         for (int i = 0; i < enemies.size; i++) {
             Enemy enemy = enemies.get(i);
-            if(player.getChunkGeneratorRectangle().overlaps(enemy.getRectangle()))
+            if (player.getChunkGeneratorRectangle().overlaps(enemy.getRectangle()))
                 enemy.render(delta);
         }
-        game.getBatch().end();
+        batch.end();
+        Gdx.gl.glEnable(GL20.GL_BLEND);
     }
 
     public boolean isAreaClear(Rectangle rectangle) {
@@ -149,7 +147,7 @@ public class Map {
         return true;
     }
 
-    public boolean isAreaClearByPoint(Vector2 point){
+    public boolean isAreaClearByPoint(Vector2 point) {
         for (int i = 0; i < chunks.size; i++) {
             Chunk chunk = chunks.get(i);
             for (int j = 0; j < chunk.getObjects().size; j++) {
@@ -182,40 +180,40 @@ public class Map {
     private void checkGenerateChunk() {
         for (int i = 0; i < chunks.size; i++) {
             Chunk chunk = chunks.get(i);
-            if (chunk.isHasTriggers()) {
-                if (chunk.getRectangle().overlaps(player.getChunkGeneratorRectangle())) {
-                    Array<ChunkTrigger> triggers = chunk.getTriggers();
-                    for (int j = 0; j < triggers.size; j++) {
-                        ChunkTrigger trigger = triggers.get(j);
-                        if (player.getChunkGeneratorRectangle().overlaps(trigger.getRectangle())) {
-                            chunk.deleteTriggerByTriggerPosition(trigger.getTriggerPosition());
-                            switch (trigger.getTriggerPosition()) {
-                                case TOP -> {
-                                    tmpVector.set(chunk.getRectangle().x,
-                                            chunk.getPosition().y + chunk.getRectangle().height);
-                                    if (getChunkByPosition(tmpVector).isEmpty())
-                                        generateNewChunk(tmpVector.x, tmpVector.y);
-                                }
-                                case LEFT -> {
-                                    tmpVector.set(chunk.getPosition().x - chunk.getRectangle().width,
-                                            chunk.getRectangle().y);
-                                    if (getChunkByPosition(tmpVector).isEmpty())
-                                        generateNewChunk(tmpVector.x, tmpVector.y);
-                                }
-                                case RIGHT -> {
-                                    tmpVector.set(chunk.getRectangle().x + chunk.getRectangle().width,
-                                            chunk.getRectangle().y);
-                                    if (getChunkByPosition(tmpVector).isEmpty())
-                                        generateNewChunk(tmpVector.x, tmpVector.y);
-                                }
-                                case BOTTOM -> {
-                                    tmpVector.set(chunk.getRectangle().x,
-                                            chunk.getRectangle().y - chunk.getRectangle().height);
-                                    if (getChunkByPosition(tmpVector).isEmpty())
-                                        generateNewChunk(tmpVector.x, tmpVector.y);
-                                }
-                            }
-                        }
+            if (!chunk.isHasTriggers()) continue;
+            if (!chunk.getRectangle().overlaps(player.getChunkGeneratorRectangle())) continue;
+
+            Array<ChunkTrigger> triggers = chunk.getTriggers();
+            for (int j = 0; j < triggers.size; j++) {
+                ChunkTrigger trigger = triggers.get(j);
+                if (!player.getChunkGeneratorRectangle().overlaps(trigger.getRectangle()))
+                    continue;
+
+                chunk.deleteTriggerByTriggerPosition(trigger.getTriggerPosition());
+                switch (trigger.getTriggerPosition()) {
+                    case TOP -> {
+                        tmpVector.set(chunk.getRectangle().x,
+                                chunk.getPosition().y + chunk.getRectangle().height);
+                        if (getChunkByPosition(tmpVector).isEmpty())
+                            generateNewChunk(tmpVector.x, tmpVector.y);
+                    }
+                    case LEFT -> {
+                        tmpVector.set(chunk.getPosition().x - chunk.getRectangle().width,
+                                chunk.getRectangle().y);
+                        if (getChunkByPosition(tmpVector).isEmpty())
+                            generateNewChunk(tmpVector.x, tmpVector.y);
+                    }
+                    case RIGHT -> {
+                        tmpVector.set(chunk.getRectangle().x + chunk.getRectangle().width,
+                                chunk.getRectangle().y);
+                        if (getChunkByPosition(tmpVector).isEmpty())
+                            generateNewChunk(tmpVector.x, tmpVector.y);
+                    }
+                    case BOTTOM -> {
+                        tmpVector.set(chunk.getRectangle().x,
+                                chunk.getRectangle().y - chunk.getRectangle().height);
+                        if (getChunkByPosition(tmpVector).isEmpty())
+                            generateNewChunk(tmpVector.x, tmpVector.y);
                     }
                 }
             }

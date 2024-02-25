@@ -143,7 +143,7 @@ public class Player extends GameObject {
         update(dt);
         Gdx.gl.glEnable(GL20.GL_BLEND);
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
         for (Map.Entry<Vector2, Float> e : particlesPositions.entrySet()) {
             Vector2 pos = e.getKey();
             Float lifetime = e.getValue();
@@ -151,8 +151,7 @@ public class Player extends GameObject {
             shapeRenderer.setColor(color);
             shapeRenderer.circle(pos.x, pos.y, 20, 12);
         }
-        shapeRenderer.end();
-        Gdx.gl.glDisable(GL20.GL_BLEND);
+//        shapeRenderer.end();
 
         batch.begin();
         super.render(dt);
@@ -175,13 +174,14 @@ public class Player extends GameObject {
 
         if (getGame().isDebug()) {
             batch.end();
+            Gdx.gl.glEnable(GL20.GL_BLEND);
             shapeRenderer.setColor(chunkGeneratorRectangleColor);
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.set(ShapeRenderer.ShapeType.Line);
             shapeRenderer.rect(chunkGeneratorRectangle.x,
                     chunkGeneratorRectangle.y,
                     chunkGeneratorRectangle.width,
                     chunkGeneratorRectangle.height);
-            shapeRenderer.end();
+//            shapeRenderer.end();
             batch.begin();
         }
     }

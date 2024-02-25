@@ -47,10 +47,9 @@ public abstract class GameObject {
             batch.end();
             Gdx.gl.glEnable(GL20.GL_BLEND);
             shapeRenderer.setColor(getRectColor());
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.rect(getRectangle().x, getRectangle().y, getRectangle().width, getRectangle().height);
-            shapeRenderer.end();
-            Gdx.gl.glDisable(GL20.GL_BLEND);
+//            shapeRenderer.end();
             batch.begin();
         }
     }

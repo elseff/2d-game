@@ -126,6 +126,7 @@ public class WindowUtil {
             font.draw(batch, data.get(i), padding, game.getSCREEN_HEIGHT() - (margin * i) - padding);
         }
         batch.end();
+        Gdx.gl.glEnable(GL20.GL_BLEND);
     }
 
     public void playerHpBar() {
@@ -141,20 +142,23 @@ public class WindowUtil {
         shapeRenderer.setColor(playerHpBarColor);
         shapeRenderer.rect(12, 12, gameScreen.getPlayer().getHp(), 28);
         shapeRenderer.end();
+
+        // count of hp text
         if (game.isDebug()) {
             batch.begin();
             this.font.setColor(Color.WHITE);
             this.font.draw(batch, String.valueOf((int) gameScreen.getPlayer().getHp()), 110, 55);
             batch.end();
+            Gdx.gl.glEnable(GL20.GL_BLEND);
         }
     }
 
     public void renderMouse() {
         Gdx.gl.glEnable(GL20.GL_BLEND);
-        game.getShapeRenderer().begin(ShapeRenderer.ShapeType.Filled);
+        game.getShapeRenderer().set(ShapeRenderer.ShapeType.Filled);
         game.getShapeRenderer().setColor(Color.WHITE);
         Vector2 mousePos = game.getMouseController().getWorldMousePosition();
         game.getShapeRenderer().circle(mousePos.x, mousePos.y, 5);
-        game.getShapeRenderer().end();
+//        game.getShapeRenderer().end();
     }
 }

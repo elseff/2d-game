@@ -3,6 +3,7 @@ package com.elseff.game.model.enemy;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.elseff.game.MyGdxGame;
 import com.elseff.game.model.GameObject;
 import com.elseff.game.screen.GameScreen;

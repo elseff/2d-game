@@ -46,6 +46,7 @@ public class GameOverScreen extends AbstractScreen {
         font.draw(batch, "Press ESC to exit", game.getSCREEN_WIDTH() / 2f - 100, game.getSCREEN_HEIGHT() / 4f);
         font.draw(batch, "Press SPACE to restart", game.getSCREEN_WIDTH() / 2f - 120, game.getSCREEN_HEIGHT() / 5f);
         batch.end();
+        Gdx.gl.glEnable(GL20.GL_BLEND);
     }
 
     public void update(float dt) {
