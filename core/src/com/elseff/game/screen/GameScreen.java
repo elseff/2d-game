@@ -102,14 +102,14 @@ public class GameScreen extends AbstractScreen {
         game.BATCH_BEGIN();
         map.render(delta);
 
-        renderDistances();
         player.render(delta);
-        popUpMessagesController.render(delta);
+
         renderDebugMode();
 
         snowflakeController.render(delta);
         game.getWindowUtil().playerHpBar();
         game.getWindowUtil().renderMouse();
+        popUpMessagesController.render(delta);
         game.BATCH_END();
     }
 
@@ -129,47 +129,6 @@ public class GameScreen extends AbstractScreen {
         map.update();
         playerSpeedUpdate(delta);
         killPlayer();
-    }
-
-    private void renderDistances() {
-        if (!game.isDebug())
-            return;
-
-        game.GRACEFUL_SHAPE_RENDERER_BEGIN(ShapeRenderer.ShapeType.Line);
-        game.getShapeRenderer().setColor(1, 1, 1, 0.5f);
-        for (int i = 0; i < map.getEnemies().size; i++) {
-            Enemy enemy = map.getEnemies().get(i);
-            if (!player.getChunkGeneratorRectangle().overlaps(enemy.getRectangle()))
-                continue;
-
-            Vector2 playerPos = player.getPosition();
-            Vector2 enemyPos = enemy.getPosition();
-            double distance = MathUtils.distanceBetweenTwoPoints(playerPos, enemyPos);
-            Vector2 middleOfTheLine = tempVector.set(MathUtils.middleOfTwoPoints(playerPos, enemyPos));
-            Color oldShRColor = game.getShapeRenderer().getColor();
-
-            game.getShapeRenderer().setColor(Color.WHITE);
-            game.getShapeRenderer().set(ShapeRenderer.ShapeType.Filled);
-            int rectWidth = 35;
-            int rectHeight = 15;
-            game.getShapeRenderer().rect(middleOfTheLine.x,
-                    middleOfTheLine.y - rectHeight / 2f,
-                    rectWidth,
-                    rectHeight);
-            game.getShapeRenderer().set(ShapeRenderer.ShapeType.Line);
-            game.getShapeRenderer().setColor(oldShRColor);
-            game.GRACEFUL_SHAPE_RENDERER_END();
-            Color oldColor = game.getFont().getColor();
-            game.getFont().getColor().set(Color.BLACK);
-            game.getFont().draw(game.getBatch(),
-                    String.format("%.2f", distance),
-                    middleOfTheLine.x,
-                    middleOfTheLine.y);
-            game.getFont().setColor(oldColor);
-            game.GRACEFUL_SHAPE_RENDERER_BEGIN();
-//            game.getShapeRenderer().line(playerPos, enemyPos);
-        }
-        game.GRACEFUL_SHAPE_RENDERER_END();
     }
 
     private void cameraUpdate(float delta) {

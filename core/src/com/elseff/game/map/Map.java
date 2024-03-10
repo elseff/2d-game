@@ -71,7 +71,7 @@ public class Map {
     public void update() {
         checkGenerateChunk();
         updateCurrentChunk();
-        checkDeleteTriggers();
+
         updateKillMonsters();
     }
 

@@ -17,7 +17,7 @@ public abstract class Box extends GameObject implements Obstacle {
     protected Box(MyGdxGame game, GameScreen gameScreen, float x, float y) {
         super(game, x, y, gameScreen);
         this.batch = getGame().getBatch();
-        this.SCALE = 8.0f;
+        this.SCALE = 2.0f;
         getRectColor().set(1, 1, 1, 0.5f);
         rectangle = new Rectangle();
     }

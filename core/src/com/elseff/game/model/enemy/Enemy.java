@@ -32,6 +32,7 @@ public abstract class Enemy extends GameObject {
     private final int circlesToPlayerRadius;
     private final Rectangle rectangle;
     private final Set<Circle> circlesToPlayer;
+    private final Vector2 tempVector;
 
     protected Enemy(MyGdxGame game, float x, float y, GameScreen gameScreen) {
         super(game, x, y, gameScreen);
@@ -46,6 +47,7 @@ public abstract class Enemy extends GameObject {
         circlesToPlayerRadius = 10;
         rectangle = new Rectangle();
         circlesToPlayer = new HashSet<>();
+        tempVector = new Vector2();
     }
 
     @Override
@@ -66,6 +68,7 @@ public abstract class Enemy extends GameObject {
     }
 
     private void updateCirclesToPlayer() {
+        if (!MathUtils.isCircleOverlapsWithRectangle(collideCircle, getGameScreen().getPlayer().getRectangle())) return;
         circlesToPlayer.clear();
 
         Vector2 playerPos = getGame().getGameScreen().getPlayer().getPosition();
@@ -74,7 +77,7 @@ public abstract class Enemy extends GameObject {
         float x2 = getPosition().x;
         float y1 = playerPos.y;
         float y2 = getPosition().y;
-        double countCircles = distance / (circlesToPlayerRadius * 2);
+        double countCircles = distance / (circlesToPlayerRadius);
         //        for (int j = 0; j < countCircles; j++) {
 //            float x = x1 + (x2 - x1) / countCircles * j;
 //            float y = y1 + (y2 - y1) / countCircles * j;
@@ -140,7 +143,8 @@ public abstract class Enemy extends GameObject {
         shapeRenderer.circle(collideCircle.x, collideCircle.y, collideCircle.radius);
 
         shapeRenderer.setColor(circlesToPlayerColor);
-        circlesToPlayer.forEach(circle -> shapeRenderer.circle(circle.x, circle.y, circle.radius));
+        if (MathUtils.isCircleOverlapsWithRectangle(collideCircle, getGameScreen().getPlayer().getRectangle()))
+            circlesToPlayer.forEach(circle -> shapeRenderer.circle(circle.x, circle.y, circle.radius));
 
         getGame().GRACEFUL_SHAPE_RENDERER_END();
         BitmapFont font = getGame().getGameResources().getFontFromDef(FontDefinition.ARIAL_20);
@@ -150,7 +154,46 @@ public abstract class Enemy extends GameObject {
                 getPosition().x - getState().getName().length() * 3f,
                 getPosition().y + 50);
         getGame().GRACEFUL_SHAPE_RENDERER_BEGIN();
+
+//        renderDistances();
     }
+
+    private void renderDistances() {
+        getGame().GRACEFUL_SHAPE_RENDERER_BEGIN(ShapeRenderer.ShapeType.Line);
+        getGame().getShapeRenderer().setColor(1, 1, 1, 0.5f);
+        Player player = getGame().getGameScreen().getPlayer();
+        if (!player.getChunkGeneratorRectangle().overlaps(getRectangle()))
+            return;
+
+        Vector2 playerPos = player.getPosition();
+        Vector2 enemyPos = getPosition();
+        double distance = MathUtils.distanceBetweenTwoPoints(playerPos, enemyPos);
+        Vector2 middleOfTheLine = tempVector.set(MathUtils.middleOfTwoPoints(playerPos, enemyPos));
+        Color oldShRColor = getGame().getShapeRenderer().getColor();
+
+        getGame().getShapeRenderer().setColor(Color.WHITE);
+        getGame().getShapeRenderer().set(ShapeRenderer.ShapeType.Filled);
+        int rectWidth = 35;
+        int rectHeight = 15;
+        getGame().getShapeRenderer().rect(middleOfTheLine.x,
+                middleOfTheLine.y - rectHeight / 2f,
+                rectWidth,
+                rectHeight);
+        getGame().getShapeRenderer().set(ShapeRenderer.ShapeType.Line);
+        getGame().getShapeRenderer().setColor(oldShRColor);
+        getGame().GRACEFUL_SHAPE_RENDERER_END();
+        Color oldColor = getGame().getFont().getColor();
+        getGame().getFont().getColor().set(Color.BLACK);
+        getGame().getFont().draw(getGame().getBatch(),
+                String.format("%.2f", distance),
+                middleOfTheLine.x,
+                middleOfTheLine.y);
+        getGame().getFont().setColor(oldColor);
+        getGame().GRACEFUL_SHAPE_RENDERER_BEGIN();
+//            game.getShapeRenderer().line(playerPos, enemyPos);
+
+        getGame().GRACEFUL_SHAPE_RENDERER_END();
+}
 
     private Color getCollideCircleColor() {
         return collideCircleColor;

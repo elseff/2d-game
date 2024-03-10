@@ -32,8 +32,8 @@ public class MathUtils {
         Vector2 circleCenter = tmpVector2.set(circle.x, circle.y);
         Vector2 rectangleCenter = tmpVector1.set(rectangle.x, rectangle.y);
 
-        float rectangleCenterX = rectangleCenter.x;
-        float rectangleCenterY = rectangleCenter.y;
+        double rectangleCenterX = rectangleCenter.x;
+        double rectangleCenterY = rectangleCenter.y;
         double rectangleCircumscribedCircleRadius = Math.sqrt(Math.pow(rectangleCenterX, 2) + Math.pow(rectangleCenterY, 2)) / 2;
 
         double distanceBetweenCenters = distanceBetweenTwoPoints(circleCenter, rectangle.getCenter(tmpVector1));
@@ -41,8 +41,8 @@ public class MathUtils {
         if (distanceBetweenCenters > (rectangleCircumscribedCircleRadius + circle.radius))
             return false;
 
-        float hH = rectangle.height / 2f;
-        float hW = rectangle.width / 2f;
+        double hH = rectangle.height / 2f;
+        double hW = rectangle.width / 2f;
 
         return (distanceBetweenCenters < hH + circle.radius) ||
                 (distanceBetweenCenters > hH + circle.radius && distanceBetweenCenters < hW + circle.radius);

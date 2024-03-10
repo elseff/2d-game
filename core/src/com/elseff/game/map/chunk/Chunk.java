@@ -1,8 +1,6 @@
 package com.elseff.game.map.chunk;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -189,17 +187,7 @@ public class Chunk {
             } else {
                 randomBox = new RandomTextureBox(game, gameScreen, 0, 0);
             }
-            boolean findCollision;
-            do {
-                findCollision = false;
-                randomBox.getPosition().set(gameScreen.getMap().randomPosition(this, randomBox));
-                for (GameObject object : objects) {
-                    if (object.getRectangle().overlaps(randomBox.getRectangle())){
-                        findCollision = true;
-                        break;
-                    }
-                }
-            } while (randomBox.getRectangle().overlaps(player.getRectangle()) || findCollision);
+            setRandomPositionIncludingGameObjects(randomBox);
             addGameObject(randomBox);
         }
     }
@@ -207,9 +195,7 @@ public class Chunk {
     public void fillRandomFood() {
         for (int i = 0; i < countRandomFood; i++) {
             Food randomFood = new FriedChicken(game, 0, 0, gameScreen);
-            do {
-                randomFood.getPosition().set(gameScreen.getMap().randomPosition(this, randomFood));
-            } while (randomFood.getRectangle().overlaps(player.getRectangle()));
+            setRandomPositionIncludingGameObjects(randomFood);
             foodArray.add(randomFood);
         }
     }
@@ -217,16 +203,23 @@ public class Chunk {
     public void fillRandomMonsters() {
         for (int i = 0; i < countRandomMonsters; i++) {
             Slime slime = new Slime(game, gameScreen, 0, 0);
-            GameObject gameObject = null;
-            do {
-                for (int j = 0; j < getObjects().size; j++) {
-                    gameObject = getObjects().get(i);
-                }
-                slime.getPosition().set(gameScreen.getMap().randomPosition(this, slime));
-            } while (slime.getRectangle().overlaps(Objects.requireNonNull(gameObject).getRectangle()));
-
+            setRandomPositionIncludingGameObjects(slime);
             gameScreen.getMap().getEnemies().add(slime);
         }
+    }
+
+    private void setRandomPositionIncludingGameObjects(GameObject gameObject) {
+        boolean findCollision;
+        do {
+            findCollision = false;
+            gameObject.getPosition().set(gameScreen.getMap().randomPosition(this, gameObject));
+            for (GameObject object : objects) {
+                if (object.getRectangle().overlaps(gameObject.getRectangle())) {
+                    findCollision = true;
+                    break;
+                }
+            }
+        } while (gameObject.getRectangle().overlaps(player.getRectangle()) || findCollision);
     }
 
     public void addTrigger(ChunkTrigger trigger) {

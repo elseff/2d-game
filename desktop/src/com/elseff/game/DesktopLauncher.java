@@ -6,7 +6,7 @@ import com.elseff.game.util.GameScreenDimension;
 
 public class DesktopLauncher {
     public static void main(String[] arg) {
-        GameScreenDimension dimension = GameScreenDimension.MEDIUM;
+        GameScreenDimension dimension = GameScreenDimension.LARGE;
 
         int width = dimension.getWidth();
         int height = dimension.getHeight();
